@@ -1,7 +1,7 @@
-import { Swim, Mountain, Ship, Bike } from "lucide-react";
+import { Waves, Ship, Mountain, Bike } from "lucide-react";
 
 const activities = [
-  { icon: Swim, name: "Plongée sous-marine" },
+  { icon: Waves, name: "Plongée sous-marine" },
   { icon: Ship, name: "Canoë kayak" },
   { icon: Mountain, name: "Randonnée" },
   { icon: Bike, name: "Scooter des mers" },

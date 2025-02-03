@@ -1,11 +1,11 @@
-import { PalmTree } from "lucide-react";
+import { Palmtree } from "lucide-react";
 
 export const Header = () => {
   return (
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <PalmTree className="h-8 w-8 text-creole-green" />
+          <Palmtree className="h-8 w-8 text-creole-green" />
           <div>
             <h1 className="text-2xl font-bold text-creole-green">Club Créole</h1>
             <p className="text-sm text-creole-blue">Le partenaire de vos Loisirs !</p>

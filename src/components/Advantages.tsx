@@ -1,4 +1,4 @@
-import { Gift, Tool, HeartHandshake } from "lucide-react";
+import { Gift, Wrench, HeartHandshake } from "lucide-react";
 
 const advantages = [
   {
@@ -7,7 +7,7 @@ const advantages = [
     description: "Profitez de réductions exclusives chez nos partenaires",
   },
   {
-    icon: Tool,
+    icon: Wrench,
     title: "Prêt de matériel",
     description: "Accédez à du matériel de réception et des outils",
   },
