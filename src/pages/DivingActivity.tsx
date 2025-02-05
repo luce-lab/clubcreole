@@ -11,7 +11,20 @@ const DivingActivity = () => {
   const { toast } = useToast();
 
   const availableTimes = ["09:00", "11:00", "14:00", "16:00"];
-  const price = 75; // Prix en euros
+  const price = 75;
+
+  const images = [
+    {
+      url: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21",
+      alt: "Vague océanique sur la plage",
+      title: "Découvrez nos spots de plongée"
+    },
+    {
+      url: "https://images.unsplash.com/photo-1518877593221-1f28583780b4",
+      alt: "Baleine à bosse sautant hors de l'eau",
+      title: "Observation de la vie marine"
+    }
+  ];
 
   const handleReservation = () => {
     if (!date || !selectedTime) {
@@ -34,6 +47,22 @@ const DivingActivity = () => {
       <div className="flex items-center gap-4 mb-8">
         <Waves className="h-8 w-8 text-creole-green" />
         <h1 className="text-3xl font-bold text-creole-blue">Plongée sous-marine</h1>
+      </div>
+
+      {/* Galerie photos */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        {images.map((image, index) => (
+          <div key={index} className="relative group overflow-hidden rounded-lg shadow-lg">
+            <img
+              src={image.url}
+              alt={image.alt}
+              className="w-full h-[300px] object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p className="text-white p-4 text-lg font-semibold">{image.title}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
