@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const activities = [
   { icon: Waves, name: "Plongée sous-marine", path: "/plongee" },
-  { icon: Ship, name: "Canoë kayak", path: "/" },
+  { icon: Ship, name: "Canoë kayak", path: "/canoe" },
   { icon: Mountain, name: "Randonnée", path: "/" },
   { icon: Bike, name: "Scooter des mers", path: "/" },
 ];

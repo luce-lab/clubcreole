@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import DivingActivity from "./pages/DivingActivity";
+import CanoeActivity from "./pages/CanoeActivity";
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/plongee" element={<DivingActivity />} />
+          <Route path="/canoe" element={<CanoeActivity />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
