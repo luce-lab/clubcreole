@@ -1,11 +1,12 @@
+
 import { Waves, Ship, Mountain, Bike } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const activities = [
   { icon: Waves, name: "Plongée sous-marine", path: "/plongee" },
   { icon: Ship, name: "Canoë kayak", path: "/canoe" },
-  { icon: Mountain, name: "Randonnée", path: "/" },
-  { icon: Bike, name: "Scooter des mers", path: "/" },
+  { icon: Mountain, name: "Randonnée", path: "/randonnee" },
+  { icon: Bike, name: "Scooter des mers", path: "/jet-ski" },
 ];
 
 export const Activities = () => {
