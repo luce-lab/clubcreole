@@ -3,12 +3,14 @@ import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Waves } from "lucide-react";
+import { Waves, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const DivingActivity = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string>("");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const availableTimes = ["09:00", "11:00", "14:00", "16:00"];
   const price = 75;
@@ -44,6 +46,15 @@ const DivingActivity = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => navigate(-1)}
+        className="mb-4"
+      >
+        <ArrowLeft className="h-6 w-6" />
+      </Button>
+
       <div className="flex items-center gap-4 mb-8">
         <Waves className="h-8 w-8 text-creole-green" />
         <h1 className="text-3xl font-bold text-creole-blue">Plongée sous-marine</h1>
