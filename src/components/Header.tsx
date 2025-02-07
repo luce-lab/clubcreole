@@ -1,7 +1,11 @@
 
 import { Palmtree } from "lucide-react";
+import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
+  const navigate = useNavigate();
+
   return (
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -12,20 +16,30 @@ export const Header = () => {
             <p className="text-sm text-creole-blue">Le partenaire de vos Loisirs !</p>
           </div>
         </div>
-        <nav className="hidden md:flex gap-6">
-          <a href="#activities" className="text-gray-600 hover:text-creole-green transition-colors">
-            Activités
-          </a>
-          <a href="#advantages" className="text-gray-600 hover:text-creole-green transition-colors">
-            Avantages
-          </a>
-          <a href="#pricing" className="text-gray-600 hover:text-creole-green transition-colors">
-            Prix
-          </a>
-          <a href="#cyclone" className="text-gray-600 hover:text-creole-green transition-colors">
-            Club Cyclone
-          </a>
-        </nav>
+        <div className="flex items-center gap-6">
+          <nav className="hidden md:flex gap-6">
+            <a href="#activities" className="text-gray-600 hover:text-creole-green transition-colors">
+              Activités
+            </a>
+            <a href="#advantages" className="text-gray-600 hover:text-creole-green transition-colors">
+              Avantages
+            </a>
+            <a href="#pricing" className="text-gray-600 hover:text-creole-green transition-colors">
+              Prix
+            </a>
+            <a href="#cyclone" className="text-gray-600 hover:text-creole-green transition-colors">
+              Club Cyclone
+            </a>
+          </nav>
+          <div className="flex gap-2">
+            <Button variant="ghost" onClick={() => navigate("/login")}>
+              Connexion
+            </Button>
+            <Button variant="default" className="bg-creole-green hover:bg-creole-green/90" onClick={() => navigate("/register")}>
+              Inscription
+            </Button>
+          </div>
+        </div>
       </div>
     </header>
   );

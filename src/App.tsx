@@ -10,6 +10,8 @@ import DivingActivity from "./pages/DivingActivity";
 import CanoeActivity from "./pages/CanoeActivity";
 import HikingActivity from "./pages/HikingActivity";
 import JetSkiActivity from "./pages/JetSkiActivity";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +27,8 @@ const App = () => (
           <Route path="/canoe" element={<CanoeActivity />} />
           <Route path="/randonnee" element={<HikingActivity />} />
           <Route path="/jet-ski" element={<JetSkiActivity />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
