@@ -1,3 +1,4 @@
+
 import { Palmtree } from "lucide-react";
 
 export const Header = () => {
@@ -17,6 +18,9 @@ export const Header = () => {
           </a>
           <a href="#advantages" className="text-gray-600 hover:text-creole-green transition-colors">
             Avantages
+          </a>
+          <a href="#pricing" className="text-gray-600 hover:text-creole-green transition-colors">
+            Prix
           </a>
           <a href="#cyclone" className="text-gray-600 hover:text-creole-green transition-colors">
             Club Cyclone
