@@ -3,19 +3,19 @@ import { Check } from "lucide-react";
 
 const subscriptions = [
   {
-    name: "Découverte",
-    price: "29.99",
+    name: "Gratuit",
+    price: "0",
     period: "mois",
-    description: "Parfait pour découvrir nos activités",
+    description: "Pour découvrir nos activités",
     features: [
-      "5% de réduction sur toutes les activités",
-      "Accès aux événements spéciaux",
-      "Newsletter mensuelle"
+      "Accès à toutes les activités (tarif de base)",
+      "Newsletter mensuelle",
+      "Compte personnel"
     ]
   },
   {
     name: "Passionné",
-    price: "49.99",
+    price: "29.99",
     period: "mois",
     description: "Pour les amateurs d'activités nautiques",
     features: [
@@ -81,3 +81,4 @@ export const Pricing = () => {
     </section>
   );
 };
+
