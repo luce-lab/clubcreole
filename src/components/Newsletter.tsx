@@ -54,7 +54,7 @@ export const Newsletter = ({ variant = "dialog", onSuccess }: NewsletterProps) =
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="bg-white"
+            className="bg-white text-gray-900"
             disabled={isLoading}
           />
           <Button
