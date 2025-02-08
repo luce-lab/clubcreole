@@ -7,9 +7,10 @@ import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/di
 
 type NewsletterProps = {
   variant?: "dialog" | "footer";
+  onSuccess?: () => void;
 };
 
-export const Newsletter = ({ variant = "dialog" }: NewsletterProps) => {
+export const Newsletter = ({ variant = "dialog", onSuccess }: NewsletterProps) => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -25,6 +26,9 @@ export const Newsletter = ({ variant = "dialog" }: NewsletterProps) => {
         description: "Merci de vous être inscrit à notre newsletter.",
       });
       setEmail("");
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       toast({
         title: "Erreur",

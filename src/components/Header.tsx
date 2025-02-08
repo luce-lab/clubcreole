@@ -4,9 +4,11 @@ import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { Newsletter } from "./Newsletter";
+import { useState } from "react";
 
 export const Header = () => {
   const navigate = useNavigate();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
     <header className="bg-white shadow-sm">
@@ -32,14 +34,14 @@ export const Header = () => {
             <a href="#cyclone" className="text-gray-600 hover:text-creole-green transition-colors">
               Club Cyclone
             </a>
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <button className="text-gray-600 hover:text-creole-green transition-colors">
                   Newsletter
                 </button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
-                <Newsletter />
+                <Newsletter onSuccess={() => setIsDialogOpen(false)} />
               </DialogContent>
             </Dialog>
           </nav>
