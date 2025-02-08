@@ -2,6 +2,8 @@
 import { Palmtree } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import { Newsletter } from "./Newsletter";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -30,6 +32,16 @@ export const Header = () => {
             <a href="#cyclone" className="text-gray-600 hover:text-creole-green transition-colors">
               Club Cyclone
             </a>
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="text-gray-600 hover:text-creole-green transition-colors">
+                  Newsletter
+                </button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <Newsletter />
+              </DialogContent>
+            </Dialog>
           </nav>
           <div className="flex gap-2">
             <Button variant="ghost" onClick={() => navigate("/login")}>

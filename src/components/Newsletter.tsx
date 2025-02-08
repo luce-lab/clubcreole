@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export const Newsletter = () => {
   const [email, setEmail] = useState("");
@@ -32,29 +33,33 @@ export const Newsletter = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <h3 className="text-xl font-bold text-white">Newsletter</h3>
-      <p className="text-gray-400">
-        Restez informé de nos dernières actualités et offres spéciales !
-      </p>
-      <div className="flex gap-2">
-        <Input
-          type="email"
-          placeholder="Votre email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="bg-white"
-          disabled={isLoading}
-        />
-        <Button
-          type="submit"
-          className="bg-creole-green hover:bg-creole-green/90 text-white"
-          disabled={isLoading}
-        >
-          {isLoading ? "Inscription..." : "S'inscrire"}
-        </Button>
-      </div>
-    </form>
+    <div className="space-y-4">
+      <DialogHeader>
+        <DialogTitle>Newsletter</DialogTitle>
+        <DialogDescription>
+          Restez informé de nos dernières actualités et offres spéciales !
+        </DialogDescription>
+      </DialogHeader>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Input
+            type="email"
+            placeholder="Votre email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full"
+            disabled={isLoading}
+          />
+          <Button
+            type="submit"
+            className="w-full bg-creole-green hover:bg-creole-green/90 text-white"
+            disabled={isLoading}
+          >
+            {isLoading ? "Inscription..." : "S'inscrire"}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 };
