@@ -31,7 +31,7 @@ export const Footer = () => {
             </p>
           </div>
           <div>
-            <Newsletter />
+            <Newsletter variant="footer" />
           </div>
         </div>
       </div>

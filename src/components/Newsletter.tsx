@@ -5,7 +5,11 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
-export const Newsletter = () => {
+type NewsletterProps = {
+  variant?: "dialog" | "footer";
+};
+
+export const Newsletter = ({ variant = "dialog" }: NewsletterProps) => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -31,6 +35,35 @@ export const Newsletter = () => {
       setIsLoading(false);
     }
   };
+
+  if (variant === "footer") {
+    return (
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <h3 className="text-xl font-bold text-white">Newsletter</h3>
+        <p className="text-gray-400">
+          Restez informé de nos dernières actualités et offres spéciales !
+        </p>
+        <div className="flex gap-2">
+          <Input
+            type="email"
+            placeholder="Votre email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="bg-white"
+            disabled={isLoading}
+          />
+          <Button
+            type="submit"
+            className="bg-creole-green hover:bg-creole-green/90 text-white"
+            disabled={isLoading}
+          >
+            {isLoading ? "..." : "OK"}
+          </Button>
+        </div>
+      </form>
+    );
+  }
 
   return (
     <div className="space-y-4">
