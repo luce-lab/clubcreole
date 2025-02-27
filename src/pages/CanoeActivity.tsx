@@ -83,8 +83,8 @@ const CanoeActivity = () => {
           <CardContent className="space-y-4">
             <p>
               Partez à l'aventure en canoë kayak et découvrez les magnifiques
-              paysages des Antilles. Naviguez le long des côtes ou explorez les
-              rivières intérieures, accompagné par nos guides expérimentés.
+              paysages des Antilles françaises. Naviguez le long des côtes ou explorez les
+              rivières intérieures, accompagné par nos guides expérimentés. 
             </p>
             <div className="text-2xl font-bold text-creole-green">
               {price}€ / personne
