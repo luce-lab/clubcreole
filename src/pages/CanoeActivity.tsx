@@ -24,7 +24,7 @@ const CanoeActivity = () => {
     {
       url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
       alt: "Plan d'eau entouré d'arbres",
-      title: "Navigation en eaux calmes"
+      title: "Navigation en eaux calmes et limpides"
     }
   ];
 
