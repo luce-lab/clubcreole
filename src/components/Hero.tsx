@@ -1,6 +1,5 @@
 export const Hero = () => {
-  return (
-    <section className="bg-gradient-to-br from-creole-green/10 to-creole-blue/10 py-20">
+  return <section className="bg-gradient-to-br from-creole-green/10 to-creole-blue/10 py-20">
       <div className="container mx-auto px-4 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-creole-green mb-6">
           Bienvenue au Club Créole
@@ -9,11 +8,8 @@ export const Hero = () => {
           Et de votre Vie Quotidienne !
         </p>
         <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg fade-in">
-          <p className="text-gray-700 text-lg">
-            Le Club Créole est un réseau de 50 entreprises touristiques et de loisirs à votre service pour le meilleur des Antilles
-          </p>
+          <p className="text-gray-700 text-lg">Le Club Créole un programme de fidélité innovant, conçu pour les passionnés de la culture créole et les voyageurs en quête d'expériences authentiques. Il offre à ses membres un accès privilégié à un réseau de partenaires sélectionnés dans le secteur touristique, leur permettant ainsi de bénéficier de réductions, d'avantages exclusifs et de services sur mesure.</p>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
