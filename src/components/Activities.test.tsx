@@ -33,7 +33,7 @@ describe('Activities Component', () => {
         expect(screen.getByText('Nos Activités')).toBeInTheDocument();
     });
 
-    it('displays all six activities', () => {
+    it('displays all activities', () => {
         render(
           <MemoryRouter>
             <Activities />
@@ -45,5 +45,8 @@ describe('Activities Component', () => {
         expect(screen.getByText('Concerts')).toBeInTheDocument();
         expect(screen.getByText('Soirée')).toBeInTheDocument();
         expect(screen.getByText('Location de Voitures')).toBeInTheDocument();
+        expect(screen.getByText('Plongée sous marine')).toBeInTheDocument();
+        expect(screen.getByText('Canoë Kayak')).toBeInTheDocument();
+        expect(screen.getByText('Randonnée')).toBeInTheDocument();
     });
 });

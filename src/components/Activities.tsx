@@ -1,5 +1,5 @@
 
-import { Coffee, Bed, Music, Martini, Car, Gamepad2 } from "lucide-react";
+import { Coffee, Bed, Music, Martini, Car, Gamepad2, Mountain, Ship, Waves } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const activities = [
@@ -9,6 +9,9 @@ const activities = [
   { icon: Music, name: "Concerts", path: "/concerts" },
   { icon: Martini, name: "Soirée", path: "/soiree" },
   { icon: Car, name: "Location de Voitures", path: "/location" },
+  { icon: Waves, name: "Plongée sous marine", path: "/plongee" },
+  { icon: Ship, name: "Canoë Kayak", path: "/canoe" },
+  { icon: Mountain, name: "Randonnée", path: "/randonnee" },
 ];
 
 export const Activities = () => {
@@ -20,7 +23,7 @@ export const Activities = () => {
         <h2 className="text-3xl font-bold text-center text-creole-blue mb-12">
           Nos Activités
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-8">
           {activities.map((activity, index) => (
             <div
               key={index}
