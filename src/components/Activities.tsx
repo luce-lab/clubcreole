@@ -1,12 +1,14 @@
 
-import { Waves, Ship, Mountain, Bike } from "lucide-react";
+import { Coffee, Bed, Music, Martini, Car, Gamepad2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const activities = [
-  { icon: Waves, name: "Plongée sous-marine", path: "/plongee" },
-  { icon: Ship, name: "Canoë kayak", path: "/canoe" },
-  { icon: Mountain, name: "Randonnée", path: "/randonnee" },
-  { icon: Bike, name: "Scooter des mers", path: "/jet-ski" },
+  { icon: Gamepad2, name: "Loisirs", path: "/loisirs" },
+  { icon: Coffee, name: "Restauration", path: "/restauration" },
+  { icon: Bed, name: "Hébergements", path: "/hebergements" },
+  { icon: Music, name: "Concerts", path: "/concerts" },
+  { icon: Martini, name: "Soirée", path: "/soiree" },
+  { icon: Car, name: "Location de Voitures", path: "/location" },
 ];
 
 export const Activities = () => {
@@ -18,7 +20,7 @@ export const Activities = () => {
         <h2 className="text-3xl font-bold text-center text-creole-blue mb-12">
           Nos Activités
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {activities.map((activity, index) => (
             <div
               key={index}
@@ -34,3 +36,5 @@ export const Activities = () => {
     </section>
   );
 };
+
+export default Activities;

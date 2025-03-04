@@ -29,6 +29,12 @@ const App = () => (
           <Route path="/jet-ski" element={<JetSkiActivity />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/loisirs" element={<NotFound />} />
+          <Route path="/restauration" element={<NotFound />} />
+          <Route path="/hebergements" element={<NotFound />} />
+          <Route path="/concerts" element={<NotFound />} />
+          <Route path="/soiree" element={<NotFound />} />
+          <Route path="/location" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
