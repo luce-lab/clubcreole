@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { CheckCircle2, Clock, MapPin, Users } from "lucide-react";
+import { CheckCircle2, Clock, MapPin, Users, Film, Martini, Map } from "lucide-react";
 
 interface Loisir {
   id: number;
@@ -69,6 +69,36 @@ const loisirs: Loisir[] = [
     maxParticipants: 15,
     currentParticipants: 9,
     image: "https://images.unsplash.com/photo-1485579149621-3123dd979885?q=80&w=2069&auto=format&fit=crop"
+  },
+  {
+    id: 6,
+    title: "Sortie en boite - La Créolita",
+    description: "Profitez d'une soirée inoubliable dans l'une des boîtes de nuit les plus populaires des Antilles avec musique zouk et cocktails tropicaux.",
+    location: "Trois-Îlets, Martinique",
+    date: "18 juin 2024, 22:00",
+    maxParticipants: 30,
+    currentParticipants: 15,
+    image: "https://images.unsplash.com/photo-1545128485-c400ce7b0aa2?q=80&w=2070&auto=format&fit=crop"
+  },
+  {
+    id: 7,
+    title: "Sortie cinéma - Film créole",
+    description: "Projection exclusive d'un film créole suivi d'une discussion avec le réalisateur sur la culture et l'identité antillaise.",
+    location: "Basse-Terre, Guadeloupe",
+    date: "25 juin 2024, 19:30",
+    maxParticipants: 40,
+    currentParticipants: 22,
+    image: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=2070&auto=format&fit=crop"
+  },
+  {
+    id: 8,
+    title: "Balade dans la forêt tropicale",
+    description: "Randonnée guidée dans la forêt tropicale avec un guide local qui vous fera découvrir la faune et la flore exceptionnelles des Antilles.",
+    location: "Parc National de la Guadeloupe",
+    date: "30 juin 2024, 09:00",
+    maxParticipants: 18,
+    currentParticipants: 10,
+    image: "https://images.unsplash.com/photo-1550236520-7050f3582da0?q=80&w=2075&auto=format&fit=crop"
   }
 ];
 
@@ -100,6 +130,14 @@ const LoisirsActivity = () => {
     setOpenDialog(false);
   };
 
+  // Fonction pour obtenir l'icône en fonction du titre de l'activité
+  const getActivityIcon = (title: string) => {
+    if (title.includes("boite")) return <Martini className="h-4 w-4 text-creole-blue" />;
+    if (title.includes("cinéma")) return <Film className="h-4 w-4 text-creole-blue" />;
+    if (title.includes("Balade") || title.includes("Randonnée")) return <Map className="h-4 w-4 text-creole-blue" />;
+    return <CheckCircle2 className="h-4 w-4 text-creole-blue" />;
+  };
+
   return (
     <div className="container mx-auto px-4 py-12">
       <h1 className="text-3xl md:text-4xl font-bold text-center text-creole-blue mb-8">
@@ -122,7 +160,10 @@ const LoisirsActivity = () => {
               />
             </div>
             <CardHeader>
-              <CardTitle>{loisir.title}</CardTitle>
+              <div className="flex items-center gap-2 mb-2">
+                {getActivityIcon(loisir.title)}
+                <CardTitle>{loisir.title}</CardTitle>
+              </div>
               <CardDescription>{loisir.description}</CardDescription>
             </CardHeader>
             <CardContent className="flex-grow">
