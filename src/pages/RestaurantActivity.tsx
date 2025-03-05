@@ -35,7 +35,7 @@ const restaurants: Restaurant[] = [
     id: 2,
     name: "L'Azur Bleu",
     type: "Restaurant de fruits de mer",
-    image: "https://images.unsplash.com/photo-1564419320720-068497c4ca1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+    image: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
     location: "Le Diamant",
     description: "Face à la mer, dégustez les meilleurs fruits de mer et poissons fraîchement pêchés. Notre terrasse offre une vue imprenable sur l'océan.",
     rating: 4.6,
