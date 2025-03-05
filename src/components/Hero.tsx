@@ -8,7 +8,9 @@ export const Hero = () => {
           Et de votre Vie Quotidienne !
         </p>
         <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg fade-in">
-          <p className="text-gray-700 text-lg">Le Club Créole un programme de fidélité innovant, conçu pour les passionnés de la culture créole et les voyageurs en quête d'expériences authentiques. Il offre à ses membres un accès privilégié à un réseau de partenaires sélectionnés dans le secteur touristique, leur permettant ainsi de bénéficier de réductions, d'avantages exclusifs et de services sur mesure.</p>
+          <p className="text-gray-700 text-lg">
+          Le Club Créole un programme de fidélité innovant, conçu pour les passionnés de la culture créole et les voyageurs en quête d'expériences authentiques. Il offre à ses membres un accès privilégié à un réseau de partenaires sélectionnés dans le secteur touristique, leur permettant ainsi de bénéficier de réductions, d'avantages exclusifs et de services sur mesure.
+          </p>
         </div>
       </div>
     </section>;
