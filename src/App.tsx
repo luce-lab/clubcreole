@@ -11,6 +11,7 @@ import HikingActivity from "./pages/HikingActivity";
 import JetSkiActivity from "./pages/JetSkiActivity";
 import LoisirsActivity from "./pages/LoisirsActivity";
 import RestaurantActivity from "./pages/RestaurantActivity";
+import CarRentalActivity from "./pages/CarRentalActivity";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { useEffect } from "react";
@@ -33,10 +34,10 @@ const App = () => (
           <Route path="/register" element={<Register />} />
           <Route path="/loisirs" element={<LoisirsActivity />} />
           <Route path="/restauration" element={<RestaurantActivity />} />
+          <Route path="/location" element={<CarRentalActivity />} />
           <Route path="/hebergements" element={<NotFound />} />
           <Route path="/concerts" element={<NotFound />} />
           <Route path="/soiree" element={<NotFound />} />
-          <Route path="/location" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
