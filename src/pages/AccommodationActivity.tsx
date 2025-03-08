@@ -12,7 +12,8 @@ import {
   Coffee, 
   Car, 
   Bath, 
-  Search
+  Search,
+  ArrowLeft
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -123,123 +124,139 @@ const AccommodationActivity = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-grow">
-        <div className="bg-creole-blue text-white py-16">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl font-bold mb-4">Hébergements en Guadeloupe</h1>
-            <p className="text-xl max-w-2xl mx-auto">
-              Découvrez notre sélection d'hébergements pour un séjour inoubliable. Villas, hôtels, bungalows et plus encore!
-            </p>
-          </div>
+      <main className="flex-grow container mx-auto px-4 py-8">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate(-1)}
+          className="mb-4"
+        >
+          <ArrowLeft className="h-6 w-6" />
+        </Button>
+
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-creole-blue">Hébergements en Guadeloupe</h1>
+          <p className="text-gray-600 mt-2">
+            Découvrez notre sélection d'hébergements pour un séjour inoubliable. Villas, hôtels, bungalows et plus encore!
+          </p>
         </div>
 
-        <div className="container mx-auto px-4 py-12">
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-10">
-            <h2 className="text-2xl font-bold mb-6 text-creole-green">Trouvez votre hébergement idéal</h2>
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-grow">
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    type="text"
-                    placeholder="Rechercher par nom, lieu ou type..."
-                    className="pl-10"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-10">
+          <h2 className="text-2xl font-bold mb-6 text-creole-green">Trouvez votre hébergement idéal</h2>
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-grow">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="Rechercher par nom, lieu ou type..."
+                  className="pl-10"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
-              <div className="md:w-1/4">
-                <select
-                  className="w-full h-10 rounded-md border border-input bg-background px-3 py-2"
-                  value={priceFilter}
-                  onChange={(e) => setPriceFilter(e.target.value)}
-                >
-                  <option value="">Prix (Tous)</option>
-                  <option value="low">Économique (≤ 80€)</option>
-                  <option value="medium">Modéré (80-100€)</option>
-                  <option value="high">Premium (≥ 100€)</option>
-                </select>
-              </div>
-              <Button 
-                className="bg-creole-green hover:bg-creole-green/90"
-                onClick={() => {
-                  setSearchTerm("");
-                  setPriceFilter("");
-                }}
+            </div>
+            <div className="md:w-1/4">
+              <select
+                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2"
+                value={priceFilter}
+                onChange={(e) => setPriceFilter(e.target.value)}
               >
-                Réinitialiser
-              </Button>
+                <option value="">Prix (Tous)</option>
+                <option value="low">Économique (≤ 80€)</option>
+                <option value="medium">Modéré (80-100€)</option>
+                <option value="high">Premium (≥ 100€)</option>
+              </select>
             </div>
+            <Button 
+              className="bg-creole-green hover:bg-creole-green/90"
+              onClick={() => {
+                setSearchTerm("");
+                setPriceFilter("");
+              }}
+            >
+              Réinitialiser
+            </Button>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredAccommodations.map((accommodation) => (
-              <Card key={accommodation.id} className="overflow-hidden hover:shadow-xl transition-shadow">
-                <div className="h-48 bg-gray-200 relative">
-                  <img 
-                    src={accommodation.image} 
-                    alt={accommodation.name} 
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-2 right-2 bg-white rounded-full px-2 py-1 text-sm font-bold flex items-center">
-                    <Star className="h-4 w-4 text-yellow-400 mr-1" fill="currentColor" />
-                    {accommodation.rating}
-                  </div>
-                </div>
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-xl">{accommodation.name}</CardTitle>
-                      <CardDescription className="flex items-center mt-1">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        {accommodation.location}
-                      </CardDescription>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-lg font-bold text-creole-green">{accommodation.price}€</span>
-                      <p className="text-sm text-gray-500">par nuit</p>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 mb-4">{accommodation.description}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {accommodation.features.slice(0, 4).map((feature, index) => (
-                      <span 
-                        key={index}
-                        className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs flex items-center"
-                      >
-                        {renderFeatureIcon(feature)}
-                        <span className="ml-1">{feature}</span>
-                      </span>
-                    ))}
-                    {accommodation.features.length > 4 && (
-                      <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
-                        +{accommodation.features.length - 4}
-                      </span>
-                    )}
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full bg-creole-green hover:bg-creole-green/90">
-                    Réserver maintenant
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-
-          {filteredAccommodations.length === 0 && (
-            <div className="text-center py-12">
-              <Bed className="h-16 w-16 mx-auto text-gray-300 mb-4" />
-              <h3 className="text-xl font-bold text-gray-700">Aucun hébergement trouvé</h3>
-              <p className="text-gray-500 mt-2">Essayez de modifier vos critères de recherche</p>
-            </div>
-          )}
         </div>
 
-        <section className="bg-gray-50 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+          {filteredAccommodations.map((accommodation) => (
+            <Card key={accommodation.id} className="overflow-hidden hover:shadow-xl transition-shadow">
+              <div className="h-48 bg-gray-200 relative">
+                <img 
+                  src={accommodation.image} 
+                  alt={accommodation.name} 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-2 right-2 bg-white rounded-full px-2 py-1 text-sm font-bold flex items-center">
+                  <Star className="h-4 w-4 text-yellow-400 mr-1" fill="currentColor" />
+                  {accommodation.rating}
+                </div>
+              </div>
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-xl">{accommodation.name}</CardTitle>
+                    <CardDescription className="flex items-center mt-1">
+                      <MapPin className="h-4 w-4 mr-1" />
+                      {accommodation.location}
+                    </CardDescription>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-lg font-bold text-creole-green">{accommodation.price}€</span>
+                    <p className="text-sm text-gray-500">par nuit</p>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 mb-4">{accommodation.description}</p>
+                <div className="flex flex-wrap gap-2">
+                  {accommodation.features.slice(0, 4).map((feature, index) => (
+                    <span 
+                      key={index}
+                      className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs flex items-center"
+                    >
+                      {renderFeatureIcon(feature)}
+                      <span className="ml-1">{feature}</span>
+                    </span>
+                  ))}
+                  {accommodation.features.length > 4 && (
+                    <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
+                      +{accommodation.features.length - 4}
+                    </span>
+                  )}
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button className="w-full bg-creole-green hover:bg-creole-green/90">
+                  Réserver maintenant
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+
+        {filteredAccommodations.length === 0 && (
+          <div className="text-center py-12">
+            <Bed className="h-16 w-16 mx-auto text-gray-300 mb-4" />
+            <h3 className="text-xl font-bold text-gray-700">Aucun hébergement trouvé</h3>
+            <p className="text-gray-500 mt-2">Essayez de modifier vos critères de recherche</p>
+          </div>
+        )}
+
+        <div className="bg-gray-50 rounded-lg p-6 shadow-md mb-10">
+          <h2 className="text-2xl font-bold text-creole-blue mb-2">Comment profiter des avantages?</h2>
+          <p className="text-gray-700 mb-4">
+            En tant que membre du Club Créole, présentez simplement votre carte de membre ou application mobile
+            pour bénéficier de réductions exclusives sur votre séjour.
+          </p>
+          <Button className="bg-creole-green hover:bg-creole-green/90">
+            Devenir membre
+          </Button>
+        </div>
+
+        <section className="bg-gray-50 py-16 rounded-lg shadow-md mb-10">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center text-creole-blue mb-12">
               Pourquoi réserver avec Club Créole ?
