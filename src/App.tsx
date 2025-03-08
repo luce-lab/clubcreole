@@ -14,6 +14,7 @@ import LoisirsActivity from "./pages/LoisirsActivity";
 import RestaurantActivity from "./pages/RestaurantActivity";
 import CarRentalActivity from "./pages/CarRentalActivity";
 import AccommodationActivity from "./pages/AccommodationActivity";
+import ConcertActivity from "./pages/ConcertActivity";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
@@ -37,7 +38,7 @@ const App = () => (
           <Route path="/restauration" element={<RestaurantActivity />} />
           <Route path="/location" element={<CarRentalActivity />} />
           <Route path="/hebergements" element={<AccommodationActivity />} />
-          <Route path="/concerts" element={<NotFound />} />
+          <Route path="/concerts" element={<ConcertActivity />} />
           <Route path="/soiree" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
