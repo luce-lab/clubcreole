@@ -1,4 +1,3 @@
-
 import { Check } from "lucide-react";
 
 const subscriptions = [
@@ -15,8 +14,8 @@ const subscriptions = [
   },
   {
     name: "Passionné",
-    price: "29.99",
-    period: "mois",
+    price: "15",
+    period: "2 mois",
     description: "Pour les amateurs d'activités nautiques",
     features: [
       "15% de réduction sur toutes les activités",
@@ -81,4 +80,3 @@ export const Pricing = () => {
     </section>
   );
 };
-

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,7 +5,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { CheckCircle2, Clock, MapPin, Users, Film, Martini, Map } from "lucide-react";
+import { CheckCircle2, Clock, MapPin, Users, Film, Martini, Map, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Loisir {
   id: number;
@@ -108,6 +108,7 @@ const LoisirsActivity = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
+  const navigate = useNavigate();
 
   const handleRegister = () => {
     if (!name || !email || !phone) {
@@ -130,7 +131,6 @@ const LoisirsActivity = () => {
     setOpenDialog(false);
   };
 
-  // Fonction pour obtenir l'icône en fonction du titre de l'activité
   const getActivityIcon = (title: string) => {
     if (title.includes("boite")) return <Martini className="h-4 w-4 text-creole-blue" />;
     if (title.includes("cinéma")) return <Film className="h-4 w-4 text-creole-blue" />;
@@ -140,6 +140,15 @@ const LoisirsActivity = () => {
 
   return (
     <div className="container mx-auto px-4 py-12">
+      <Button 
+        onClick={() => navigate(-1)} 
+        variant="ghost" 
+        className="mb-6 group flex items-center gap-1 hover:gap-2 transition-all"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        <span>Retour</span>
+      </Button>
+      
       <h1 className="text-3xl md:text-4xl font-bold text-center text-creole-blue mb-8">
         Nos Activités de Loisirs
       </h1>

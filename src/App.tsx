@@ -12,6 +12,9 @@ import JetSkiActivity from "./pages/JetSkiActivity";
 import LoisirsActivity from "./pages/LoisirsActivity";
 import RestaurantActivity from "./pages/RestaurantActivity";
 import CarRentalActivity from "./pages/CarRentalActivity";
+import AccommodationActivity from "./pages/AccommodationActivity";
+import ConcertActivity from "./pages/ConcertActivity";
+import NightlifeActivity from "./pages/NightlifeActivity";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { useEffect } from "react";
@@ -35,9 +38,9 @@ const App = () => (
           <Route path="/loisirs" element={<LoisirsActivity />} />
           <Route path="/restauration" element={<RestaurantActivity />} />
           <Route path="/location" element={<CarRentalActivity />} />
-          <Route path="/hebergements" element={<NotFound />} />
-          <Route path="/concerts" element={<NotFound />} />
-          <Route path="/soiree" element={<NotFound />} />
+          <Route path="/hebergements" element={<AccommodationActivity />} />
+          <Route path="/concerts" element={<ConcertActivity />} />
+          <Route path="/soiree" element={<NightlifeActivity />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
