@@ -4,11 +4,35 @@ import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { Newsletter } from "./Newsletter";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase"; // Import the supabase client
 
 export const Header = () => {
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsLoggedIn(!!session);
+    };
+
+    checkSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsLoggedIn(!!session);
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+  };
 
   return (
     <header className="bg-white shadow-sm">
@@ -46,12 +70,20 @@ export const Header = () => {
             </Dialog>
           </nav>
           <div className="flex gap-2">
-            <Button variant="ghost" onClick={() => navigate("/login")}>
-              Connexion
-            </Button>
-            <Button variant="default" className="bg-creole-green hover:bg-creole-green/90" onClick={() => navigate("/register")}>
-              Inscription
-            </Button>
+            {isLoggedIn ? (
+              <Button variant="ghost" onClick={handleLogout}>
+                Déconnexion
+              </Button>
+            ) : (
+              <>
+                <Button variant="ghost" onClick={() => navigate("/login")}>
+                  Connexion
+                </Button>
+                <Button variant="default" className="bg-creole-green hover:bg-creole-green/90" onClick={() => navigate("/register")}>
+                  Inscription
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
