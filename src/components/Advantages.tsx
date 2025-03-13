@@ -24,7 +24,7 @@ const advantages = [
     title: "Prêt de matériel",
     description: "Accédez à du matériel de réception et des outils",
     badge: null,
-    image: "https://images.unsplash.com/photo-1562516710-35a33f6a2d98?q=80&w=1760&auto=format&fit=crop"
+    image: "/lovable-uploads/c7dc7b94-fcb7-46f8-aa26-0740b8bbdad1.png"
   },
   {
     icon: HeartHandshake,
