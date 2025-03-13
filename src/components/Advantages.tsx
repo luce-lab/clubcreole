@@ -77,11 +77,11 @@ export const Advantages = () => {
               <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 pl-4">
                 <Card className="h-full bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow">
                   {advantage.image && (
-                    <div className="w-full h-40 overflow-hidden rounded-t-lg">
+                    <div className="w-full h-40 overflow-hidden rounded-t-lg relative group">
                       <img 
                         src={advantage.image} 
                         alt={advantage.title} 
-                        className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
+                        className="w-full h-full object-cover transition-all duration-500 ease-in-out group-hover:scale-110 group-hover:brightness-105"
                       />
                     </div>
                   )}
