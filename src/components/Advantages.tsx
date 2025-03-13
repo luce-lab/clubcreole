@@ -38,7 +38,7 @@ const advantages = [
     title: "Concert de Francis CABREL",
     description: "Profitez d'une réduction de 20% sur le concert du 15 mars",
     badge: "Coup de cœur",
-    image: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=1760&auto=format&fit=crop"
+    image: "https://images.unsplash.com/photo-1470229538611-16ba8c7ffbd7?q=80&w=1760&auto=format&fit=crop"
   },
   {
     icon: Hotel,
