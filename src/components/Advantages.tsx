@@ -17,24 +17,28 @@ const advantages = [
     title: "Des réductions",
     description: "Profitez de réductions exclusives chez nos partenaires",
     badge: null,
+    image: "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?q=80&w=1760&auto=format&fit=crop"
   },
   {
     icon: Wrench,
     title: "Prêt de matériel",
     description: "Accédez à du matériel de réception et des outils",
     badge: null,
+    image: "https://images.unsplash.com/photo-1562516710-35a33f6a2d98?q=80&w=1760&auto=format&fit=crop"
   },
   {
     icon: HeartHandshake,
     title: "Services gratuits",
     description: "Bénéficiez de services d'assistance gratuits",
     badge: null,
+    image: "https://images.unsplash.com/photo-1577563908411-5077b6dc7624?q=80&w=1760&auto=format&fit=crop"
   },
   {
     icon: Music,
     title: "Concert de Francis CABREL",
     description: "Profitez d'une réduction de 20% sur le concert du 15 mars",
     badge: "Coup de cœur",
+    image: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=1760&auto=format&fit=crop"
   },
   {
     icon: Hotel,
@@ -48,6 +52,7 @@ const advantages = [
     title: "Parc l'Infini",
     description: "2 entrées gratuites au parc d'attractions",
     badge: "Gratuit",
+    image: "https://images.unsplash.com/photo-1472396961693-142e6e269027?q=80&w=1760&auto=format&fit=crop"
   },
 ];
 
