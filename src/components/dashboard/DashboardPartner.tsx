@@ -1,5 +1,4 @@
 
-<<<<<<< HEAD
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -13,13 +12,6 @@ import { PartnerOffers } from "./partner/PartnerOffers";
 export const DashboardPartner = () => {
   const [activeTab, setActiveTab] = useState("overview");
 
-=======
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CalendarClock, Users, ShoppingBag, Star } from "lucide-react";
-
-export const DashboardPartner = () => {
->>>>>>> f563802 (feat: Implement dashboard structure)
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -67,7 +59,6 @@ export const DashboardPartner = () => {
 
       <Card>
         <CardHeader>
-<<<<<<< HEAD
           <CardTitle>Gestion partenaire</CardTitle>
         </CardHeader>
         <CardContent>
@@ -174,63 +165,6 @@ export const DashboardPartner = () => {
               <PartnerOffers />
             </TabsContent>
           </Tabs>
-=======
-          <CardTitle>Dernières réservations</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Client</TableHead>
-                <TableHead>Service</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Statut</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">Jean Dupont</TableCell>
-                <TableCell>Plongée découverte</TableCell>
-                <TableCell>15/04/2025</TableCell>
-                <TableCell>
-                  <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                    Confirmé
-                  </span>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Marie Lambert</TableCell>
-                <TableCell>Plongée exploration</TableCell>
-                <TableCell>16/04/2025</TableCell>
-                <TableCell>
-                  <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
-                    En attente
-                  </span>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Thomas Martin</TableCell>
-                <TableCell>Formation niveau 1</TableCell>
-                <TableCell>18/04/2025</TableCell>
-                <TableCell>
-                  <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                    Confirmé
-                  </span>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Sophie Dubois</TableCell>
-                <TableCell>Baptême de plongée</TableCell>
-                <TableCell>20/04/2025</TableCell>
-                <TableCell>
-                  <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                    Payé
-                  </span>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
->>>>>>> f563802 (feat: Implement dashboard structure)
         </CardContent>
       </Card>
     </div>

@@ -1,20 +1,9 @@
-<<<<<<< HEAD
-=======
-
-import { Palmtree } from "lucide-react";
-import { Button } from "./ui/button";
->>>>>>> f563802 (feat: Implement dashboard structure)
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { Newsletter } from "./Newsletter";
-<<<<<<< HEAD
 import { useState } from "react";
 import { useAuth } from "@/contexts/auth";
-=======
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
->>>>>>> f563802 (feat: Implement dashboard structure)
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -62,21 +51,12 @@ export const Header = () => {
             </Dialog>
           </nav>
           <div className="flex gap-2">
-<<<<<<< HEAD
             {user ? (
               <>
                 <Button variant="default" className="bg-creole-green hover:bg-creole-green/90" onClick={() => navigate("/dashboard")}>
                   Tableau de bord
                 </Button>
                 <Button variant="outline" onClick={handleLogout}>
-=======
-            {isLoggedIn ? (
-              <>
-                <Button variant="outline" onClick={() => navigate("/dashboard")}>
-                  Tableau de bord
-                </Button>
-                <Button variant="ghost" onClick={handleLogout}>
->>>>>>> f563802 (feat: Implement dashboard structure)
                   Déconnexion
                 </Button>
               </>
