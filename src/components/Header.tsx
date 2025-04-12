@@ -1,12 +1,11 @@
 
-
 import { Palmtree } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { Newsletter } from "./Newsletter";
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase"; // Import the supabase client
+import { supabase } from "@/lib/supabase";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -72,9 +71,14 @@ export const Header = () => {
           </nav>
           <div className="flex gap-2">
             {isLoggedIn ? (
-              <Button variant="ghost" onClick={handleLogout}>
-                Déconnexion
-              </Button>
+              <>
+                <Button variant="outline" onClick={() => navigate("/dashboard")}>
+                  Tableau de bord
+                </Button>
+                <Button variant="ghost" onClick={handleLogout}>
+                  Déconnexion
+                </Button>
+              </>
             ) : (
               <>
                 <Button variant="ghost" onClick={() => navigate("/login")}>

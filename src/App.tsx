@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,7 +18,7 @@ import ConcertActivity from "./pages/ConcertActivity";
 import NightlifeActivity from "./pages/NightlifeActivity";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import { useEffect } from "react";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/jet-ski" element={<JetSkiActivity />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/loisirs" element={<LoisirsActivity />} />
           <Route path="/restauration" element={<RestaurantActivity />} />
           <Route path="/location" element={<CarRentalActivity />} />
