@@ -1,7 +1,5 @@
-
-import { Palmtree } from "lucide-react";
-import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { Newsletter } from "./Newsletter";
 import { useState } from "react";
@@ -21,11 +19,11 @@ export const Header = () => {
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Palmtree className="h-8 w-8 text-creole-green" />
-          <div>
-            <h1 className="text-2xl font-bold text-creole-green">Club Créole</h1>
-            <p className="text-sm text-creole-blue">Le partenaire de vos Loisirs !</p>
-          </div>
+          <img 
+            src="/lovable-uploads/ee9cef8d-d74a-4118-94e3-80f17f1e3fc2.png" 
+            alt="Club Créole Logo" 
+            className="h-12 w-auto"
+          />
         </div>
         <div className="flex items-center gap-6">
           <nav className="hidden md:flex gap-6">
