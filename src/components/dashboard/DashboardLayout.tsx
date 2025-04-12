@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sidebar";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { useAuth } from "@/contexts/AuthContext";
+import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 
 interface DashboardLayoutProps {
   children: ReactNode;
