@@ -16,11 +16,13 @@ export const Header = () => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setIsLoggedIn(!!session);
+      console.log("Auth state:", !!session ? "Logged in" : "Not logged in");
     };
 
     checkSession();
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed:", event, !!session);
       setIsLoggedIn(!!session);
     });
 
@@ -72,7 +74,7 @@ export const Header = () => {
           <div className="flex gap-2">
             {isLoggedIn ? (
               <>
-                <Button variant="outline" onClick={() => navigate("/dashboard")}>
+                <Button variant="default" className="bg-creole-green hover:bg-creole-green/90" onClick={() => navigate("/dashboard")}>
                   Tableau de bord
                 </Button>
                 <Button variant="ghost" onClick={handleLogout}>

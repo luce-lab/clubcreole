@@ -20,26 +20,34 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
+        console.error("Login error:", error.message);
         toast({
           title: "Erreur de connexion",
           description: error.message,
           variant: "destructive",
         });
+        setIsLoading(false);
         return;
       }
 
+      console.log("Login successful, redirecting to dashboard");
       toast({
         title: "Connexion réussie",
         description: "Vous êtes maintenant connecté",
       });
-      navigate("/dashboard");
+      
+      // Ensure we have data before redirecting
+      if (data && data.user) {
+        navigate("/dashboard");
+      }
     } catch (error) {
+      console.error("Unexpected error during login:", error);
       toast({
         title: "Erreur de connexion",
         description: "Une erreur s'est produite",
