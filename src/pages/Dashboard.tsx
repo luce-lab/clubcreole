@@ -1,7 +1,6 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
 import {
   SidebarProvider,
   Sidebar,
@@ -28,53 +27,22 @@ import {
   CalendarClock
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-
-type UserRole = "admin" | "partner" | "client" | null;
+import { useAuth } from "@/contexts/AuthContext";
 
 const Dashboard = () => {
-  const [userRole, setUserRole] = useState<UserRole>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, signOut, isLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const userRole = user?.role || null;
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
-          navigate("/login");
-          return;
-        }
-        
-        // Dans un cas réel, vous récupéreriez le rôle depuis la base de données
-        // Ici, nous simulons un rôle basé sur l'email pour la démonstration
-        const email = session.user.email;
-        
-        if (email?.includes("admin")) {
-          setUserRole("admin");
-        } else if (email?.includes("partner")) {
-          setUserRole("partner");
-        } else {
-          setUserRole("client");
-        }
-        
-        setLoading(false);
-      } catch (error) {
-        toast({
-          title: "Erreur d'authentification",
-          description: "Impossible de vérifier votre session",
-          variant: "destructive",
-        });
-        navigate("/login");
-      }
-    };
-    
-    checkAuth();
-  }, [navigate, toast]);
+  // Rediriger vers login si non authentifié
+  if (!isLoading && !user) {
+    navigate("/login");
+    return null;
+  }
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    signOut();
     navigate("/");
     toast({
       title: "Déconnecté",
@@ -82,7 +50,7 @@ const Dashboard = () => {
     });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg">Chargement...</div>

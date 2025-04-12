@@ -4,35 +4,16 @@ import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { Newsletter } from "./Newsletter";
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const Header = () => {
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setIsLoggedIn(!!session);
-      console.log("Auth state:", !!session ? "Logged in" : "Not logged in");
-    };
-
-    checkSession();
-
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth state changed:", event, !!session);
-      setIsLoggedIn(!!session);
-    });
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, []);
+  const { user, signOut } = useAuth();
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    signOut();
     navigate("/");
   };
 
@@ -72,7 +53,7 @@ export const Header = () => {
             </Dialog>
           </nav>
           <div className="flex gap-2">
-            {isLoggedIn ? (
+            {user ? (
               <>
                 <Button variant="default" className="bg-creole-green hover:bg-creole-green/90" onClick={() => navigate("/dashboard")}>
                   Tableau de bord

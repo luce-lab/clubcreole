@@ -3,6 +3,7 @@ import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface DashboardHeaderProps {
   userRole: "admin" | "partner" | "client" | null;
@@ -10,6 +11,7 @@ interface DashboardHeaderProps {
 
 export const DashboardHeader: FC<DashboardHeaderProps> = ({ userRole }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   
   return (
     <div className="flex justify-between items-center w-full">
@@ -22,7 +24,7 @@ export const DashboardHeader: FC<DashboardHeaderProps> = ({ userRole }) => {
             : "Espace Client"}
         </h1>
         <p className="text-sm text-gray-600">
-          Bienvenue sur votre tableau de bord
+          Bienvenue {user?.name || ""} sur votre tableau de bord
         </p>
       </div>
       

@@ -19,6 +19,7 @@ import NightlifeActivity from "./pages/NightlifeActivity";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,29 +32,31 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/plongee" element={<DivingActivity />} />
-          <Route path="/canoe" element={<CanoeActivity />} />
-          <Route path="/randonnee" element={<HikingActivity />} />
-          <Route path="/jet-ski" element={<JetSkiActivity />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/loisirs" element={<LoisirsActivity />} />
-          <Route path="/restauration" element={<RestaurantActivity />} />
-          <Route path="/location" element={<CarRentalActivity />} />
-          <Route path="/hebergements" element={<AccommodationActivity />} />
-          <Route path="/concerts" element={<ConcertActivity />} />
-          <Route path="/soiree" element={<NightlifeActivity />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/plongee" element={<DivingActivity />} />
+            <Route path="/canoe" element={<CanoeActivity />} />
+            <Route path="/randonnee" element={<HikingActivity />} />
+            <Route path="/jet-ski" element={<JetSkiActivity />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/loisirs" element={<LoisirsActivity />} />
+            <Route path="/restauration" element={<RestaurantActivity />} />
+            <Route path="/location" element={<CarRentalActivity />} />
+            <Route path="/hebergements" element={<AccommodationActivity />} />
+            <Route path="/concerts" element={<ConcertActivity />} />
+            <Route path="/soiree" element={<NightlifeActivity />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

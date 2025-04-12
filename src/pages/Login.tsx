@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,38 +14,31 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { signIn } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { success, message } = await signIn(email, password);
 
-      if (error) {
-        console.error("Login error:", error.message);
+      if (!success) {
         toast({
           title: "Erreur de connexion",
-          description: error.message,
+          description: message,
           variant: "destructive",
         });
         setIsLoading(false);
         return;
       }
 
-      console.log("Login successful, redirecting to dashboard");
       toast({
         title: "Connexion réussie",
         description: "Vous êtes maintenant connecté",
       });
       
-      // Ensure we have data before redirecting
-      if (data && data.user) {
-        navigate("/dashboard");
-      }
+      navigate("/dashboard");
     } catch (error) {
       console.error("Unexpected error during login:", error);
       toast({
@@ -78,6 +71,9 @@ const Login = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
+              <p className="text-xs text-muted-foreground">
+                Astuce: utilisez admin@email.com, partner@email.com ou client@email.com
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Mot de passe</Label>
@@ -88,6 +84,9 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+              <p className="text-xs text-muted-foreground">
+                N'importe quel mot de passe fonctionnera dans cette démo
+              </p>
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
