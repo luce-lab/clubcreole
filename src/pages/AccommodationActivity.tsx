@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
@@ -27,7 +26,7 @@ const accommodations = [
     location: "Basse-Terre",
     price: 120,
     rating: 4.8,
-    image: "/placeholder.svg",
+    image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
     features: ["WiFi", "TV", "Cuisine", "Parking", "Climatisation", "Piscine"],
     description: "Magnifique villa avec vue sur la mer, parfaite pour des vacances en famille ou entre amis."
   },
@@ -38,7 +37,7 @@ const accommodations = [
     location: "Grande-Terre",
     price: 85,
     rating: 4.5,
-    image: "/placeholder.svg",
+    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
     features: ["WiFi", "TV", "Restaurant", "Parking", "Climatisation", "Piscine"],
     description: "Hôtel confortable et élégant situé à quelques pas de la plage."
   },
@@ -49,7 +48,7 @@ const accommodations = [
     location: "Les Saintes",
     price: 95,
     rating: 4.6,
-    image: "/placeholder.svg",
+    image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
     features: ["WiFi", "TV", "Cuisine", "Vue mer", "Climatisation"],
     description: "Bungalow charmant offrant une expérience authentique au bord de l'océan."
   },
@@ -60,7 +59,7 @@ const accommodations = [
     location: "Pointe-à-Pitre",
     price: 70,
     rating: 4.3,
-    image: "/placeholder.svg",
+    image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
     features: ["WiFi", "TV", "Cuisine", "Parking", "Climatisation"],
     description: "Appartements modernes et spacieux dans un quartier calme et résidentiel."
   },
@@ -71,7 +70,7 @@ const accommodations = [
     location: "Marie-Galante",
     price: 65,
     rating: 4.7,
-    image: "/placeholder.svg",
+    image: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
     features: ["WiFi", "Cuisine", "Jardin", "Hamac", "BBQ"],
     description: "Gîte authentique pour découvrir la vraie vie caribéenne dans un cadre naturel exceptionnel."
   },
@@ -82,7 +81,7 @@ const accommodations = [
     location: "Le Gosier",
     price: 90,
     rating: 4.9,
-    image: "/placeholder.svg",
+    image: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
     features: ["WiFi", "TV", "Petit-déjeuner", "Piscine", "Climatisation"],
     description: "Chambres d'hôtes de luxe avec un service personnalisé et une atmosphère chaleureuse."
   }
