@@ -25,6 +25,9 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import PartnersManagement from "./pages/PartnersManagement";
 import UsersManagement from "./pages/UsersManagement";
+import Reservations from "./pages/Reservations";
+import Clients from "./pages/Clients";
+import Offers from "./pages/Offers";
 import { AuthProvider } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient({
@@ -54,6 +57,9 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/partners" element={<PartnersManagement />} />
             <Route path="/users" element={<UsersManagement />} />
+            <Route path="/reservations" element={<Reservations />} />
+            <Route path="/clients" element={<Clients />} />
+            <Route path="/offers" element={<Offers />} />
             <Route path="/loisirs" element={<LoisirsActivity />} />
             <Route path="/restauration" element={<RestaurantActivity />} />
             <Route path="/location" element={<CarRentalActivity />} />

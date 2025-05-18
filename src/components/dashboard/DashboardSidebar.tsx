@@ -1,6 +1,6 @@
 
 import { FC } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -25,6 +25,7 @@ interface DashboardSidebarProps {
 
 export const DashboardSidebar: FC<DashboardSidebarProps> = ({ userRole }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const { signOut } = useAuth();
 
@@ -37,10 +38,14 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ userRole }) => {
     });
   };
 
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <SidebarMenuButton tooltip="Accueil" onClick={() => navigate("/")}>
+        <SidebarMenuButton tooltip="Accueil" onClick={() => navigate("/")} active={isActive("/")}>
           <Home className="h-5 w-5" />
           <span>Accueil</span>
         </SidebarMenuButton>
@@ -50,13 +55,13 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ userRole }) => {
       {userRole === "admin" && (
         <>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Utilisateurs" onClick={() => navigate("/users")}>
+            <SidebarMenuButton tooltip="Utilisateurs" onClick={() => navigate("/users")} active={isActive("/users")}>
               <Users className="h-5 w-5" />
               <span>Utilisateurs</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Partenaires" onClick={() => navigate("/partners")}>
+            <SidebarMenuButton tooltip="Partenaires" onClick={() => navigate("/partners")} active={isActive("/partners")}>
               <ShoppingBag className="h-5 w-5" />
               <span>Partenaires</span>
             </SidebarMenuButton>
@@ -80,21 +85,27 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ userRole }) => {
       {userRole === "partner" && (
         <>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Offres">
-              <ShoppingBag className="h-5 w-5" />
-              <span>Mes offres</span>
+            <SidebarMenuButton tooltip="Dashboard" onClick={() => navigate("/dashboard")} active={isActive("/dashboard")}>
+              <LineChart className="h-5 w-5" />
+              <span>Tableau de bord</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Réservations">
+            <SidebarMenuButton tooltip="Réservations" onClick={() => navigate("/reservations")} active={isActive("/reservations")}>
               <CalendarClock className="h-5 w-5" />
               <span>Réservations</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Statistiques">
-              <LineChart className="h-5 w-5" />
-              <span>Statistiques</span>
+            <SidebarMenuButton tooltip="Clients" onClick={() => navigate("/clients")} active={isActive("/clients")}>
+              <Users className="h-5 w-5" />
+              <span>Clients</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton tooltip="Offres" onClick={() => navigate("/offers")} active={isActive("/offers")}>
+              <ShoppingBag className="h-5 w-5" />
+              <span>Offres</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </>
