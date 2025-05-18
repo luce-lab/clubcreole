@@ -1,6 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { UserWithRole } from './types';
+import { UserWithRole, UserRole } from './types';
 import { User } from '@supabase/supabase-js';
 
 export const fetchUserProfile = async (user: User): Promise<UserWithRole> => {
@@ -16,9 +16,12 @@ export const fetchUserProfile = async (user: User): Promise<UserWithRole> => {
       return { ...user, role: null };
     }
     
+    // Ensure the role is properly typed as UserRole
+    const role = profileData?.role as UserRole;
+    
     return {
       ...user,
-      role: profileData?.role || null,
+      role: role || null,
       name: profileData?.first_name 
         ? `${profileData.first_name} ${profileData.last_name || ''}`
         : user.email
