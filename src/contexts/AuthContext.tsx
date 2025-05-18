@@ -66,7 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               
               const userWithRole: UserWithRole = {
                 ...currentSession.user,
-                role: profileData?.role as UserRole,
+                role: profileData?.role as UserRole || null,
                 name: profileData?.first_name 
                   ? `${profileData.first_name} ${profileData.last_name || ''}`
                   : currentSession.user.email
@@ -79,7 +79,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }, 0);
           
           // Set basic user immediately for better UX
-          setUser(currentSession.user);
+          setUser({
+            ...currentSession.user,
+            role: null // Set a default role to satisfy the UserWithRole type
+          });
         } catch (error) {
           console.error('Auth state processing error:', error);
         } finally {

@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
@@ -11,7 +12,7 @@ export const Header = () => {
   const { user, signOut } = useAuth();
 
   const handleLogout = async () => {
-    signOut();
+    await signOut();
     navigate("/");
   };
 
@@ -56,7 +57,7 @@ export const Header = () => {
                 <Button variant="default" className="bg-creole-green hover:bg-creole-green/90" onClick={() => navigate("/dashboard")}>
                   Tableau de bord
                 </Button>
-                <Button variant="ghost" onClick={handleLogout}>
+                <Button variant="outline" onClick={handleLogout}>
                   Déconnexion
                 </Button>
               </>
