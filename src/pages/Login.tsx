@@ -4,48 +4,51 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2 } from "lucide-react";
 
 const Login = () => {
-  const location = useLocation();
-  const initialTab = location.state?.activeTab || "login";
-  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState(initialTab);
+  const [isFormSubmitting, setIsFormSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState("login");
   const navigate = useNavigate();
   const { toast } = useToast();
   const { signIn, signUp, user, isLoading: authLoading } = useAuth();
-
-  // Effet pour initialiser l'onglet actif basé sur la navigation
-  useEffect(() => {
-    if (location.state?.activeTab) {
-      setActiveTab(location.state.activeTab);
-    }
-  }, [location.state]);
 
   // Si l'utilisateur est déjà connecté, redirection vers le tableau de bord
   useEffect(() => {
     if (user) {
       console.log('User is authenticated, redirecting to dashboard:', user);
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     }
   }, [user, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Handle sign in triggered with:', email);
-    setIsLoading(true);
+    
+    if (!email || !password) {
+      toast({
+        title: "Erreur de connexion",
+        description: "Veuillez remplir tous les champs",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsFormSubmitting(true);
 
     try {
+      console.log('Calling signIn function...');
       const { success, message } = await signIn(email, password);
+      console.log('Sign in result:', success, message);
 
       if (!success) {
         toast({
@@ -53,7 +56,6 @@ const Login = () => {
           description: message,
           variant: "destructive",
         });
-        setIsLoading(false);
         return;
       }
 
@@ -71,13 +73,22 @@ const Login = () => {
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setIsFormSubmitting(false);
     }
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Handle sign up triggered with:', registerEmail);
+    
+    if (!registerEmail || !registerPassword || !confirmPassword) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs",
+        variant: "destructive",
+      });
+      return;
+    }
     
     if (registerPassword !== confirmPassword) {
       toast({
@@ -88,7 +99,7 @@ const Login = () => {
       return;
     }
     
-    setIsLoading(true);
+    setIsFormSubmitting(true);
     
     try {
       const { success, message } = await signUp(registerEmail, registerPassword);
@@ -118,7 +129,7 @@ const Login = () => {
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setIsFormSubmitting(false);
     }
   };
 
@@ -126,13 +137,23 @@ const Login = () => {
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Chargement...</p>
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-creole-green" />
+          <p className="text-lg">Vérification de l'authentification...</p>
+        </div>
       </div>
     );
   }
 
   if (user) {
-    return null; // L'effet useEffect s'occupera de la redirection
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-creole-green" />
+          <p className="text-lg">Redirection vers le tableau de bord...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -164,7 +185,8 @@ const Login = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    disabled={isLoading}
+                    disabled={isFormSubmitting || authLoading}
+                    placeholder="votre@email.com"
                   />
                 </div>
                 <div className="space-y-2">
@@ -175,7 +197,8 @@ const Login = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    disabled={isLoading}
+                    disabled={isFormSubmitting || authLoading}
+                    placeholder="••••••••"
                   />
                 </div>
               </CardContent>
@@ -183,9 +206,14 @@ const Login = () => {
                 <Button 
                   type="submit" 
                   className="w-full bg-creole-green hover:bg-creole-green/90"
-                  disabled={isLoading}
+                  disabled={isFormSubmitting || authLoading}
                 >
-                  {isLoading ? "Connexion en cours..." : "Se connecter"}
+                  {isFormSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Connexion en cours...
+                    </>
+                  ) : "Se connecter"}
                 </Button>
                 <p className="text-center text-sm text-gray-600 mt-4">
                   <Link to="/" className="text-creole-green hover:underline">
@@ -207,7 +235,8 @@ const Login = () => {
                     value={registerEmail}
                     onChange={(e) => setRegisterEmail(e.target.value)}
                     required
-                    disabled={isLoading}
+                    disabled={isFormSubmitting || authLoading}
+                    placeholder="votre@email.com"
                   />
                 </div>
                 <div className="space-y-2">
@@ -218,7 +247,8 @@ const Login = () => {
                     value={registerPassword}
                     onChange={(e) => setRegisterPassword(e.target.value)}
                     required
-                    disabled={isLoading}
+                    disabled={isFormSubmitting || authLoading}
+                    placeholder="••••••••"
                   />
                 </div>
                 <div className="space-y-2">
@@ -229,7 +259,8 @@ const Login = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    disabled={isLoading}
+                    disabled={isFormSubmitting || authLoading}
+                    placeholder="••••••••"
                   />
                 </div>
               </CardContent>
@@ -237,9 +268,14 @@ const Login = () => {
                 <Button 
                   type="submit" 
                   className="w-full bg-creole-green hover:bg-creole-green/90"
-                  disabled={isLoading}
+                  disabled={isFormSubmitting || authLoading}
                 >
-                  {isLoading ? "Inscription en cours..." : "S'inscrire"}
+                  {isFormSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Inscription en cours...
+                    </>
+                  ) : "S'inscrire"}
                 </Button>
                 <p className="text-center text-sm text-gray-600 mt-4">
                   <Link to="/" className="text-creole-green hover:underline">

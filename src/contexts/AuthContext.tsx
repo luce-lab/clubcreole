@@ -37,6 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { toast } = useToast();
 
   useEffect(() => {
+    console.log('Setting up auth state listener...');
     // Configurer l'écouteur d'événements d'authentification Supabase
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
@@ -87,18 +88,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Vérifier la session au chargement
     const checkSession = async () => {
       console.log('Checking session...');
-      const { data: { session: initialSession }, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error('Erreur lors de la récupération de la session:', error);
-        setIsLoading(false);
-        return;
-      }
-      
-      console.log('Initial session:', initialSession);
-      setSession(initialSession);
-      
-      if (initialSession?.user) {
-        try {
+      try {
+        const { data: { session: initialSession }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Erreur lors de la récupération de la session:', error);
+          setIsLoading(false);
+          return;
+        }
+        
+        console.log('Initial session:', initialSession);
+        
+        if (initialSession?.user) {
+          setSession(initialSession);
+          
           // Récupérer le rôle et les informations de l'utilisateur depuis la table profiles
           const { data: profileData, error: profileError } = await supabase
             .from('profiles')
@@ -123,12 +126,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           };
           
           setUser(userWithRole);
-        } catch (error) {
-          console.error('Erreur lors du traitement des données utilisateur:', error);
         }
+      } catch (error) {
+        console.error('Exception lors de la vérification de la session:', error);
+      } finally {
+        setIsLoading(false);
       }
-      
-      setIsLoading(false);
     };
 
     checkSession();
@@ -146,14 +149,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Nettoyer les états d'authentification précédents pour éviter les conflits
       cleanupAuthState();
       
+      console.log('Auth state cleaned, attempting global sign out...');
+      
       // Tentative de déconnexion globale avant de se connecter
       try {
         await supabase.auth.signOut({ scope: 'global' });
+        console.log('Global sign out succeeded');
       } catch (err) {
         console.error('Erreur lors de la déconnexion globale:', err);
         // Continuer même si cette étape échoue
       }
       
+      console.log('Calling signInWithPassword...');
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -166,8 +173,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data?.user) {
+        console.log('Sign in successful, user ID:', data.user.id);
         return { success: true, message: 'Connexion réussie' };
       } else {
+        console.error('No user data returned from sign in');
         return { success: false, message: 'Aucun utilisateur trouvé' };
       }
     } catch (error: any) {
@@ -223,6 +232,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Tentative de déconnexion globale
       try {
         await supabase.auth.signOut({ scope: 'global' });
+        console.log('Global sign out completed');
       } catch (err) {
         console.error('Erreur lors de la déconnexion globale:', err);
         // Ignorer les erreurs

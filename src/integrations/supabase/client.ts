@@ -14,23 +14,38 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
+    debug: true, // Activer le mode debug pour mieux comprendre les problèmes d'auth
   }
 });
 
 // Fonction utilitaire pour nettoyer l'état d'authentification
 export const cleanupAuthState = () => {
-  // Suppression des jetons d'authentification standard
-  localStorage.removeItem('supabase.auth.token');
-  // Suppression de toutes les clés d'authentification Supabase de localStorage
-  Object.keys(localStorage).forEach((key) => {
-    if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
-      localStorage.removeItem(key);
+  console.log('Cleaning up auth state...');
+  
+  try {
+    // Suppression des jetons d'authentification standard
+    localStorage.removeItem('supabase.auth.token');
+    
+    // Suppression de toutes les clés d'authentification Supabase de localStorage
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && (key.startsWith('supabase.auth.') || key.includes('sb-'))) {
+        console.log('Removing localStorage key:', key);
+        localStorage.removeItem(key);
+      }
     }
-  });
-  // Suppression de sessionStorage si utilisé
-  Object.keys(sessionStorage || {}).forEach((key) => {
-    if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
-      sessionStorage.removeItem(key);
+    
+    // Suppression de sessionStorage si utilisé
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const key = sessionStorage.key(i);
+      if (key && (key.startsWith('supabase.auth.') || key.includes('sb-'))) {
+        console.log('Removing sessionStorage key:', key);
+        sessionStorage.removeItem(key);
+      }
     }
-  });
+    
+    console.log('Auth state cleanup completed');
+  } catch (error) {
+    console.error('Error cleaning up auth state:', error);
+  }
 };
