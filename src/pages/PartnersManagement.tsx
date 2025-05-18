@@ -50,11 +50,13 @@ const PartnersManagement = () => {
                 <CardDescription>Liste des partenaires enregistrés sur la plateforme</CardDescription>
               </div>
               <div className="flex items-center gap-2">
-                <Input 
-                  placeholder="Rechercher un partenaire..." 
-                  className="w-64" 
-                  icon={<Search className="h-4 w-4 opacity-50" />}
-                />
+                <div className="relative w-64">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Rechercher un partenaire..."
+                    className="pl-8 w-full"
+                  />
+                </div>
               </div>
             </div>
           </CardHeader>
