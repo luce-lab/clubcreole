@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { 
   Card, 
   CardContent, 
@@ -17,12 +17,15 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, ShoppingBag, Activity, CreditCard } from "lucide-react";
 import { UsersList } from "./UsersList";
-import { UserConsumptionHistory } from "./UserConsumptionHistory";
+import { ConsumptionHistoryProps } from "./consumption/types";
 
 interface DashboardAdminProps {
   selectedUserId?: string | null;
   onSelectUser?: (userId: string | null) => void;
 }
+
+// Use lazy loading to avoid circular dependencies and improve performance
+const UserConsumptionHistory = lazy(() => import('./consumption/UserConsumptionHistory'));
 
 export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminProps) => {
   const [activeTab, setActiveTab] = useState<string>("partners");
@@ -163,7 +166,9 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
               </button>
             )}
           </div>
-          <UserConsumptionHistory userId={selectedUserId || undefined} />
+          <Suspense fallback={<div>Chargement...</div>}>
+            <UserConsumptionHistory userId={selectedUserId || undefined} />
+          </Suspense>
         </TabsContent>
       </Tabs>
     </div>

@@ -8,21 +8,17 @@ import {
   CardDescription
 } from "@/components/ui/card";
 
-import { ConsumptionItem } from "./consumption/types";
-import { ConsumptionFilters } from "./consumption/ConsumptionFilters";
-import { ConsumptionTable } from "./consumption/ConsumptionTable";
-import { ConsumptionCharts } from "./consumption/ConsumptionCharts";
+import { ConsumptionItem, ConsumptionHistoryProps } from "./types";
+import { ConsumptionFilters } from "./ConsumptionFilters";
+import { ConsumptionTable } from "./ConsumptionTable";
+import { ConsumptionCharts } from "./ConsumptionCharts";
 import { 
   calculateConsumptionByCategory, 
   calculateConsumptionByType, 
   calculateConsumptionByMonth 
-} from "./consumption/utils";
+} from "./utils";
 
-interface UserConsumptionHistoryProps {
-  userId?: string;
-}
-
-export const UserConsumptionHistory = ({ userId = "1" }: UserConsumptionHistoryProps) => {
+const UserConsumptionHistory = ({ userId = "1" }: ConsumptionHistoryProps) => {
   // Données fictives pour l'historique de consommation
   const [history, setHistory] = useState<ConsumptionItem[]>([
     {
@@ -177,3 +173,5 @@ export const UserConsumptionHistory = ({ userId = "1" }: UserConsumptionHistoryP
     </div>
   );
 };
+
+export default UserConsumptionHistory;
