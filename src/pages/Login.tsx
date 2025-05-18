@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
+import { cleanupAuthState } from "@/integrations/supabase/client";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -17,22 +18,31 @@ const Login = () => {
   const [registerPassword, setRegisterPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
-  const [activeTab, setActiveTab] = useState("login");
+  const [clientSideLoading, setClientSideLoading] = useState(false);
+  const location = useLocation();
+  const initialTab = location.state?.activeTab || "login";
+  const [activeTab, setActiveTab] = useState(initialTab);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { signIn, signUp, user, isLoading: authLoading } = useAuth();
 
-  // Si l'utilisateur est déjà connecté, redirection vers le tableau de bord
+  // Clean up auth state when component mounts
   useEffect(() => {
-    if (user) {
-      console.log('User is authenticated, redirecting to dashboard:', user);
+    cleanupAuthState();
+  }, []);
+
+  // Handle redirection when user is authenticated
+  useEffect(() => {
+    if (user && !authLoading) {
+      setClientSideLoading(true);
       navigate("/dashboard", { replace: true });
+    } else {
+      setClientSideLoading(false);
     }
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Handle sign in triggered with:', email);
     
     if (!email || !password) {
       toast({
@@ -46,9 +56,7 @@ const Login = () => {
     setIsFormSubmitting(true);
 
     try {
-      console.log('Calling signIn function...');
       const { success, message } = await signIn(email, password);
-      console.log('Sign in result:', success, message);
 
       if (!success) {
         toast({
@@ -56,15 +64,13 @@ const Login = () => {
           description: message,
           variant: "destructive",
         });
-        return;
+      } else {
+        toast({
+          title: "Connexion réussie",
+          description: "Vous êtes maintenant connecté",
+        });
+        // Redirection will be handled by the useEffect
       }
-
-      toast({
-        title: "Connexion réussie",
-        description: "Vous êtes maintenant connecté",
-      });
-      
-      // La redirection sera gérée par useEffect quand l'état user sera mis à jour
     } catch (error) {
       console.error("Unexpected error during login:", error);
       toast({
@@ -79,7 +85,6 @@ const Login = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Handle sign up triggered with:', registerEmail);
     
     if (!registerEmail || !registerPassword || !confirmPassword) {
       toast({
@@ -110,17 +115,16 @@ const Login = () => {
           description: message,
           variant: "destructive",
         });
-        return;
+      } else {
+        toast({
+          title: "Inscription réussie",
+          description: "Votre compte a été créé. Vous pouvez maintenant vous connecter.",
+        });
+        
+        setActiveTab("login");
+        setEmail(registerEmail);
+        setPassword("");
       }
-      
-      toast({
-        title: "Inscription réussie",
-        description: "Votre compte a été créé. Vous pouvez maintenant vous connecter.",
-      });
-      
-      setActiveTab("login");
-      setEmail(registerEmail);
-      setPassword("");
     } catch (error) {
       console.error("Unexpected error during registration:", error);
       toast({
@@ -133,7 +137,7 @@ const Login = () => {
     }
   };
 
-  // Affichage d'un indicateur de chargement pendant que l'état d'authentification est vérifié
+  // Show loading state when auth is being checked
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -145,7 +149,8 @@ const Login = () => {
     );
   }
 
-  if (user) {
+  // Show loading state during redirection
+  if (clientSideLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -154,6 +159,11 @@ const Login = () => {
         </div>
       </div>
     );
+  }
+
+  // User is already authenticated, redirect to dashboard
+  if (user) {
+    return null; // Will be redirected by useEffect
   }
 
   return (
@@ -185,7 +195,7 @@ const Login = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    disabled={isFormSubmitting || authLoading}
+                    disabled={isFormSubmitting}
                     placeholder="votre@email.com"
                   />
                 </div>
@@ -197,7 +207,7 @@ const Login = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    disabled={isFormSubmitting || authLoading}
+                    disabled={isFormSubmitting}
                     placeholder="••••••••"
                   />
                 </div>
@@ -206,7 +216,7 @@ const Login = () => {
                 <Button 
                   type="submit" 
                   className="w-full bg-creole-green hover:bg-creole-green/90"
-                  disabled={isFormSubmitting || authLoading}
+                  disabled={isFormSubmitting}
                 >
                   {isFormSubmitting ? (
                     <>
@@ -235,7 +245,7 @@ const Login = () => {
                     value={registerEmail}
                     onChange={(e) => setRegisterEmail(e.target.value)}
                     required
-                    disabled={isFormSubmitting || authLoading}
+                    disabled={isFormSubmitting}
                     placeholder="votre@email.com"
                   />
                 </div>
@@ -247,7 +257,7 @@ const Login = () => {
                     value={registerPassword}
                     onChange={(e) => setRegisterPassword(e.target.value)}
                     required
-                    disabled={isFormSubmitting || authLoading}
+                    disabled={isFormSubmitting}
                     placeholder="••••••••"
                   />
                 </div>
@@ -259,7 +269,7 @@ const Login = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    disabled={isFormSubmitting || authLoading}
+                    disabled={isFormSubmitting}
                     placeholder="••••••••"
                   />
                 </div>
@@ -268,7 +278,7 @@ const Login = () => {
                 <Button 
                   type="submit" 
                   className="w-full bg-creole-green hover:bg-creole-green/90"
-                  disabled={isFormSubmitting || authLoading}
+                  disabled={isFormSubmitting}
                 >
                   {isFormSubmitting ? (
                     <>

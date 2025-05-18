@@ -14,37 +14,35 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
-    debug: true, // Activer le mode debug pour mieux comprendre les problèmes d'auth
+    debug: false, // Disable debug mode to reduce potential issues
   }
 });
 
-// Fonction utilitaire pour nettoyer l'état d'authentification
+// Completely clear all auth data
 export const cleanupAuthState = () => {
-  console.log('Cleaning up auth state...');
-  
   try {
-    // Suppression des jetons d'authentification standard
-    localStorage.removeItem('supabase.auth.token');
-    
-    // Suppression de toutes les clés d'authentification Supabase de localStorage
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && (key.startsWith('supabase.auth.') || key.includes('sb-'))) {
-        console.log('Removing localStorage key:', key);
+    // Clear all localStorage items related to Supabase auth
+    Object.keys(localStorage).forEach(key => {
+      if (key.includes('supabase') || key.includes('sb-')) {
         localStorage.removeItem(key);
       }
-    }
+    });
     
-    // Suppression de sessionStorage si utilisé
-    for (let i = 0; i < sessionStorage.length; i++) {
-      const key = sessionStorage.key(i);
-      if (key && (key.startsWith('supabase.auth.') || key.includes('sb-'))) {
-        console.log('Removing sessionStorage key:', key);
+    // Clear all sessionStorage items related to Supabase auth
+    Object.keys(sessionStorage || {}).forEach(key => {
+      if (key.includes('supabase') || key.includes('sb-')) {
         sessionStorage.removeItem(key);
       }
-    }
+    });
     
-    console.log('Auth state cleanup completed');
+    // Clear any cookies related to auth (optional but thorough)
+    document.cookie.split(';').forEach(cookie => {
+      const [name] = cookie.split('=');
+      if (name.trim().includes('sb-')) {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+      }
+    });
+    
   } catch (error) {
     console.error('Error cleaning up auth state:', error);
   }

@@ -37,150 +37,109 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { toast } = useToast();
 
   useEffect(() => {
-    console.log('Setting up auth state listener...');
-    // Configurer l'écouteur d'événements d'authentification Supabase
+    // Set up auth listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
-        console.log('Auth state changed:', event);
         setSession(currentSession);
         
-        if (currentSession?.user) {
-          try {
-            // Récupérer le rôle et les informations de l'utilisateur depuis la table profiles
-            const { data: profileData, error: profileError } = await supabase
-              .from('profiles')
-              .select('role, first_name, last_name')
-              .eq('id', currentSession.user.id)
-              .single();
-
-            if (profileError) {
-              console.error('Erreur lors de la récupération du profil:', profileError);
-              toast({
-                title: "Erreur",
-                description: "Impossible de récupérer les informations de profil",
-                variant: "destructive",
-              });
-            }
-
-            console.log('Profile data:', profileData);
-            
-            const userWithRole: UserWithRole = {
-              ...currentSession.user,
-              role: profileData?.role as UserRole,
-              name: profileData?.first_name 
-                ? `${profileData.first_name} ${profileData.last_name || ''}`
-                : currentSession.user.email
-            };
-            
-            setUser(userWithRole);
-            console.log('User set with role:', userWithRole);
-          } catch (error) {
-            console.error('Erreur lors du traitement des données utilisateur:', error);
-          }
-        } else {
+        if (!currentSession?.user) {
           setUser(null);
-        }
-        
-        setIsLoading(false);
-      }
-    );
-
-    // Vérifier la session au chargement
-    const checkSession = async () => {
-      console.log('Checking session...');
-      try {
-        const { data: { session: initialSession }, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('Erreur lors de la récupération de la session:', error);
           setIsLoading(false);
           return;
         }
         
-        console.log('Initial session:', initialSession);
+        // Handle session with user
+        try {
+          // Fetch user profile in a non-blocking way
+          setTimeout(async () => {
+            try {
+              const { data: profileData, error: profileError } = await supabase
+                .from('profiles')
+                .select('role, first_name, last_name')
+                .eq('id', currentSession.user.id)
+                .single();
+  
+              if (profileError) {
+                console.error('Profile fetch error:', profileError);
+                return;
+              }
+              
+              const userWithRole: UserWithRole = {
+                ...currentSession.user,
+                role: profileData?.role as UserRole,
+                name: profileData?.first_name 
+                  ? `${profileData.first_name} ${profileData.last_name || ''}`
+                  : currentSession.user.email
+              };
+              
+              setUser(userWithRole);
+            } catch (err) {
+              console.error('Error in profile fetch:', err);
+            }
+          }, 0);
+          
+          // Set basic user immediately for better UX
+          setUser(currentSession.user);
+        } catch (error) {
+          console.error('Auth state processing error:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    );
+    
+    // Check initial session
+    const checkSession = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error('Session error:', error);
+          setIsLoading(false);
+          return;
+        }
         
-        if (initialSession?.user) {
-          setSession(initialSession);
-          
-          // Récupérer le rôle et les informations de l'utilisateur depuis la table profiles
-          const { data: profileData, error: profileError } = await supabase
-            .from('profiles')
-            .select('role, first_name, last_name')
-            .eq('id', initialSession.user.id)
-            .single();
-
-          if (profileError) {
-            console.error('Erreur lors de la récupération du profil:', profileError);
-            setIsLoading(false);
-            return;
-          }
-
-          console.log('Profile data from session check:', profileData);
-          
-          const userWithRole: UserWithRole = {
-            ...initialSession.user,
-            role: profileData?.role as UserRole,
-            name: profileData?.first_name 
-              ? `${profileData.first_name} ${profileData.last_name || ''}`
-              : initialSession.user.email
-          };
-          
-          setUser(userWithRole);
+        // If no session, mark as not loading and return
+        if (!data.session) {
+          setIsLoading(false);
+          return;
         }
       } catch (error) {
-        console.error('Exception lors de la vérification de la session:', error);
+        console.error('Session check error:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
     checkSession();
-
+    
     return () => {
       subscription.unsubscribe();
     };
   }, [toast]);
 
   const signIn = async (email: string, password: string): Promise<{ success: boolean, message: string }> => {
-    console.log('Attempting sign in with:', email);
     setIsLoading(true);
     
     try {
-      // Nettoyer les états d'authentification précédents pour éviter les conflits
+      // Clean up auth state first
       cleanupAuthState();
       
-      console.log('Auth state cleaned, attempting global sign out...');
-      
-      // Tentative de déconnexion globale avant de se connecter
-      try {
-        await supabase.auth.signOut({ scope: 'global' });
-        console.log('Global sign out succeeded');
-      } catch (err) {
-        console.error('Erreur lors de la déconnexion globale:', err);
-        // Continuer même si cette étape échoue
-      }
-      
-      console.log('Calling signInWithPassword...');
+      // Sign in with email and password
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       
-      console.log('Sign in response:', data, error);
-      
       if (error) {
         return { success: false, message: error.message };
       }
 
-      if (data?.user) {
-        console.log('Sign in successful, user ID:', data.user.id);
-        return { success: true, message: 'Connexion réussie' };
-      } else {
-        console.error('No user data returned from sign in');
+      if (!data?.user) {
         return { success: false, message: 'Aucun utilisateur trouvé' };
       }
+      
+      return { success: true, message: 'Connexion réussie' };
     } catch (error: any) {
-      console.error('Unexpected error during login:', error);
       return { success: false, message: error.message || 'Erreur de connexion' };
     } finally {
       setIsLoading(false);
@@ -188,19 +147,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signUp = async (email: string, password: string): Promise<{ success: boolean, message: string }> => {
-    console.log('Attempting sign up with:', email);
     setIsLoading(true);
     
     try {
-      // Nettoyer les états d'authentification précédents
+      // Clean up auth state first
       cleanupAuthState();
       
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
       });
-      
-      console.log('Sign up response:', data, error);
       
       if (error) {
         return { success: false, message: error.message };
@@ -216,7 +172,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { success: false, message: 'Erreur lors de la création du compte' };
       }
     } catch (error: any) {
-      console.error('Unexpected error during registration:', error);
       return { success: false, message: error.message || 'Erreur d\'inscription' };
     } finally {
       setIsLoading(false);
@@ -225,27 +180,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
-      console.log('Attempting sign out');
-      // Nettoyer d'abord l'état d'authentification
+      // Clean up auth state first
       cleanupAuthState();
       
-      // Tentative de déconnexion globale
-      try {
-        await supabase.auth.signOut({ scope: 'global' });
-        console.log('Global sign out completed');
-      } catch (err) {
-        console.error('Erreur lors de la déconnexion globale:', err);
-        // Ignorer les erreurs
-      }
+      // Attempt sign out
+      await supabase.auth.signOut();
       
-      // Forcer un rechargement de la page pour un état propre
+      // Force page reload
       window.location.href = '/';
-      toast({
-        title: "Déconnecté",
-        description: "Vous avez été déconnecté avec succès",
-      });
     } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
+      console.error('Sign out error:', error);
       toast({
         title: "Erreur",
         description: "Une erreur s'est produite lors de la déconnexion",
