@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Table, 
   TableBody, 
@@ -15,7 +15,9 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { Edit, History, Calendar } from "lucide-react";
 
 // Types pour les utilisateurs et leurs abonnements
 interface UserSubscription {
@@ -31,9 +33,11 @@ interface UserSubscription {
 
 interface UsersListProps {
   onSelectUser?: (userId: string) => void;
+  onEditUser?: (userId: string) => void;
+  searchQuery?: string;
 }
 
-export const UsersList = ({ onSelectUser }: UsersListProps) => {
+export const UsersList = ({ onSelectUser, onEditUser, searchQuery = "" }: UsersListProps) => {
   const { toast } = useToast();
   const [users, setUsers] = useState<UserSubscription[]>([
     {
@@ -88,6 +92,14 @@ export const UsersList = ({ onSelectUser }: UsersListProps) => {
     },
   ]);
 
+  // Filtrer les utilisateurs en fonction de la recherche
+  const filteredUsers = searchQuery 
+    ? users.filter(user => 
+        user.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        user.email.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : users;
+
   const getStatusBadge = (status: UserSubscription["subscriptionStatus"]) => {
     switch (status) {
       case "active":
@@ -140,61 +152,90 @@ export const UsersList = ({ onSelectUser }: UsersListProps) => {
     }
   };
 
-  const handleViewHistory = (userId: string) => {
-    toast({
-      title: "Détails de consommation",
-      description: `Affichage de l'historique de consommation pour l'utilisateur ${userId}`,
-    });
-    
-    if (onSelectUser) {
-      onSelectUser(userId);
-    }
-  };
-
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Utilisateurs et abonnements</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
+    <div className="w-full">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Nom</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Statut</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>Date d'expiration</TableHead>
+            <TableHead>Inscription</TableHead>
+            <TableHead>Dernière activité</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filteredUsers.length === 0 ? (
             <TableRow>
-              <TableHead>Nom</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Statut</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Date d'expiration</TableHead>
-              <TableHead>Inscription</TableHead>
-              <TableHead>Dernière activité</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableCell colSpan={8} className="text-center py-6 text-gray-500">
+                Aucun utilisateur trouvé
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="font-medium">{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{getStatusBadge(user.subscriptionStatus)}</TableCell>
-                <TableCell>{getSubscriptionTypeBadge(user.subscriptionType)}</TableCell>
-                <TableCell>
+          ) : (
+            filteredUsers.map((user) => (
+              <TableRow key={user.id} className="cursor-pointer hover:bg-slate-50">
+                <TableCell 
+                  className="font-medium"
+                  onClick={() => onSelectUser && onSelectUser(user.id)}
+                >
+                  {user.name}
+                </TableCell>
+                <TableCell
+                  onClick={() => onSelectUser && onSelectUser(user.id)}
+                >
+                  {user.email}
+                </TableCell>
+                <TableCell
+                  onClick={() => onSelectUser && onSelectUser(user.id)}
+                >
+                  {getStatusBadge(user.subscriptionStatus)}
+                </TableCell>
+                <TableCell
+                  onClick={() => onSelectUser && onSelectUser(user.id)}
+                >
+                  {getSubscriptionTypeBadge(user.subscriptionType)}
+                </TableCell>
+                <TableCell
+                  onClick={() => onSelectUser && onSelectUser(user.id)}
+                >
                   {user.subscriptionEndDate || "—"}
                 </TableCell>
-                <TableCell>{user.registeredDate}</TableCell>
-                <TableCell>{user.lastActivity}</TableCell>
+                <TableCell
+                  onClick={() => onSelectUser && onSelectUser(user.id)}
+                >
+                  {user.registeredDate}
+                </TableCell>
+                <TableCell
+                  onClick={() => onSelectUser && onSelectUser(user.id)}
+                >
+                  {user.lastActivity}
+                </TableCell>
                 <TableCell>
-                  <button 
-                    className="text-xs text-blue-600 hover:underline"
-                    onClick={() => handleViewHistory(user.id)}
-                  >
-                    Voir l'historique
-                  </button>
+                  <div className="flex space-x-2">
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      onClick={() => onEditUser && onEditUser(user.id)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      onClick={() => onSelectUser && onSelectUser(user.id)}
+                    >
+                      <History className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 };

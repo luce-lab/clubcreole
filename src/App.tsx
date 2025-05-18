@@ -24,6 +24,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import PartnersManagement from "./pages/PartnersManagement";
+import UsersManagement from "./pages/UsersManagement";
 import { AuthProvider } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient({
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/partners" element={<PartnersManagement />} />
+            <Route path="/users" element={<UsersManagement />} />
             <Route path="/loisirs" element={<LoisirsActivity />} />
             <Route path="/restauration" element={<RestaurantActivity />} />
             <Route path="/location" element={<CarRentalActivity />} />

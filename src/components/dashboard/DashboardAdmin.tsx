@@ -1,5 +1,6 @@
 
 import { useState, useEffect, lazy, Suspense } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   Card, 
   CardContent, 
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, ShoppingBag, Activity, CreditCard } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { UsersList } from "./UsersList";
 import { ConsumptionHistoryProps } from "./consumption/types";
 
@@ -28,6 +30,7 @@ interface DashboardAdminProps {
 const UserConsumptionHistory = lazy(() => import('./consumption/UserConsumptionHistory'));
 
 export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminProps) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>("partners");
   
   // Si un utilisateur est sélectionné, passer à l'onglet de consommation
@@ -91,8 +94,13 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
         
         <TabsContent value="partners" className="mt-4">
           <Card>
-            <CardHeader>
-              <CardTitle>Derniers partenaires inscrits</CardTitle>
+            <CardHeader className="flex justify-between">
+              <div>
+                <CardTitle>Derniers partenaires inscrits</CardTitle>
+              </div>
+              <Button onClick={() => navigate("/partners")} variant="outline" size="sm">
+                Voir tous les partenaires
+              </Button>
             </CardHeader>
             <CardContent>
               <Table>
@@ -152,7 +160,19 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
         </TabsContent>
         
         <TabsContent value="users" className="mt-4">
-          <UsersList onSelectUser={onSelectUser} />
+          <Card>
+            <CardHeader className="flex justify-between">
+              <div>
+                <CardTitle>Utilisateurs récents</CardTitle>
+              </div>
+              <Button onClick={() => navigate("/users")} variant="outline" size="sm">
+                Gérer tous les utilisateurs
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <UsersList onSelectUser={onSelectUser} />
+            </CardContent>
+          </Card>
         </TabsContent>
         
         <TabsContent value="consumption" className="mt-4">

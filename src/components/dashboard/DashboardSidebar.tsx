@@ -50,7 +50,7 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ userRole }) => {
       {userRole === "admin" && (
         <>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Utilisateurs">
+            <SidebarMenuButton tooltip="Utilisateurs" onClick={() => navigate("/users")}>
               <Users className="h-5 w-5" />
               <span>Utilisateurs</span>
             </SidebarMenuButton>
