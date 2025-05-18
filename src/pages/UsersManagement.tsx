@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
@@ -16,7 +15,7 @@ import { Plus, Search, UserPlus } from "lucide-react";
 import { UsersList } from "@/components/dashboard/UsersList";
 import { AddUserDialog } from "@/components/dashboard/users/AddUserDialog";
 import { EditUserDialog } from "@/components/dashboard/users/EditUserDialog";
-import { UserConsumptionHistory } from "@/components/dashboard/consumption/UserConsumptionHistory";
+import UserConsumptionHistory from "@/components/dashboard/consumption/UserConsumptionHistory";
 
 const UsersManagement = () => {
   const navigate = useNavigate();
