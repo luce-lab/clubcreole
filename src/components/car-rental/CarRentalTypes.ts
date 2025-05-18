@@ -11,6 +11,18 @@ export interface CarRental {
   rating: number;
   offer: string;
   icon: LucideIcon;
+  features?: string[];
+  models?: CarModel[];
+}
+
+export interface CarModel {
+  name: string;
+  image: string;
+  pricePerDay: number;
+  category: string;
+  seats: number;
+  transmission: string;
+  airCon: boolean;
 }
 
 export interface ClientReview {
