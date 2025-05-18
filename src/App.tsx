@@ -23,6 +23,7 @@ import NightlifeDetail from "./pages/NightlifeDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import PartnersManagement from "./pages/PartnersManagement";
 import { AuthProvider } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient({
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/partners" element={<PartnersManagement />} />
             <Route path="/loisirs" element={<LoisirsActivity />} />
             <Route path="/restauration" element={<RestaurantActivity />} />
             <Route path="/location" element={<CarRentalActivity />} />

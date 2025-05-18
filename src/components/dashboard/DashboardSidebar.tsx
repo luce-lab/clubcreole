@@ -56,7 +56,7 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ userRole }) => {
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Partenaires">
+            <SidebarMenuButton tooltip="Partenaires" onClick={() => navigate("/partners")}>
               <ShoppingBag className="h-5 w-5" />
               <span>Partenaires</span>
             </SidebarMenuButton>
