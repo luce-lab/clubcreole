@@ -1,10 +1,8 @@
-
 import { useState } from "react";
 import { ArrowLeft, MapPin, Tag, Star, Car, Route, Shield, Fuel, ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 
 interface CarRental {
@@ -132,7 +130,6 @@ const clientReviews: ClientReview[] = [
 
 const CarRentalActivity = () => {
   const navigate = useNavigate();
-  const [selectedCarRental, setSelectedCarRental] = useState<CarRental | null>(null);
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
 
   const nextReview = () => {
@@ -204,53 +201,12 @@ const CarRentalActivity = () => {
             </CardContent>
             
             <CardFooter>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button 
-                    className="w-full bg-creole-green hover:bg-creole-green/90"
-                    onClick={() => setSelectedCarRental(rental)}
-                  >
-                    Voir les détails
-                  </Button>
-                </DialogTrigger>
-                {selectedCarRental && (
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>{selectedCarRental.name}</DialogTitle>
-                      <DialogDescription className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-1" /> {selectedCarRental.location}
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <img 
-                        src={selectedCarRental.image} 
-                        alt={selectedCarRental.name} 
-                        className="w-full h-56 object-cover rounded-md"
-                      />
-                      <p className="text-gray-700">{selectedCarRental.description}</p>
-                      <div className="bg-green-50 p-4 rounded-md border border-green-200">
-                        <h3 className="font-semibold text-creole-green flex items-center">
-                          <Tag className="h-4 w-4 mr-2" />
-                          Offre spéciale Club Créole
-                        </h3>
-                        <p className="mt-1 text-gray-700">{selectedCarRental.offer}</p>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center">
-                          <span className="text-gray-700 mr-2">Note:</span>
-                          <div className="flex items-center text-yellow-500">
-                            <Star className="fill-yellow-500 h-5 w-5" />
-                            <span className="ml-1 text-gray-700">{selectedCarRental.rating}/5</span>
-                          </div>
-                        </div>
-                        <Button className="bg-creole-green hover:bg-creole-green/90">
-                          Réserver maintenant
-                        </Button>
-                      </div>
-                    </div>
-                  </DialogContent>
-                )}
-              </Dialog>
+              <Button 
+                className="w-full bg-creole-green hover:bg-creole-green/90"
+                onClick={() => navigate(`/location/${rental.id}`)}
+              >
+                Voir les détails
+              </Button>
             </CardFooter>
           </Card>
         ))}

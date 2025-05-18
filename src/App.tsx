@@ -13,6 +13,7 @@ import JetSkiActivity from "./pages/JetSkiActivity";
 import LoisirsActivity from "./pages/LoisirsActivity";
 import RestaurantActivity from "./pages/RestaurantActivity";
 import CarRentalActivity from "./pages/CarRentalActivity";
+import CarRentalDetail from "./pages/CarRentalDetail";
 import AccommodationActivity from "./pages/AccommodationActivity";
 import AccommodationDetail from "./pages/AccommodationDetail";
 import ConcertActivity from "./pages/ConcertActivity";
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/loisirs" element={<LoisirsActivity />} />
             <Route path="/restauration" element={<RestaurantActivity />} />
             <Route path="/location" element={<CarRentalActivity />} />
+            <Route path="/location/:id" element={<CarRentalDetail />} />
             <Route path="/hebergements" element={<AccommodationActivity />} />
             <Route path="/hebergements/:id" element={<AccommodationDetail />} />
             <Route path="/concerts" element={<ConcertActivity />} />
