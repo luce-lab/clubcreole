@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
@@ -182,7 +183,7 @@ const AccommodationActivity = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
           {filteredAccommodations.map((accommodation) => (
             <Card key={accommodation.id} className="overflow-hidden hover:shadow-xl transition-shadow">
-              <div className="h-48 bg-gray-200 relative">
+              <div className="h-48 bg-gray-200 relative cursor-pointer" onClick={() => navigate(`/hebergements/${accommodation.id}`)}>
                 <img 
                   src={accommodation.image} 
                   alt={accommodation.name} 
@@ -196,7 +197,12 @@ const AccommodationActivity = () => {
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-xl">{accommodation.name}</CardTitle>
+                    <CardTitle 
+                      className="text-xl cursor-pointer hover:text-creole-green" 
+                      onClick={() => navigate(`/hebergements/${accommodation.id}`)}
+                    >
+                      {accommodation.name}
+                    </CardTitle>
                     <CardDescription className="flex items-center mt-1">
                       <MapPin className="h-4 w-4 mr-1" />
                       {accommodation.location}
@@ -228,8 +234,11 @@ const AccommodationActivity = () => {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button className="w-full bg-creole-green hover:bg-creole-green/90">
-                  Réserver maintenant
+                <Button 
+                  className="w-full bg-creole-green hover:bg-creole-green/90"
+                  onClick={() => navigate(`/hebergements/${accommodation.id}`)}
+                >
+                  Voir les détails
                 </Button>
               </CardFooter>
             </Card>
