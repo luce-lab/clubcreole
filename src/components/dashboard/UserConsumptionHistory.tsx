@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { 
   Table, 
@@ -17,7 +18,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { 
   ChartContainer, 
-  ChartTooltip,
   ChartLegend, 
   ChartLegendContent 
 } from "@/components/ui/chart";
@@ -299,12 +299,12 @@ export const UserConsumptionHistory = ({ userId = "1" }: UserConsumptionHistoryP
           <div className="flex flex-wrap gap-4 mb-6">
             <div className="w-full md:w-auto">
               <label className="text-sm font-medium">Catégorie</label>
-              <Select value={categoryFilter || ""} onValueChange={(value) => setCategoryFilter(value || null)}>
+              <Select value={categoryFilter || "all"} onValueChange={(value) => setCategoryFilter(value === "all" ? null : value)}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Toutes les catégories" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Toutes les catégories</SelectItem>
+                  <SelectItem value="all">Toutes les catégories</SelectItem>
                   {categories.map((cat) => (
                     <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                   ))}
@@ -314,12 +314,12 @@ export const UserConsumptionHistory = ({ userId = "1" }: UserConsumptionHistoryP
             
             <div className="w-full md:w-auto">
               <label className="text-sm font-medium">Type</label>
-              <Select value={typeFilter || ""} onValueChange={(value: any) => setTypeFilter(value || null)}>
+              <Select value={typeFilter || "all"} onValueChange={(value: any) => setTypeFilter(value === "all" ? null : value)}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Tous les types" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tous les types</SelectItem>
+                  <SelectItem value="all">Tous les types</SelectItem>
                   <SelectItem value="réservation">Réservation</SelectItem>
                   <SelectItem value="achat">Achat</SelectItem>
                   <SelectItem value="consultation">Consultation</SelectItem>
@@ -329,12 +329,12 @@ export const UserConsumptionHistory = ({ userId = "1" }: UserConsumptionHistoryP
             
             <div className="w-full md:w-auto">
               <label className="text-sm font-medium">Statut</label>
-              <Select value={statusFilter || ""} onValueChange={(value: any) => setStatusFilter(value || null)}>
+              <Select value={statusFilter || "all"} onValueChange={(value: any) => setStatusFilter(value === "all" ? null : value)}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Tous les statuts" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tous les statuts</SelectItem>
+                  <SelectItem value="all">Tous les statuts</SelectItem>
                   <SelectItem value="complété">Complété</SelectItem>
                   <SelectItem value="annulé">Annulé</SelectItem>
                   <SelectItem value="en cours">En cours</SelectItem>
