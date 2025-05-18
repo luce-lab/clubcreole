@@ -1,16 +1,10 @@
 
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 const Register = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    // Rediriger vers la page de login avec l'onglet d'inscription actif
-    navigate("/login", { state: { activeTab: "register" } });
-  }, [navigate]);
-
-  return null; // Ce composant ne rend rien, il redirige simplement
+  // Au lieu d'utiliser useNavigate, utilisons le composant Navigate de react-router-dom
+  return <Navigate to="/login" state={{ activeTab: "register" }} replace />;
 };
 
 export default Register;
