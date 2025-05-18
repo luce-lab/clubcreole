@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { 
-  Calendar,
+  Calendar as CalendarIcon, 
   Star, 
   MapPin, 
   Wifi, 
@@ -23,6 +23,13 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useToast } from "@/components/ui/use-toast";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { format } from "date-fns";
 
 // Liste temporaire des hébergements (idéalement, cela viendrait d'une API ou d'une base de données)
 const accommodations = [
@@ -149,7 +156,9 @@ const AccommodationDetail = () => {
     });
   };
 
-  const handleDateSelect = (date: Date) => {
+  const handleDateSelect = (date: Date | undefined) => {
+    if (!date) return;
+    
     if (!selectedStartDate) {
       setSelectedStartDate(date);
     } else if (!selectedEndDate && date > selectedStartDate) {
@@ -158,21 +167,6 @@ const AccommodationDetail = () => {
       setSelectedStartDate(date);
       setSelectedEndDate(null);
     }
-  };
-
-  // Fonction pour générer l'affichage du calendrier
-  const renderCalendarDay = (date: Date) => {
-    const isStartDate = selectedStartDate && date.toDateString() === selectedStartDate.toDateString();
-    const isEndDate = selectedEndDate && date.toDateString() === selectedEndDate.toDateString();
-    const isInRange = selectedStartDate && selectedEndDate && 
-                     date > selectedStartDate && date < selectedEndDate;
-    
-    let className = "";
-    if (isStartDate) className = "bg-creole-green text-white rounded-l-full";
-    else if (isEndDate) className = "bg-creole-green text-white rounded-r-full";
-    else if (isInRange) className = "bg-creole-green/20";
-    
-    return <div className={className + " h-full w-full flex items-center justify-center"}>{date.getDate()}</div>;
   };
 
   const renderFeatureIcon = (feature: string) => {
@@ -204,6 +198,23 @@ const AccommodationDetail = () => {
       </div>
     );
   }
+
+  // Fonctions pour déterminer les styles des dates dans le calendrier
+  const isStartDate = (date: Date) => 
+    selectedStartDate && date.toDateString() === selectedStartDate.toDateString();
+  
+  const isEndDate = (date: Date) => 
+    selectedEndDate && date.toDateString() === selectedEndDate.toDateString();
+  
+  const isInRange = (date: Date) => 
+    selectedStartDate && selectedEndDate && 
+    date > selectedStartDate && date < selectedEndDate;
+
+  // Fonction pour formater les dates si elles sont sélectionnées
+  const getDateDisplay = (date: Date | null) => {
+    if (!date) return "";
+    return format(date, "dd/MM/yyyy");
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -382,19 +393,18 @@ const AccommodationDetail = () => {
                         onSelect={handleDateSelect}
                         disabled={(date) => date < new Date()}
                         className="w-full"
-                        DayComponent={renderCalendarDay}
                       />
-                      <div className="flex justify-between items-center mt-2 text-sm text-gray-600">
+                      <div className="flex justify-between items-center mt-4 text-sm text-gray-600">
                         <div>
                           {selectedStartDate ? (
-                            <span>Arrivée: {selectedStartDate.toLocaleDateString()}</span>
+                            <span>Arrivée: {getDateDisplay(selectedStartDate)}</span>
                           ) : (
                             <span>Sélectionnez une date d'arrivée</span>
                           )}
                         </div>
                         <div>
                           {selectedEndDate ? (
-                            <span>Départ: {selectedEndDate.toLocaleDateString()}</span>
+                            <span>Départ: {getDateDisplay(selectedEndDate)}</span>
                           ) : (
                             selectedStartDate && <span>Sélectionnez une date de départ</span>
                           )}
