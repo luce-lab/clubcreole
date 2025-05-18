@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
@@ -25,7 +24,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { nightEvents } from "./NightlifeActivity";
+import { nightEvents } from "@/components/nightlife/NightlifeTypes";
 
 // Schéma de validation pour le formulaire d'invitation
 const invitationFormSchema = z.object({
