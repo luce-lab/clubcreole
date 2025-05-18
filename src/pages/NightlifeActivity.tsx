@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { ArrowLeft, Clock, MapPin, Martini, Music, Users, Calendar, Star } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
@@ -22,7 +22,7 @@ interface NightEvent {
   features: string[];
 }
 
-const nightEvents: NightEvent[] = [
+export const nightEvents: NightEvent[] = [
   {
     id: 1,
     name: "Soirée Zouk & Kompa",
@@ -152,72 +152,12 @@ const NightlifeActivity = () => {
             </CardContent>
             
             <CardFooter>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button 
-                    className="w-full bg-[#7E69AB] hover:bg-[#6E59A5]"
-                    onClick={() => setSelectedEvent(event)}
-                  >
-                    Voir les détails
-                  </Button>
-                </DialogTrigger>
-                {selectedEvent && (
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>{selectedEvent.name}</DialogTitle>
-                      <DialogDescription className="font-medium text-[#8B5CF6]">
-                        {selectedEvent.type} | {selectedEvent.venue}
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <img 
-                        src={selectedEvent.image} 
-                        alt={selectedEvent.name} 
-                        className="w-full h-56 object-cover rounded-md"
-                      />
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4 text-[#8B5CF6]" />
-                          <span>{selectedEvent.date}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Clock className="h-4 w-4 text-[#8B5CF6]" />
-                          <span>{selectedEvent.time}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <MapPin className="h-4 w-4 text-[#8B5CF6]" />
-                        <span>{selectedEvent.venue}</span>
-                      </div>
-                      <p className="text-gray-700">{selectedEvent.description}</p>
-                      
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {selectedEvent.features.map((feature, index) => (
-                          <Badge key={index} variant="outline" className="bg-[#D6BCFA] text-[#6E59A5] border-[#8B5CF6]">
-                            {feature}
-                          </Badge>
-                        ))}
-                      </div>
-                      
-                      <div className="bg-purple-50 p-4 rounded-md border border-purple-200">
-                        <h3 className="font-semibold text-[#8B5CF6] flex items-center">
-                          <Users className="h-4 w-4 mr-2" />
-                          Offre spéciale Club Créole
-                        </h3>
-                        <p className="mt-1 text-gray-700">{selectedEvent.offer}</p>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <div className="text-xl font-bold text-[#8B5CF6]">
-                          {selectedEvent.price}€
-                        </div>
-                        <Button className="bg-[#7E69AB] hover:bg-[#6E59A5]">
-                          Réserver maintenant
-                        </Button>
-                      </div>
-                    </div>
-                  </DialogContent>
-                )}
-              </Dialog>
+              <Button 
+                className="w-full bg-[#7E69AB] hover:bg-[#6E59A5]"
+                onClick={() => navigate(`/soiree/${event.id}`)}
+              >
+                Voir les détails
+              </Button>
             </CardFooter>
           </Card>
         ))}
