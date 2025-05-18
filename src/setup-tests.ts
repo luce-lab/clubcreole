@@ -1,6 +1,6 @@
 
 import '@testing-library/jest-dom';
-import 'vitest-dom/extend-expect';
+import { vi } from 'vitest';
 
 // Mock ResizeObserver which is not available in test environment
 global.ResizeObserver = class ResizeObserver {
@@ -10,12 +10,18 @@ global.ResizeObserver = class ResizeObserver {
 };
 
 // Mock IntersectionObserver which is not available in test environment
-global.IntersectionObserver = class IntersectionObserver {
+global.IntersectionObserver = class MockIntersectionObserver {
+  readonly root: Element | null = null;
+  readonly rootMargin: string = '';
+  readonly thresholds: ReadonlyArray<number> = [];
+  
   constructor() {}
+  
   observe() {}
   unobserve() {}
   disconnect() {}
+  takeRecords(): IntersectionObserverEntry[] { return []; }
 };
 
 // Add ARIA role for Loader component in tests
-HTMLElement.prototype.scrollIntoView = jest.fn();
+HTMLElement.prototype.scrollIntoView = vi.fn();

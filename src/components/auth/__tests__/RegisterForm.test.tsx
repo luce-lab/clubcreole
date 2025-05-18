@@ -1,30 +1,31 @@
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { RegisterForm } from '../RegisterForm';
 import { BrowserRouter } from 'react-router-dom';
 import { useAuth } from '@/contexts/auth';
 import { useToast } from '@/components/ui/use-toast';
 
 // Mock the auth context and toast
-jest.mock('@/contexts/auth', () => ({
-  useAuth: jest.fn(),
+vi.mock('@/contexts/auth', () => ({
+  useAuth: vi.fn(),
 }));
 
-jest.mock('@/components/ui/use-toast', () => ({
-  useToast: jest.fn(),
+vi.mock('@/components/ui/use-toast', () => ({
+  useToast: vi.fn(),
 }));
 
 describe('RegisterForm', () => {
-  const mockSignUp = jest.fn();
-  const mockOnSuccess = jest.fn();
-  const mockToast = jest.fn();
+  const mockSignUp = vi.fn();
+  const mockOnSuccess = vi.fn();
+  const mockToast = vi.fn();
   
   beforeEach(() => {
-    jest.clearAllMocks();
-    (useAuth as jest.Mock).mockReturnValue({
+    vi.clearAllMocks();
+    (useAuth as any).mockReturnValue({
       signUp: mockSignUp,
     });
-    (useToast as jest.Mock).mockReturnValue({
+    (useToast as any).mockReturnValue({
       toast: mockToast,
     });
   });

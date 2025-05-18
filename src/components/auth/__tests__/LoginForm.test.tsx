@@ -1,21 +1,22 @@
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { LoginForm } from '../LoginForm';
 import { BrowserRouter } from 'react-router-dom';
 import { useAuth } from '@/contexts/auth';
 
 // Mock the auth context
-jest.mock('@/contexts/auth', () => ({
-  useAuth: jest.fn(),
+vi.mock('@/contexts/auth', () => ({
+  useAuth: vi.fn(),
 }));
 
 describe('LoginForm', () => {
-  const mockSignIn = jest.fn();
-  const mockOnSuccess = jest.fn();
+  const mockSignIn = vi.fn();
+  const mockOnSuccess = vi.fn();
   
   beforeEach(() => {
-    jest.clearAllMocks();
-    (useAuth as jest.Mock).mockReturnValue({
+    vi.clearAllMocks();
+    (useAuth as any).mockReturnValue({
       signIn: mockSignIn,
     });
   });
