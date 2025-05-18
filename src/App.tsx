@@ -16,6 +16,7 @@ import CarRentalActivity from "./pages/CarRentalActivity";
 import AccommodationActivity from "./pages/AccommodationActivity";
 import AccommodationDetail from "./pages/AccommodationDetail";
 import ConcertActivity from "./pages/ConcertActivity";
+import ConcertDetail from "./pages/ConcertDetail";
 import NightlifeActivity from "./pages/NightlifeActivity";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -53,6 +54,7 @@ const App = () => (
             <Route path="/hebergements" element={<AccommodationActivity />} />
             <Route path="/hebergements/:id" element={<AccommodationDetail />} />
             <Route path="/concerts" element={<ConcertActivity />} />
+            <Route path="/concerts/:id" element={<ConcertDetail />} />
             <Route path="/soiree" element={<NightlifeActivity />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

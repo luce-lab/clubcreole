@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ArrowLeft, MapPin, Calendar, Clock, Music, Users, Ticket, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -90,6 +89,10 @@ const ConcertActivity = () => {
   const navigate = useNavigate();
   const [selectedConcert, setSelectedConcert] = useState<Concert | null>(null);
 
+  const handleViewConcertDetails = (concert: Concert) => {
+    navigate(`/concerts/${concert.id}`);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <Button
@@ -158,63 +161,12 @@ const ConcertActivity = () => {
             </CardContent>
             
             <CardFooter>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button 
-                    className="w-full bg-purple-600 hover:bg-purple-700"
-                    onClick={() => setSelectedConcert(concert)}
-                  >
-                    Voir les détails
-                  </Button>
-                </DialogTrigger>
-                {selectedConcert && (
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>{selectedConcert.name}</DialogTitle>
-                      <DialogDescription className="font-medium text-purple-700">
-                        {selectedConcert.artist}
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <img 
-                        src={selectedConcert.image} 
-                        alt={selectedConcert.name} 
-                        className="w-full h-56 object-cover rounded-md"
-                      />
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4 text-purple-600" />
-                          <span>{selectedConcert.date}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Clock className="h-4 w-4 text-purple-600" />
-                          <span>{selectedConcert.time}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <MapPin className="h-4 w-4 text-purple-600" />
-                        <span>{selectedConcert.location}</span>
-                      </div>
-                      <p className="text-gray-700">{selectedConcert.description}</p>
-                      <div className="bg-purple-50 p-4 rounded-md border border-purple-200">
-                        <h3 className="font-semibold text-purple-700 flex items-center">
-                          <Ticket className="h-4 w-4 mr-2" />
-                          Offre spéciale Club Créole
-                        </h3>
-                        <p className="mt-1 text-gray-700">{selectedConcert.offer}</p>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <div className="text-xl font-bold text-purple-700">
-                          {selectedConcert.price}€
-                        </div>
-                        <Button className="bg-purple-600 hover:bg-purple-700">
-                          Réserver des places
-                        </Button>
-                      </div>
-                    </div>
-                  </DialogContent>
-                )}
-              </Dialog>
+              <Button 
+                className="w-full bg-purple-600 hover:bg-purple-700"
+                onClick={() => handleViewConcertDetails(concert)}
+              >
+                Voir les détails
+              </Button>
             </CardFooter>
           </Card>
         ))}
