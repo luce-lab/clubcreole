@@ -1,5 +1,5 @@
 
-import { ReactElement } from "react";
+import { Music } from "lucide-react";
 
 export interface Concert {
   id: number;
@@ -17,7 +17,7 @@ export interface Concert {
   icon: React.ElementType;
 }
 
-// Mock data that we'll move from the main component
+// Mock data for concerts
 export const concerts: Concert[] = [
   {
     id: 1,
@@ -32,7 +32,7 @@ export const concerts: Concert[] = [
     price: 45,
     offer: "Réduction de 20% sur le tarif normal pour les membres du Club Créole",
     rating: 4.9,
-    icon: () => null
+    icon: Music
   },
   {
     id: 2,
@@ -47,7 +47,7 @@ export const concerts: Concert[] = [
     price: 38,
     offer: "Un cocktail offert sur présentation de la carte Club Créole",
     rating: 4.7,
-    icon: () => null
+    icon: Music
   },
   {
     id: 3,
@@ -62,7 +62,7 @@ export const concerts: Concert[] = [
     price: 32,
     offer: "Places en catégorie supérieure au tarif standard pour les membres du Club Créole",
     rating: 4.8,
-    icon: () => null
+    icon: Music
   },
   {
     id: 4,
@@ -77,6 +77,6 @@ export const concerts: Concert[] = [
     price: 55,
     offer: "Accès à l'espace VIP avec une consommation offerte pour les membres du Club Créole",
     rating: 4.6,
-    icon: () => null
+    icon: Music
   }
 ];
