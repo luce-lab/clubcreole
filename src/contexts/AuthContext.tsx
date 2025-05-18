@@ -1,7 +1,7 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, cleanupAuthState } from '@/integrations/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
 
 type UserRole = 'admin' | 'partner' | 'client' | null;
@@ -40,6 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Configurer l'écouteur d'événements d'authentification Supabase
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
+        console.log('Auth state changed:', event);
         setSession(currentSession);
         
         if (currentSession?.user) {
@@ -60,6 +61,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               });
             }
 
+            console.log('Profile data:', profileData);
+            
             const userWithRole: UserWithRole = {
               ...currentSession.user,
               role: profileData?.role as UserRole,
@@ -69,6 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             };
             
             setUser(userWithRole);
+            console.log('User set with role:', userWithRole);
           } catch (error) {
             console.error('Erreur lors du traitement des données utilisateur:', error);
           }
@@ -82,6 +86,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Vérifier la session au chargement
     const checkSession = async () => {
+      console.log('Checking session...');
       const { data: { session: initialSession }, error } = await supabase.auth.getSession();
       if (error) {
         console.error('Erreur lors de la récupération de la session:', error);
@@ -89,6 +94,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       
+      console.log('Initial session:', initialSession);
       setSession(initialSession);
       
       if (initialSession?.user) {
@@ -106,6 +112,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             return;
           }
 
+          console.log('Profile data from session check:', profileData);
+          
           const userWithRole: UserWithRole = {
             ...initialSession.user,
             role: profileData?.role as UserRole,
@@ -131,13 +139,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [toast]);
 
   const signIn = async (email: string, password: string): Promise<{ success: boolean, message: string }> => {
+    console.log('Attempting sign in with:', email);
     setIsLoading(true);
     
     try {
+      // Nettoyer les états d'authentification précédents pour éviter les conflits
+      cleanupAuthState();
+      
+      // Tentative de déconnexion globale avant de se connecter
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (err) {
+        console.error('Erreur lors de la déconnexion globale:', err);
+        // Continuer même si cette étape échoue
+      }
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
+      
+      console.log('Sign in response:', data, error);
       
       if (error) {
         return { success: false, message: error.message };
@@ -149,6 +171,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { success: false, message: 'Aucun utilisateur trouvé' };
       }
     } catch (error: any) {
+      console.error('Unexpected error during login:', error);
       return { success: false, message: error.message || 'Erreur de connexion' };
     } finally {
       setIsLoading(false);
@@ -156,13 +179,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signUp = async (email: string, password: string): Promise<{ success: boolean, message: string }> => {
+    console.log('Attempting sign up with:', email);
     setIsLoading(true);
     
     try {
+      // Nettoyer les états d'authentification précédents
+      cleanupAuthState();
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
       });
+      
+      console.log('Sign up response:', data, error);
       
       if (error) {
         return { success: false, message: error.message };
@@ -178,6 +207,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { success: false, message: 'Erreur lors de la création du compte' };
       }
     } catch (error: any) {
+      console.error('Unexpected error during registration:', error);
       return { success: false, message: error.message || 'Erreur d\'inscription' };
     } finally {
       setIsLoading(false);
@@ -186,7 +216,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
+      console.log('Attempting sign out');
+      // Nettoyer d'abord l'état d'authentification
+      cleanupAuthState();
+      
+      // Tentative de déconnexion globale
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (err) {
+        console.error('Erreur lors de la déconnexion globale:', err);
+        // Ignorer les erreurs
+      }
+      
+      // Forcer un rechargement de la page pour un état propre
       window.location.href = '/';
       toast({
         title: "Déconnecté",

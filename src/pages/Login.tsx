@@ -22,7 +22,7 @@ const Login = () => {
   const [activeTab, setActiveTab] = useState(initialTab);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, user, isLoading: authLoading } = useAuth();
 
   // Effet pour initialiser l'onglet actif basé sur la navigation
   useEffect(() => {
@@ -34,12 +34,14 @@ const Login = () => {
   // Si l'utilisateur est déjà connecté, redirection vers le tableau de bord
   useEffect(() => {
     if (user) {
+      console.log('User is authenticated, redirecting to dashboard:', user);
       navigate("/dashboard");
     }
   }, [user, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Handle sign in triggered with:', email);
     setIsLoading(true);
 
     try {
@@ -60,7 +62,7 @@ const Login = () => {
         description: "Vous êtes maintenant connecté",
       });
       
-      navigate("/dashboard");
+      // La redirection sera gérée par useEffect quand l'état user sera mis à jour
     } catch (error) {
       console.error("Unexpected error during login:", error);
       toast({
@@ -75,6 +77,7 @@ const Login = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Handle sign up triggered with:', registerEmail);
     
     if (registerPassword !== confirmPassword) {
       toast({
@@ -118,6 +121,15 @@ const Login = () => {
       setIsLoading(false);
     }
   };
+
+  // Affichage d'un indicateur de chargement pendant que l'état d'authentification est vérifié
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Chargement...</p>
+      </div>
+    );
+  }
 
   if (user) {
     return null; // L'effet useEffect s'occupera de la redirection
