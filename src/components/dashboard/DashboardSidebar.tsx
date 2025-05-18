@@ -45,7 +45,7 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ userRole }) => {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <SidebarMenuButton tooltip="Accueil" onClick={() => navigate("/")} active={isActive("/")}>
+        <SidebarMenuButton tooltip="Accueil" onClick={() => navigate("/")} isActive={isActive("/")}>
           <Home className="h-5 w-5" />
           <span>Accueil</span>
         </SidebarMenuButton>
@@ -55,13 +55,13 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ userRole }) => {
       {userRole === "admin" && (
         <>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Utilisateurs" onClick={() => navigate("/users")} active={isActive("/users")}>
+            <SidebarMenuButton tooltip="Utilisateurs" onClick={() => navigate("/users")} isActive={isActive("/users")}>
               <Users className="h-5 w-5" />
               <span>Utilisateurs</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Partenaires" onClick={() => navigate("/partners")} active={isActive("/partners")}>
+            <SidebarMenuButton tooltip="Partenaires" onClick={() => navigate("/partners")} isActive={isActive("/partners")}>
               <ShoppingBag className="h-5 w-5" />
               <span>Partenaires</span>
             </SidebarMenuButton>
@@ -85,25 +85,25 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ userRole }) => {
       {userRole === "partner" && (
         <>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Dashboard" onClick={() => navigate("/dashboard")} active={isActive("/dashboard")}>
+            <SidebarMenuButton tooltip="Dashboard" onClick={() => navigate("/dashboard")} isActive={isActive("/dashboard")}>
               <LineChart className="h-5 w-5" />
               <span>Tableau de bord</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Réservations" onClick={() => navigate("/reservations")} active={isActive("/reservations")}>
+            <SidebarMenuButton tooltip="Réservations" onClick={() => navigate("/reservations")} isActive={isActive("/reservations")}>
               <CalendarClock className="h-5 w-5" />
               <span>Réservations</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Clients" onClick={() => navigate("/clients")} active={isActive("/clients")}>
+            <SidebarMenuButton tooltip="Clients" onClick={() => navigate("/clients")} isActive={isActive("/clients")}>
               <Users className="h-5 w-5" />
               <span>Clients</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Offres" onClick={() => navigate("/offers")} active={isActive("/offers")}>
+            <SidebarMenuButton tooltip="Offres" onClick={() => navigate("/offers")} isActive={isActive("/offers")}>
               <ShoppingBag className="h-5 w-5" />
               <span>Offres</span>
             </SidebarMenuButton>
