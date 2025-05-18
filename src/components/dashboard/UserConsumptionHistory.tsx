@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Table, 
   TableBody, 
@@ -30,8 +29,19 @@ import {
   CartesianGrid, 
   ResponsiveContainer,
   Tooltip,
-  Legend
+  Legend,
+  PieChart,
+  Pie,
+  Cell
 } from "recharts";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 interface ConsumptionItem {
   id: string;
@@ -104,16 +114,106 @@ export const UserConsumptionHistory = ({ userId = "1" }: UserConsumptionHistoryP
       price: 45,
       status: "annulé"
     },
+    {
+      id: "7",
+      date: "2025-03-22",
+      type: "réservation",
+      category: "Activité",
+      itemName: "Sortie Jet-Ski - 2 heures",
+      price: 130,
+      status: "complété"
+    },
+    {
+      id: "8",
+      date: "2025-03-15",
+      type: "achat",
+      category: "Événement",
+      itemName: "Soirée Carnaval - Pass VIP",
+      price: 85,
+      status: "complété"
+    },
   ]);
 
-  // Données pour le graphique de consommation par catégorie
-  const consumptionByCategory = [
-    { name: "Activités", montant: 120 },
-    { name: "Hébergement", montant: 450 },
-    { name: "Location", montant: 280 },
-    { name: "Événements", montant: 120 },
-    { name: "Restauration", montant: 0 },
-  ];
+  // Filtres
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  const [typeFilter, setTypeFilter] = useState<ConsumptionItem["type"] | null>(null);
+  const [statusFilter, setStatusFilter] = useState<ConsumptionItem["status"] | null>(null);
+  const [filteredHistory, setFilteredHistory] = useState<ConsumptionItem[]>(history);
+
+  // Données pour les graphiques
+  const [consumptionByCategory, setConsumptionByCategory] = useState<any[]>([]);
+  const [consumptionByType, setConsumptionByType] = useState<any[]>([]);
+  const [consumptionByMonth, setConsumptionByMonth] = useState<any[]>([]);
+
+  // Appliquer les filtres
+  useEffect(() => {
+    let result = history;
+    
+    if (categoryFilter) {
+      result = result.filter(item => item.category === categoryFilter);
+    }
+    
+    if (typeFilter) {
+      result = result.filter(item => item.type === typeFilter);
+    }
+    
+    if (statusFilter) {
+      result = result.filter(item => item.status === statusFilter);
+    }
+    
+    setFilteredHistory(result);
+  }, [history, categoryFilter, typeFilter, statusFilter]);
+
+  // Préparer les données pour les graphiques
+  useEffect(() => {
+    // Données par catégorie
+    const categoryData = filteredHistory.reduce((acc, item) => {
+      if (item.price && item.status === "complété") {
+        const existingCategory = acc.find(c => c.name === item.category);
+        if (existingCategory) {
+          existingCategory.montant += item.price;
+        } else {
+          acc.push({ name: item.category, montant: item.price });
+        }
+      }
+      return acc;
+    }, [] as { name: string; montant: number }[]);
+    
+    setConsumptionByCategory(categoryData);
+
+    // Données par type
+    const typeData = filteredHistory.reduce((acc, item) => {
+      if (item.price && item.status === "complété") {
+        const existingType = acc.find(t => t.name === item.type);
+        if (existingType) {
+          existingType.value += item.price;
+        } else {
+          acc.push({ name: item.type, value: item.price });
+        }
+      }
+      return acc;
+    }, [] as { name: string; value: number }[]);
+    
+    setConsumptionByType(typeData);
+
+    // Données par mois
+    const monthData = filteredHistory.reduce((acc, item) => {
+      if (item.price && item.status === "complété") {
+        const month = item.date.substring(0, 7); // Format 'YYYY-MM'
+        const monthName = new Date(item.date).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+        
+        const existingMonth = acc.find(m => m.month === month);
+        if (existingMonth) {
+          existingMonth.montant += item.price;
+        } else {
+          acc.push({ month, name: monthName, montant: item.price });
+        }
+      }
+      return acc;
+    }, [] as { month: string; name: string; montant: number }[]).sort((a, b) => a.month.localeCompare(b.month));
+    
+    setConsumptionByMonth(monthData);
+  }, [filteredHistory]);
 
   // Configuration du graphique
   const chartConfig = {
@@ -122,6 +222,9 @@ export const UserConsumptionHistory = ({ userId = "1" }: UserConsumptionHistoryP
       color: "#10B981",
     },
   };
+
+  // Couleurs pour les graphiques
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
   const getStatusBadge = (status: ConsumptionItem["status"]) => {
     switch (status) {
@@ -173,16 +276,73 @@ export const UserConsumptionHistory = ({ userId = "1" }: UserConsumptionHistoryP
     }
   };
 
+  // Obtenir la liste unique des catégories
+  const categories = Array.from(new Set(history.map(item => item.category)));
+  
+  // Formater la date pour l'affichage
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('fr-FR');
+  };
+
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Historique de consommation</CardTitle>
+          <CardTitle>
+            {userId ? `Historique de consommation - Utilisateur #${userId}` : "Historique de consommation"}
+          </CardTitle>
           <CardDescription>
-            Détails des activités, réservations et achats de l'utilisateur
+            Filtrez et analysez les activités, réservations et achats
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <div className="flex flex-wrap gap-4 mb-6">
+            <div className="w-full md:w-auto">
+              <label className="text-sm font-medium">Catégorie</label>
+              <Select value={categoryFilter || ""} onValueChange={(value) => setCategoryFilter(value || null)}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Toutes les catégories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Toutes les catégories</SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="w-full md:w-auto">
+              <label className="text-sm font-medium">Type</label>
+              <Select value={typeFilter || ""} onValueChange={(value: any) => setTypeFilter(value || null)}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Tous les types" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Tous les types</SelectItem>
+                  <SelectItem value="réservation">Réservation</SelectItem>
+                  <SelectItem value="achat">Achat</SelectItem>
+                  <SelectItem value="consultation">Consultation</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="w-full md:w-auto">
+              <label className="text-sm font-medium">Statut</label>
+              <Select value={statusFilter || ""} onValueChange={(value: any) => setStatusFilter(value || null)}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Tous les statuts" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Tous les statuts</SelectItem>
+                  <SelectItem value="complété">Complété</SelectItem>
+                  <SelectItem value="annulé">Annulé</SelectItem>
+                  <SelectItem value="en cours">En cours</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
           <Table>
             <TableHeader>
               <TableRow>
@@ -195,46 +355,129 @@ export const UserConsumptionHistory = ({ userId = "1" }: UserConsumptionHistoryP
               </TableRow>
             </TableHeader>
             <TableBody>
-              {history.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>{item.date}</TableCell>
-                  <TableCell>{getTypeBadge(item.type)}</TableCell>
-                  <TableCell>{item.category}</TableCell>
-                  <TableCell className="font-medium">{item.itemName}</TableCell>
-                  <TableCell>{item.price ? `${item.price}€` : "—"}</TableCell>
-                  <TableCell>{getStatusBadge(item.status)}</TableCell>
+              {filteredHistory.length > 0 ? (
+                filteredHistory.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell>{formatDate(item.date)}</TableCell>
+                    <TableCell>{getTypeBadge(item.type)}</TableCell>
+                    <TableCell>{item.category}</TableCell>
+                    <TableCell className="font-medium">{item.itemName}</TableCell>
+                    <TableCell>{item.price ? `${item.price}€` : "—"}</TableCell>
+                    <TableCell>{getStatusBadge(item.status)}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center">
+                    Aucune activité trouvée avec ces critères
+                  </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Dépenses par catégorie</CardTitle>
-          <CardDescription>
-            Répartition des dépenses par type de service
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="h-80">
-            <ChartContainer config={chartConfig}>
-              <BarChart data={consumptionByCategory}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip 
-                  formatter={(value) => `${value}€`}
-                  labelFormatter={(name) => `${name}`}
-                />
-                <Legend />
-                <Bar dataKey="montant" fill="#10B981" name="Montant" />
-              </BarChart>
-            </ChartContainer>
-          </div>
-        </CardContent>
-      </Card>
+      {filteredHistory.some(item => item.price && item.status === "complété") && (
+        <Tabs defaultValue="categories" className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="categories">Par catégorie</TabsTrigger>
+            <TabsTrigger value="types">Par type</TabsTrigger>
+            <TabsTrigger value="timeline">Évolution mensuelle</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="categories">
+            <Card>
+              <CardHeader>
+                <CardTitle>Dépenses par catégorie</CardTitle>
+                <CardDescription>
+                  Répartition des dépenses par type de service
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-80">
+                  <ChartContainer config={chartConfig}>
+                    <BarChart data={consumptionByCategory}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip 
+                        formatter={(value) => `${value}€`}
+                        labelFormatter={(name) => `${name}`}
+                      />
+                      <Legend />
+                      <Bar dataKey="montant" fill="#10B981" name="Montant" />
+                    </BarChart>
+                  </ChartContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="types">
+            <Card>
+              <CardHeader>
+                <CardTitle>Répartition par type</CardTitle>
+                <CardDescription>
+                  Distribution des dépenses entre réservations et achats
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-80 flex justify-center">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={consumptionByType}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={true}
+                        outerRadius={120}
+                        fill="#8884d8"
+                        dataKey="value"
+                        nameKey="name"
+                        label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      >
+                        {consumptionByType.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value) => `${value}€`} />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="timeline">
+            <Card>
+              <CardHeader>
+                <CardTitle>Évolution mensuelle des dépenses</CardTitle>
+                <CardDescription>
+                  Suivi des dépenses sur les derniers mois
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-80">
+                  <ChartContainer config={chartConfig}>
+                    <BarChart data={consumptionByMonth}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip 
+                        formatter={(value) => `${value}€`}
+                      />
+                      <Legend />
+                      <Bar dataKey="montant" fill="#10B981" name="Montant" />
+                    </BarChart>
+                  </ChartContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      )}
     </div>
   );
 };

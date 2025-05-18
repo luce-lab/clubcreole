@@ -29,7 +29,11 @@ interface UserSubscription {
   lastActivity: string;
 }
 
-export const UsersList = () => {
+interface UsersListProps {
+  onSelectUser?: (userId: string) => void;
+}
+
+export const UsersList = ({ onSelectUser }: UsersListProps) => {
   const { toast } = useToast();
   const [users, setUsers] = useState<UserSubscription[]>([
     {
@@ -142,8 +146,9 @@ export const UsersList = () => {
       description: `Affichage de l'historique de consommation pour l'utilisateur ${userId}`,
     });
     
-    // Ici, on pourrait implémenter une navigation ou un modal vers UserConsumptionHistory
-    // avec l'ID de l'utilisateur comme paramètre
+    if (onSelectUser) {
+      onSelectUser(userId);
+    }
   };
 
   return (

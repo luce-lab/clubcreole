@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Card, 
   CardContent, 
@@ -19,9 +19,21 @@ import { Users, ShoppingBag, Activity, CreditCard } from "lucide-react";
 import { UsersList } from "./UsersList";
 import { UserConsumptionHistory } from "./UserConsumptionHistory";
 
-export const DashboardAdmin = () => {
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+interface DashboardAdminProps {
+  selectedUserId?: string | null;
+  onSelectUser?: (userId: string | null) => void;
+}
+
+export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminProps) => {
+  const [activeTab, setActiveTab] = useState<string>("partners");
   
+  // Si un utilisateur est sélectionné, passer à l'onglet de consommation
+  useEffect(() => {
+    if (selectedUserId) {
+      setActiveTab("consumption");
+    }
+  }, [selectedUserId]);
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -67,7 +79,7 @@ export const DashboardAdmin = () => {
         </Card>
       </div>
 
-      <Tabs defaultValue="partners" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full md:w-auto grid-cols-2 md:grid-cols-3 h-auto">
           <TabsTrigger value="partners">Partenaires</TabsTrigger>
           <TabsTrigger value="users">Utilisateurs</TabsTrigger>
@@ -137,10 +149,20 @@ export const DashboardAdmin = () => {
         </TabsContent>
         
         <TabsContent value="users" className="mt-4">
-          <UsersList />
+          <UsersList onSelectUser={onSelectUser} />
         </TabsContent>
         
         <TabsContent value="consumption" className="mt-4">
+          <div className="mb-4">
+            {selectedUserId && (
+              <button 
+                onClick={() => onSelectUser && onSelectUser(null)} 
+                className="text-blue-600 hover:underline flex items-center"
+              >
+                ← Retour à la liste des utilisateurs
+              </button>
+            )}
+          </div>
           <UserConsumptionHistory userId={selectedUserId || undefined} />
         </TabsContent>
       </Tabs>
