@@ -1,20 +1,24 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/components/ui/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { User, Session } from '@supabase/supabase-js';
 
 type UserRole = 'admin' | 'partner' | 'client' | null;
 
-interface User {
-  id: string;
-  email: string;
-  role: UserRole;
-  name: string;
+interface UserWithRole extends User {
+  role?: UserRole;
+  name?: string;
 }
 
 interface AuthContextType {
-  user: User | null;
+  user: UserWithRole | null;
+  session: Session | null;
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<{ success: boolean, message: string }>;
-  signOut: () => void;
+  signOut: () => Promise<void>;
+  signUp: (email: string, password: string) => Promise<{ success: boolean, message: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,74 +32,180 @@ export const useAuth = () => {
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserWithRole | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Simuler la vérification de session au chargement
-    const savedUser = localStorage.getItem('simulated_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    setIsLoading(false);
-  }, []);
+    // Configurer l'écouteur d'événements d'authentification Supabase
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, currentSession) => {
+        setSession(currentSession);
+        
+        if (currentSession?.user) {
+          try {
+            // Récupérer le rôle et les informations de l'utilisateur depuis la table profiles
+            const { data: profileData, error: profileError } = await supabase
+              .from('profiles')
+              .select('role, first_name, last_name')
+              .eq('id', currentSession.user.id)
+              .single();
+
+            if (profileError) {
+              console.error('Erreur lors de la récupération du profil:', profileError);
+              toast({
+                title: "Erreur",
+                description: "Impossible de récupérer les informations de profil",
+                variant: "destructive",
+              });
+            }
+
+            const userWithRole: UserWithRole = {
+              ...currentSession.user,
+              role: profileData?.role as UserRole,
+              name: profileData?.first_name 
+                ? `${profileData.first_name} ${profileData.last_name || ''}`
+                : currentSession.user.email
+            };
+            
+            setUser(userWithRole);
+          } catch (error) {
+            console.error('Erreur lors du traitement des données utilisateur:', error);
+          }
+        } else {
+          setUser(null);
+        }
+        
+        setIsLoading(false);
+      }
+    );
+
+    // Vérifier la session au chargement
+    const checkSession = async () => {
+      const { data: { session: initialSession }, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error('Erreur lors de la récupération de la session:', error);
+        setIsLoading(false);
+        return;
+      }
+      
+      setSession(initialSession);
+      
+      if (initialSession?.user) {
+        try {
+          // Récupérer le rôle et les informations de l'utilisateur depuis la table profiles
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('role, first_name, last_name')
+            .eq('id', initialSession.user.id)
+            .single();
+
+          if (profileError) {
+            console.error('Erreur lors de la récupération du profil:', profileError);
+            setIsLoading(false);
+            return;
+          }
+
+          const userWithRole: UserWithRole = {
+            ...initialSession.user,
+            role: profileData?.role as UserRole,
+            name: profileData?.first_name 
+              ? `${profileData.first_name} ${profileData.last_name || ''}`
+              : initialSession.user.email
+          };
+          
+          setUser(userWithRole);
+        } catch (error) {
+          console.error('Erreur lors du traitement des données utilisateur:', error);
+        }
+      }
+      
+      setIsLoading(false);
+    };
+
+    checkSession();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [toast]);
 
   const signIn = async (email: string, password: string): Promise<{ success: boolean, message: string }> => {
-    // Simulation de connexion basée sur l'email
     setIsLoading(true);
     
     try {
-      // Attente simulée pour imiter un appel réseau
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
       
-      let mockUser: User | null = null;
-      
-      // Déterminer le rôle en fonction de l'email
-      if (email.includes('admin')) {
-        mockUser = {
-          id: 'admin-id-123',
-          email,
-          role: 'admin',
-          name: 'Administrateur'
-        };
-      } else if (email.includes('partner')) {
-        mockUser = {
-          id: 'partner-id-456',
-          email,
-          role: 'partner',
-          name: 'Partenaire'
-        };
-      } else {
-        mockUser = {
-          id: 'client-id-789',
-          email,
-          role: 'client',
-          name: 'Client'
-        };
+      if (error) {
+        return { success: false, message: error.message };
       }
-      
-      if (mockUser) {
-        // Stocker l'utilisateur simulé
-        localStorage.setItem('simulated_user', JSON.stringify(mockUser));
-        setUser(mockUser);
+
+      if (data?.user) {
         return { success: true, message: 'Connexion réussie' };
       } else {
-        return { success: false, message: 'Email ou mot de passe incorrect' };
+        return { success: false, message: 'Aucun utilisateur trouvé' };
       }
-    } catch (error) {
-      return { success: false, message: 'Erreur de connexion' };
+    } catch (error: any) {
+      return { success: false, message: error.message || 'Erreur de connexion' };
     } finally {
       setIsLoading(false);
     }
   };
 
-  const signOut = () => {
-    localStorage.removeItem('simulated_user');
-    setUser(null);
+  const signUp = async (email: string, password: string): Promise<{ success: boolean, message: string }> => {
+    setIsLoading(true);
+    
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      
+      if (error) {
+        return { success: false, message: error.message };
+      }
+
+      if (data?.user) {
+        toast({
+          title: "Inscription réussie",
+          description: "Veuillez vérifier votre email pour confirmer votre compte",
+        });
+        return { success: true, message: 'Inscription réussie' };
+      } else {
+        return { success: false, message: 'Erreur lors de la création du compte' };
+      }
+    } catch (error: any) {
+      return { success: false, message: error.message || 'Erreur d\'inscription' };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate('/');
+      toast({
+        title: "Déconnecté",
+        description: "Vous avez été déconnecté avec succès",
+      });
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur s'est produite lors de la déconnexion",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, isLoading, signIn, signOut, signUp }}>
       {children}
     </AuthContext.Provider>
   );

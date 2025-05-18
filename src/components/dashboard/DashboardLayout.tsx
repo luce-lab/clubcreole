@@ -1,5 +1,5 @@
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   SidebarProvider,
@@ -12,6 +12,7 @@ import {
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
+import { useToast } from "@/components/ui/use-toast";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -20,13 +21,20 @@ interface DashboardLayoutProps {
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const userRole = user?.role || null;
 
-  // Redirect to login if not authenticated
-  if (!isLoading && !user) {
-    navigate("/login");
-    return null;
-  }
+  // Rediriger vers la page de login si non authentifié
+  useEffect(() => {
+    if (!isLoading && !user) {
+      toast({
+        title: "Accès refusé",
+        description: "Veuillez vous connecter pour accéder au tableau de bord",
+        variant: "destructive",
+      });
+      navigate("/login");
+    }
+  }, [isLoading, user, navigate, toast]);
 
   if (isLoading) {
     return (
@@ -34,6 +42,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <div className="text-lg">Chargement...</div>
       </div>
     );
+  }
+
+  // Si l'utilisateur n'est pas connecté, ne rien afficher (la redirection sera gérée par useEffect)
+  if (!user) {
+    return null;
   }
 
   return (
