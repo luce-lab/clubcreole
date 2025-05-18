@@ -19,7 +19,6 @@ import { Badge } from "@/components/ui/badge";
 import { 
   ChartContainer, 
   ChartTooltip,
-  ChartTooltipContent,
   ChartLegend, 
   ChartLegendContent 
 } from "@/components/ui/chart";
@@ -225,11 +224,12 @@ export const UserConsumptionHistory = ({ userId = "1" }: UserConsumptionHistoryP
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
-                <ChartTooltip
-                  content={<ChartTooltipContent formatLabel={(value) => `${value}€`} />}
+                <Tooltip 
+                  formatter={(value) => `${value}€`}
+                  labelFormatter={(name) => `${name}`}
                 />
-                <ChartLegend content={<ChartLegendContent />} />
-                <Bar dataKey="montant" fill="#10B981" name="montant" />
+                <Legend />
+                <Bar dataKey="montant" fill="#10B981" name="Montant" />
               </BarChart>
             </ChartContainer>
           </div>
