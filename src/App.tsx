@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -28,7 +27,7 @@ import UsersManagement from "./pages/UsersManagement";
 import Reservations from "./pages/Reservations";
 import Clients from "./pages/Clients";
 import Offers from "./pages/Offers";
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProvider } from "./contexts/auth";
 
 const queryClient = new QueryClient({
   defaultOptions: {
