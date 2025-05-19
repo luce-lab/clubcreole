@@ -1,10 +1,14 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button"; 
 import { ArrowRight } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { SubscriptionForm } from "@/components/SubscriptionForm";
 
 export const Hero = () => {
   const isMobile = useIsMobile();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   return <section className="bg-gradient-to-br from-creole-green/10 to-creole-blue/10 py-20">
       <div className="container mx-auto px-4 text-center">
@@ -20,10 +24,23 @@ export const Hero = () => {
           <Button 
             size={isMobile ? "default" : "lg"}
             className="bg-creole-green hover:bg-creole-green/90 text-white font-semibold group transition-all duration-300 transform hover:scale-105 w-full md:w-auto text-sm sm:text-base whitespace-normal md:whitespace-nowrap px-3 py-2 md:px-8 md:py-3"
+            onClick={() => setIsDialogOpen(true)}
           >
             {isMobile ? "DÉCOUVRIR" : "DÉCOUVREZ - ABONNEZ-VOUS - PROFITEZ"}
             <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5 group-hover:translate-x-1 transition-transform shrink-0" />
           </Button>
+          
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogContent className="sm:max-w-[550px]">
+              <DialogTitle className="text-xl font-bold text-creole-green">
+                S'abonner au Club Créole
+              </DialogTitle>
+              <DialogDescription className="text-gray-600 mb-4">
+                Remplissez ce formulaire pour vous abonner et profiter de tous les avantages du Club Créole.
+              </DialogDescription>
+              <SubscriptionForm onSuccess={() => setIsDialogOpen(false)} />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </section>;
