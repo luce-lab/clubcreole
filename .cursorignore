@@ -1,0 +1,38 @@
+# Fichiers de configuration sensibles
+# ================================
+# Les fichiers .env contiennent des variables d'environnement sensibles
+.env
+.env.*
+
+# Dépendances et builds
+# ====================
+# Dossiers générés automatiquement qui ne nécessitent pas d'indexation
+node_modules/
+dist/
+build/
+coverage/
+
+# Fichiers système et logs
+# =======================
+*.log
+.DS_Store
+
+# Fichiers d'éditeur
+# =================
+.vscode/
+.idea/
+
+# Certificats et clés de sécurité
+# ==============================
+*.pem
+*.key
+*.cert
+*.secret
+
+# Fichiers spécifiques au projet
+# ============================
+supabase/.temp/
+bun.lockb
+pnpm-lock.yaml
+package-lock.json
+.git/
