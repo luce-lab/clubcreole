@@ -280,6 +280,42 @@ export type Database = {
           },
         ]
       }
+      restaurants: {
+        Row: {
+          description: string
+          icon: string
+          id: number
+          image: string
+          location: string
+          name: string
+          offer: string
+          rating: number
+          type: string
+        }
+        Insert: {
+          description: string
+          icon: string
+          id?: number
+          image: string
+          location: string
+          name: string
+          offer: string
+          rating: number
+          type: string
+        }
+        Update: {
+          description?: string
+          icon?: string
+          id?: number
+          image?: string
+          location?: string
+          name?: string
+          offer?: string
+          rating?: number
+          type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
