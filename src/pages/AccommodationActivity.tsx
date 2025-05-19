@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
@@ -19,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Accommodation } from "@/components/accommodation/AccommodationTypes";
+import { Accommodation, Amenity } from "@/components/accommodation/AccommodationTypes";
 import { FeatureIcon } from "@/components/accommodation/FeatureIcon";
 
 const AccommodationActivity = () => {
@@ -46,8 +45,7 @@ const AccommodationActivity = () => {
           gallery_images: item.gallery_images as string[],
           features: item.features as string[],
           amenities: item.amenities as Amenity[],
-          rules: item.rules as string[],
-          galleryImages: item.gallery_images as string[] // Ajouter cette propriété pour la compatibilité
+          rules: item.rules as string[]
         }));
         
         setAccommodations(formattedData);

@@ -43,7 +43,6 @@ const AccommodationDetail = () => {
           features: data.features as string[],
           amenities: data.amenities as any[],
           rules: data.rules as string[],
-          galleryImages: data.gallery_images as string[] // Pour compatibilité
         };
         
         setAccommodation(formattedData);
@@ -104,7 +103,7 @@ const AccommodationDetail = () => {
         />
 
         <AccommodationGallery 
-          images={accommodation.galleryImages}
+          images={accommodation.gallery_images}
           name={accommodation.name}
         />
 
