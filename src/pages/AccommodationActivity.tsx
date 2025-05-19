@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -18,80 +18,49 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-
-const accommodations = [
-  {
-    id: 1,
-    name: "Villa Paradis",
-    type: "Villa",
-    location: "Basse-Terre",
-    price: 120,
-    rating: 4.8,
-    image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-    features: ["WiFi", "TV", "Cuisine", "Parking", "Climatisation", "Piscine"],
-    description: "Magnifique villa avec vue sur la mer, parfaite pour des vacances en famille ou entre amis."
-  },
-  {
-    id: 2,
-    name: "Hôtel Tropical",
-    type: "Hôtel",
-    location: "Grande-Terre",
-    price: 85,
-    rating: 4.5,
-    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-    features: ["WiFi", "TV", "Restaurant", "Parking", "Climatisation", "Piscine"],
-    description: "Hôtel confortable et élégant situé à quelques pas de la plage."
-  },
-  {
-    id: 3,
-    name: "Bungalow Océan",
-    type: "Bungalow",
-    location: "Les Saintes",
-    price: 95,
-    rating: 4.6,
-    image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-    features: ["WiFi", "TV", "Cuisine", "Vue mer", "Climatisation"],
-    description: "Bungalow charmant offrant une expérience authentique au bord de l'océan."
-  },
-  {
-    id: 4,
-    name: "Résidence Les Palmiers",
-    type: "Appartement",
-    location: "Pointe-à-Pitre",
-    price: 70,
-    rating: 4.3,
-    image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-    features: ["WiFi", "TV", "Cuisine", "Parking", "Climatisation"],
-    description: "Appartements modernes et spacieux dans un quartier calme et résidentiel."
-  },
-  {
-    id: 5,
-    name: "Gîte Rural Caraïbes",
-    type: "Gîte",
-    location: "Marie-Galante",
-    price: 65,
-    rating: 4.7,
-    image: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-    features: ["WiFi", "Cuisine", "Jardin", "Hamac", "BBQ"],
-    description: "Gîte authentique pour découvrir la vraie vie caribéenne dans un cadre naturel exceptionnel."
-  },
-  {
-    id: 6,
-    name: "Suite Créole",
-    type: "Chambre d'hôtes",
-    location: "Le Gosier",
-    price: 90,
-    rating: 4.9,
-    image: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-    features: ["WiFi", "TV", "Petit-déjeuner", "Piscine", "Climatisation"],
-    description: "Chambres d'hôtes de luxe avec un service personnalisé et une atmosphère chaleureuse."
-  }
-];
+import { supabase } from "@/integrations/supabase/client";
+import { Accommodation } from "@/components/accommodation/AccommodationTypes";
+import { FeatureIcon } from "@/components/accommodation/FeatureIcon";
 
 const AccommodationActivity = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [priceFilter, setPriceFilter] = useState<string>("");
+  const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAccommodations = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from("accommodations")
+          .select("*");
+        
+        if (error) throw error;
+
+        // Transformer les données JSON de la base
+        const formattedData = data.map(item => ({
+          ...item,
+          gallery_images: item.gallery_images as string[],
+          features: item.features as string[],
+          amenities: item.amenities as Amenity[],
+          rules: item.rules as string[],
+          galleryImages: item.gallery_images as string[] // Ajouter cette propriété pour la compatibilité
+        }));
+        
+        setAccommodations(formattedData);
+      } catch (err) {
+        console.error("Erreur lors de la récupération des hébergements:", err);
+        setError("Impossible de charger les hébergements. Veuillez réessayer plus tard.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAccommodations();
+  }, []);
 
   const filteredAccommodations = accommodations.filter(accommodation => {
     const matchesSearch = accommodation.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -106,20 +75,35 @@ const AccommodationActivity = () => {
     return matchesSearch && matchesPrice;
   });
 
-  const renderFeatureIcon = (feature: string) => {
-    switch (feature) {
-      case "WiFi":
-        return <Wifi className="h-4 w-4" />;
-      case "TV":
-        return <Tv className="h-4 w-4" />;
-      case "Cuisine":
-        return <Coffee className="h-4 w-4" />;
-      case "Parking":
-        return <Car className="h-4 w-4" />;
-      default:
-        return <Bath className="h-4 w-4" />;
-    }
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-12 flex items-center justify-center">
+          <div className="text-center">
+            <Bed className="h-16 w-16 mx-auto text-creole-blue animate-pulse mb-4" />
+            <p className="text-xl text-creole-blue">Chargement des hébergements...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-12 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-xl text-red-500 mb-4">{error}</p>
+            <Button onClick={() => window.location.reload()}>Réessayer</Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -215,14 +199,14 @@ const AccommodationActivity = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 mb-4">{accommodation.description}</p>
+                <p className="text-gray-600 mb-4">{accommodation.description.substring(0, 100)}...</p>
                 <div className="flex flex-wrap gap-2">
                   {accommodation.features.slice(0, 4).map((feature, index) => (
                     <span 
                       key={index}
                       className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs flex items-center"
                     >
-                      {renderFeatureIcon(feature)}
+                      <FeatureIcon feature={feature} />
                       <span className="ml-1">{feature}</span>
                     </span>
                   ))}

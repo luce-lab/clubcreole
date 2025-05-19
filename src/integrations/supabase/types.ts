@@ -9,6 +9,60 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      accommodations: {
+        Row: {
+          amenities: Json
+          bathrooms: number
+          description: string
+          features: Json
+          gallery_images: Json
+          id: number
+          image: string
+          location: string
+          max_guests: number
+          name: string
+          price: number
+          rating: number
+          rooms: number
+          rules: Json
+          type: string
+        }
+        Insert: {
+          amenities: Json
+          bathrooms: number
+          description: string
+          features: Json
+          gallery_images: Json
+          id?: number
+          image: string
+          location: string
+          max_guests: number
+          name: string
+          price: number
+          rating: number
+          rooms: number
+          rules: Json
+          type: string
+        }
+        Update: {
+          amenities?: Json
+          bathrooms?: number
+          description?: string
+          features?: Json
+          gallery_images?: Json
+          id?: number
+          image?: string
+          location?: string
+          max_guests?: number
+          name?: string
+          price?: number
+          rating?: number
+          rooms?: number
+          rules?: Json
+          type?: string
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           address: string | null

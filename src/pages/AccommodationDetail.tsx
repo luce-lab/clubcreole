@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
@@ -10,109 +11,80 @@ import { AccommodationRules } from "@/components/accommodation/AccommodationRule
 import { AccommodationFAQ } from "@/components/accommodation/AccommodationFAQ";
 import { ReservationCard } from "@/components/accommodation/ReservationCard";
 import { Accommodation } from "@/components/accommodation/AccommodationTypes";
-
-// Liste temporaire des hébergements (idéalement, cela viendrait d'une API ou d'une base de données)
-const accommodations = [
-  {
-    id: 1,
-    name: "Villa Paradis",
-    type: "Villa",
-    location: "Basse-Terre",
-    price: 120,
-    rating: 4.8,
-    image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-    galleryImages: [
-      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1543968332-f99478b1ebdc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1501117716987-c8c394bb29df?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1549638441-b787d2e11f14?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
-    ],
-    features: ["WiFi", "TV", "Cuisine", "Parking", "Climatisation", "Piscine"],
-    description: "Magnifique villa avec vue sur la mer, parfaite pour des vacances en famille ou entre amis. Située à seulement 5 minutes à pied de la plage, cette villa spacieuse offre tout le confort nécessaire pour un séjour inoubliable.",
-    rooms: 3,
-    bathrooms: 2,
-    maxGuests: 6,
-    amenities: [
-      { name: "WiFi gratuit", available: true },
-      { name: "Petit-déjeuner inclus", available: true },
-      { name: "Piscine privée", available: true },
-      { name: "Vue sur la mer", available: true },
-      { name: "Service de ménage", available: true },
-      { name: "Animaux acceptés", available: false },
-      { name: "Parking gratuit", available: true },
-      { name: "Climatisation", available: true }
-    ],
-    rules: [
-      "Check-in: 15h00",
-      "Check-out: 11h00",
-      "Interdiction de fumer",
-      "Pas de fêtes ou événements"
-    ]
-  },
-  {
-    id: 2,
-    name: "Hôtel Tropical",
-    type: "Hôtel",
-    location: "Grande-Terre",
-    price: 85,
-    rating: 4.5,
-    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-    galleryImages: [
-      "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1590073844006-33379778ae09?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
-    ],
-    features: ["WiFi", "TV", "Restaurant", "Parking", "Climatisation", "Piscine"],
-    description: "Hôtel confortable et élégant situé à quelques pas de la plage. Profitez de nos installations modernes et d'un service de qualité pour un séjour relaxant dans un cadre idyllique.",
-    rooms: 1,
-    bathrooms: 1,
-    maxGuests: 2,
-    amenities: [
-      { name: "WiFi gratuit", available: true },
-      { name: "Petit-déjeuner inclus", available: true },
-      { name: "Piscine", available: true },
-      { name: "Vue sur la mer", available: true },
-      { name: "Service de ménage", available: true },
-      { name: "Animaux acceptés", available: false },
-      { name: "Parking gratuit", available: true },
-      { name: "Climatisation", available: true }
-    ],
-    rules: [
-      "Check-in: 14h00",
-      "Check-out: 11h00",
-      "Interdiction de fumer dans les chambres",
-      "Petit-déjeuner servi de 7h à 10h"
-    ]
-  },
-  // ... Les autres hébergements restent identiques
-];
+import { supabase } from "@/integrations/supabase/client";
+import { Loader2 } from "lucide-react";
 
 const AccommodationDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   
   const [accommodation, setAccommodation] = useState<Accommodation | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Simuler une récupération de données
-    const accommodationId = parseInt(id || "0");
-    const foundAccommodation = accommodations.find(acc => acc.id === accommodationId);
-    
-    if (foundAccommodation) {
-      setAccommodation(foundAccommodation);
-    } else {
-      navigate("/hebergements");
-    }
+    const fetchAccommodation = async () => {
+      try {
+        setLoading(true);
+        const accommodationId = parseInt(id || "0");
+        
+        const { data, error } = await supabase
+          .from("accommodations")
+          .select("*")
+          .eq("id", accommodationId)
+          .single();
+        
+        if (error) throw error;
+        
+        // Transformer les données JSON de la base
+        const formattedData = {
+          ...data,
+          gallery_images: data.gallery_images as string[],
+          features: data.features as string[],
+          amenities: data.amenities as any[],
+          rules: data.rules as string[],
+          galleryImages: data.gallery_images as string[] // Pour compatibilité
+        };
+        
+        setAccommodation(formattedData);
+      } catch (err) {
+        console.error("Erreur lors de la récupération de l'hébergement:", err);
+        setError("Impossible de trouver cet hébergement.");
+        setTimeout(() => {
+          navigate("/hebergements");
+        }, 3000);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAccommodation();
   }, [id, navigate]);
 
-  // Si aucun hébergement n'est trouvé
-  if (!accommodation) {
+  // Si une erreur est survenue
+  if (error) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-grow container mx-auto px-4 py-12">
-          <div className="flex justify-center items-center h-full">
+          <div className="flex flex-col items-center justify-center h-full">
+            <p className="text-xl text-red-500 mb-4">{error}</p>
+            <p className="text-gray-500">Redirection vers la liste des hébergements...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Si les données sont en cours de chargement
+  if (loading || !accommodation) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-12">
+          <div className="flex flex-col items-center justify-center h-full">
+            <Loader2 className="h-12 w-12 text-creole-blue animate-spin mb-4" />
             <p className="text-xl text-gray-500">Chargement en cours...</p>
           </div>
         </main>
@@ -141,7 +113,7 @@ const AccommodationDetail = () => {
           <div className="lg:col-span-2 space-y-8">
             <AccommodationInfo 
               description={accommodation.description}
-              maxGuests={accommodation.maxGuests}
+              maxGuests={accommodation.max_guests}
               rooms={accommodation.rooms}
               bathrooms={accommodation.bathrooms}
             />
@@ -163,7 +135,7 @@ const AccommodationDetail = () => {
           <div className="lg:col-span-1">
             <ReservationCard 
               price={accommodation.price}
-              maxGuests={accommodation.maxGuests}
+              maxGuests={accommodation.max_guests}
             />
           </div>
         </div>

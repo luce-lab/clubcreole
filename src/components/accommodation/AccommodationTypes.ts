@@ -12,12 +12,12 @@ export interface Accommodation {
   price: number;
   rating: number;
   image: string;
-  galleryImages: string[];
+  gallery_images: string[];
   features: string[];
   description: string;
   rooms: number;
   bathrooms: number;
-  maxGuests: number;
+  max_guests: number;
   amenities: Amenity[];
   rules: string[];
 }
