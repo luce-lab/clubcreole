@@ -12,6 +12,7 @@ import { AccommodationAdvantages } from "@/components/accommodation/Accommodatio
 import { MembershipCard } from "@/components/accommodation/MembershipCard";
 import { AccommodationLoading } from "@/components/accommodation/AccommodationLoading";
 import { AccommodationError } from "@/components/accommodation/AccommodationError";
+import { AccommodationEmptyState } from "@/components/accommodation/AccommodationEmptyState";
 import { fetchAccommodations } from "@/services/accommodationService";
 
 const AccommodationActivity = () => {
@@ -62,7 +63,15 @@ const AccommodationActivity = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <div className="bg-white shadow-sm py-4">
+        <div className="container mx-auto px-4">
+          <img 
+            src="/lovable-uploads/ee9cef8d-d74a-4118-94e3-80f17f1e3fc2.png" 
+            alt="Club Créole Logo" 
+            className="h-12 w-auto"
+          />
+        </div>
+      </div>
       <main className="flex-grow container mx-auto px-4 py-8">
         <Button
           variant="ghost"
@@ -87,7 +96,11 @@ const AccommodationActivity = () => {
           setPriceFilter={setPriceFilter}
         />
 
-        <AccommodationGrid accommodations={filteredAccommodations} />
+        {filteredAccommodations.length > 0 ? (
+          <AccommodationGrid accommodations={filteredAccommodations} />
+        ) : (
+          <AccommodationEmptyState />
+        )}
 
         <MembershipCard />
 
