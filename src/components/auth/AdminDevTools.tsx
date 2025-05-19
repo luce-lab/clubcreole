@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { createTestUsers } from "@/contexts/auth/AuthProvider";
-import { Loader2, Tool } from "lucide-react";
+import { Loader2, WrenchIcon } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 export const AdminDevTools = () => {
@@ -42,7 +42,7 @@ export const AdminDevTools = () => {
     <div className="mt-8 border-t pt-4">
       <details className="text-sm text-gray-500">
         <summary className="cursor-pointer flex items-center text-gray-500 hover:text-gray-700">
-          <Tool className="h-4 w-4 mr-1" />
+          <WrenchIcon className="h-4 w-4 mr-1" />
           Outils de développement
         </summary>
         

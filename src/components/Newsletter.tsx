@@ -26,9 +26,10 @@ type NewsletterFormValues = z.infer<typeof newsletterSchema>;
 
 interface NewsletterProps {
   onSuccess?: () => void;
+  variant?: string; // Added variant prop
 }
 
-export function Newsletter({ onSuccess }: NewsletterProps) {
+export function Newsletter({ onSuccess, variant }: NewsletterProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -84,7 +85,7 @@ export function Newsletter({ onSuccess }: NewsletterProps) {
   }
 
   return (
-    <div className="p-4">
+    <div className={variant === "footer" ? "p-0" : "p-4"}>
       <h2 className="text-2xl font-bold text-creole-green mb-4">
         Abonnez-vous à notre newsletter
       </h2>
