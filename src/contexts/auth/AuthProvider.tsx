@@ -130,3 +130,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </AuthContext.Provider>
   );
 };
+
+// Helper function to create test users - only for development
+export const createTestUsers = async () => {
+  try {
+    // Create admin user
+    const { data: adminData, error: adminError } = await supabase.auth.signUp({
+      email: 'admin@clubcreole.com',
+      password: 'adminPassword123',
+    });
+    
+    if (adminError) throw adminError;
+    if (adminData.user) {
+      // Set admin role
+      await supabase.from('profiles').update({ role: 'admin' }).eq('id', adminData.user.id);
+    }
+    
+    // Create partner user
+    const { data: partnerData, error: partnerError } = await supabase.auth.signUp({
+      email: 'partner@clubcreole.com',
+      password: 'partnerPassword123',
+    });
+    
+    if (partnerError) throw partnerError;
+    if (partnerData.user) {
+      // Set partner role
+      await supabase.from('profiles').update({ role: 'partner' }).eq('id', partnerData.user.id);
+    }
+    
+    // Create client user
+    const { data: clientData, error: clientError } = await supabase.auth.signUp({
+      email: 'client@clubcreole.com',
+      password: 'clientPassword123',
+    });
+    
+    if (clientError) throw clientError;
+    
+    return { success: true, message: 'Test users created successfully' };
+  } catch (error) {
+    console.error('Error creating test users:', error);
+    return { success: false, message: 'Failed to create test users' };
+  }
+};

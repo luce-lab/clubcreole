@@ -7,6 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/auth";
+import { useToast } from "@/components/ui/use-toast";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -16,25 +19,36 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { signIn } = useAuth();
+  const { toast } = useToast();
   
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
     
     if (!email || !password) {
+      setErrorMessage("Veuillez remplir tous les champs");
       return false;
     }
     
     setIsFormSubmitting(true);
 
     try {
-      const { success } = await signIn(email, password);
-      if (success && onSuccess) {
-        onSuccess();
+      const { success, message } = await signIn(email, password);
+      
+      if (success) {
+        if (onSuccess) {
+          onSuccess();
+        }
+        return true;
+      } else {
+        setErrorMessage(message || "Identifiants incorrects");
+        return false;
       }
-      return success;
     } catch (error) {
       console.error("Unexpected error during login:", error);
+      setErrorMessage("Une erreur inattendue s'est produite");
       return false;
     } finally {
       setIsFormSubmitting(false);
@@ -44,6 +58,13 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
   return (
     <form onSubmit={handleSignIn}>
       <CardContent className="space-y-4">
+        {errorMessage && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{errorMessage}</AlertDescription>
+          </Alert>
+        )}
+        
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input

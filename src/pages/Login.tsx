@@ -9,6 +9,7 @@ import { cleanupAuthState } from "@/integrations/supabase/client";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { AuthLoadingState } from "@/components/auth/AuthLoadingState";
+import { AdminDevTools } from "@/components/auth/AdminDevTools";
 
 const Login = () => {
   const location = useLocation();
@@ -83,6 +84,9 @@ const Login = () => {
           
           <TabsContent value="login">
             <LoginForm onSuccess={handleLoginSuccess} />
+            <div className="px-6 pb-4">
+              <AdminDevTools />
+            </div>
           </TabsContent>
           
           <TabsContent value="register">
