@@ -41,6 +41,39 @@ export type Database = {
           },
         ]
       }
+      loisirs: {
+        Row: {
+          current_participants: number
+          date: string
+          description: string
+          id: number
+          image: string
+          location: string
+          max_participants: number
+          title: string
+        }
+        Insert: {
+          current_participants?: number
+          date: string
+          description: string
+          id?: number
+          image: string
+          location: string
+          max_participants: number
+          title: string
+        }
+        Update: {
+          current_participants?: number
+          date?: string
+          description?: string
+          id?: number
+          image?: string
+          location?: string
+          max_participants?: number
+          title?: string
+        }
+        Relationships: []
+      }
       newsletter_subscriptions: {
         Row: {
           created_at: string
