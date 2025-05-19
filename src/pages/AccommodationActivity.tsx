@@ -1,8 +1,6 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accommodation } from "@/components/accommodation/AccommodationTypes";
@@ -62,51 +60,39 @@ const AccommodationActivity = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="bg-white shadow-sm py-4">
-        <div className="container mx-auto px-4">
-          <img 
-            src="/lovable-uploads/ee9cef8d-d74a-4118-94e3-80f17f1e3fc2.png" 
-            alt="Club Créole Logo" 
-            className="h-12 w-auto"
-          />
-        </div>
+    <div className="container mx-auto px-4 py-8">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => navigate(-1)}
+        className="mb-4"
+      >
+        <ArrowLeft className="h-6 w-6" />
+      </Button>
+
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-creole-blue">Hébergements en Guadeloupe</h1>
+        <p className="text-gray-600 mt-2">
+          Découvrez notre sélection d'hébergements pour un séjour inoubliable. Villas, hôtels, bungalows et plus encore!
+        </p>
       </div>
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate(-1)}
-          className="mb-4"
-        >
-          <ArrowLeft className="h-6 w-6" />
-        </Button>
 
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-creole-blue">Hébergements en Guadeloupe</h1>
-          <p className="text-gray-600 mt-2">
-            Découvrez notre sélection d'hébergements pour un séjour inoubliable. Villas, hôtels, bungalows et plus encore!
-          </p>
-        </div>
+      <AccommodationSearch
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        priceFilter={priceFilter}
+        setPriceFilter={setPriceFilter}
+      />
 
-        <AccommodationSearch
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          priceFilter={priceFilter}
-          setPriceFilter={setPriceFilter}
-        />
+      {filteredAccommodations.length > 0 ? (
+        <AccommodationGrid accommodations={filteredAccommodations} />
+      ) : (
+        <AccommodationEmptyState />
+      )}
 
-        {filteredAccommodations.length > 0 ? (
-          <AccommodationGrid accommodations={filteredAccommodations} />
-        ) : (
-          <AccommodationEmptyState />
-        )}
+      <MembershipCard />
 
-        <MembershipCard />
-
-        <AccommodationAdvantages />
-      </main>
-      <Footer />
+      <AccommodationAdvantages />
     </div>
   );
 };
