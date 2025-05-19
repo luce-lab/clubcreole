@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
@@ -40,13 +41,22 @@ const AccommodationActivity = () => {
         if (error) throw error;
 
         // Transformer les données JSON de la base
-        const formattedData = data.map(item => ({
-          ...item,
-          gallery_images: item.gallery_images as string[],
-          features: item.features as string[],
-          amenities: item.amenities as Amenity[],
-          rules: item.rules as string[]
-        }));
+        const formattedData = data.map(item => {
+          // Vérifier et convertir explicitement le champ amenities en utilisant une assertion de type
+          const amenitiesArray = item.amenities as any[];
+          const typedAmenities: Amenity[] = amenitiesArray.map((amenity: any) => ({
+            name: amenity.name || "",
+            available: amenity.available || false
+          }));
+          
+          return {
+            ...item,
+            gallery_images: item.gallery_images as string[],
+            features: item.features as string[],
+            amenities: typedAmenities,
+            rules: item.rules as string[]
+          };
+        });
         
         setAccommodations(formattedData);
       } catch (err) {

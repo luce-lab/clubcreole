@@ -10,7 +10,7 @@ import { AccommodationAmenities } from "@/components/accommodation/Accommodation
 import { AccommodationRules } from "@/components/accommodation/AccommodationRules";
 import { AccommodationFAQ } from "@/components/accommodation/AccommodationFAQ";
 import { ReservationCard } from "@/components/accommodation/ReservationCard";
-import { Accommodation } from "@/components/accommodation/AccommodationTypes";
+import { Accommodation, Amenity } from "@/components/accommodation/AccommodationTypes";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 
@@ -36,13 +36,19 @@ const AccommodationDetail = () => {
         
         if (error) throw error;
         
-        // Transformer les données JSON de la base
+        // Transformer les données JSON de la base avec un typage explicite
+        const amenitiesArray = data.amenities as any[];
+        const typedAmenities: Amenity[] = amenitiesArray.map((amenity: any) => ({
+          name: amenity.name || "",
+          available: amenity.available || false
+        }));
+
         const formattedData = {
           ...data,
           gallery_images: data.gallery_images as string[],
           features: data.features as string[],
-          amenities: data.amenities as any[],
-          rules: data.rules as string[],
+          amenities: typedAmenities,
+          rules: data.rules as string[]
         };
         
         setAccommodation(formattedData);
