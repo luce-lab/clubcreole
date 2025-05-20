@@ -117,6 +117,55 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const handleCreateAdminUser = async (email: string, password: string, name?: string) => {
+    setIsLoading(true);
+    try {
+      // S'inscrire normalement
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name,
+            role: 'admin'
+          }
+        }
+      });
+      
+      if (error) throw error;
+      
+      if (data.user) {
+        // Mettre à jour le rôle dans le profil
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ role: 'admin', first_name: name })
+          .eq('id', data.user.id);
+          
+        if (profileError) {
+          console.error('Error updating profile:', profileError);
+          setIsLoading(false);
+          return { 
+            success: false, 
+            message: 'Erreur lors de la mise à jour du rôle administrateur' 
+          };
+        }
+      
+        setIsLoading(false);
+        return { success: true, message: 'Utilisateur administrateur créé avec succès' };
+      } else {
+        setIsLoading(false);
+        return { success: false, message: 'Erreur lors de la création de l\'utilisateur' };
+      }
+    } catch (error: any) {
+      console.error('Create admin error:', error);
+      setIsLoading(false);
+      return { 
+        success: false, 
+        message: error.message || 'Erreur lors de la création de l\'administrateur' 
+      };
+    }
+  };
+
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -124,7 +173,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isLoading, 
       signIn: handleSignIn, 
       signOut: handleSignOut, 
-      signUp: handleSignUp 
+      signUp: handleSignUp,
+      createAdminUser: handleCreateAdminUser
     }}>
       {children}
     </AuthContext.Provider>

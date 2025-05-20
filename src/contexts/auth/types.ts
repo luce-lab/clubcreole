@@ -15,4 +15,5 @@ export interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ success: boolean, message: string }>;
   signOut: () => Promise<void>;
   signUp: (email: string, password: string) => Promise<{ success: boolean, message: string }>;
+  createAdminUser: (email: string, password: string, name?: string) => Promise<{ success: boolean, message: string }>;
 }
