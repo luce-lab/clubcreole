@@ -98,32 +98,35 @@ export type Database = {
       loisirs: {
         Row: {
           current_participants: number
-          date: string
           description: string
+          end_date: string
           id: number
           image: string
           location: string
           max_participants: number
+          start_date: string
           title: string
         }
         Insert: {
           current_participants?: number
-          date: string
           description: string
+          end_date?: string
           id?: number
           image: string
           location: string
           max_participants: number
+          start_date: string
           title: string
         }
         Update: {
           current_participants?: number
-          date?: string
           description?: string
+          end_date?: string
           id?: number
           image?: string
           location?: string
           max_participants?: number
+          start_date?: string
           title?: string
         }
         Relationships: []

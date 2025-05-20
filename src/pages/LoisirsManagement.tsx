@@ -28,7 +28,7 @@ const LoisirsManagement = () => {
         const { data, error } = await supabase
           .from('loisirs')
           .select('*')
-          .order('date', { ascending: true });
+          .order('start_date', { ascending: true });
         
         if (error) {
           throw error;

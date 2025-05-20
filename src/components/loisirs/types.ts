@@ -4,7 +4,8 @@ export interface Loisir {
   title: string;
   description: string;
   location: string;
-  date: string;
+  start_date: string;
+  end_date: string;
   max_participants: number;
   current_participants: number;
   image: string;

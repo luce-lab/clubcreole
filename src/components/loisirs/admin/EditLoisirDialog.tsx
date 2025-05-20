@@ -29,20 +29,29 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
   const [title, setTitle] = useState(loisir.title);
   const [description, setDescription] = useState(loisir.description);
   const [location, setLocation] = useState(loisir.location);
-  const [date, setDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [image, setImage] = useState(loisir.image);
   const [maxParticipants, setMaxParticipants] = useState(loisir.max_participants);
   const [currentParticipants, setCurrentParticipants] = useState(loisir.current_participants);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    // Format date for input when loisir changes
+    // Format dates for input when loisir changes
     try {
-      const dateObj = new Date(loisir.date);
-      const formattedDate = dateObj.toISOString().split('T')[0]; // Format as YYYY-MM-DD
-      setDate(formattedDate);
+      // Handle start date
+      const startDateObj = new Date(loisir.start_date);
+      const formattedStartDate = startDateObj.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+      setStartDate(formattedStartDate);
+      
+      // Handle end date
+      const endDateObj = new Date(loisir.end_date);
+      const formattedEndDate = endDateObj.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+      setEndDate(formattedEndDate);
     } catch (error) {
-      setDate(loisir.date);
+      // Fallback if date parsing fails
+      setStartDate(loisir.start_date);
+      setEndDate(loisir.end_date);
     }
 
     setTitle(loisir.title);
@@ -55,6 +64,17 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate that end date is not before start date
+    if (new Date(endDate) < new Date(startDate)) {
+      toast({
+        variant: "destructive",
+        title: "Erreur de date",
+        description: "La date de fin ne peut pas être antérieure à la date de début",
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
@@ -62,7 +82,8 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
         title,
         description,
         location,
-        date,
+        start_date: startDate,
+        end_date: endDate,
         image,
         max_participants: maxParticipants,
         current_participants: currentParticipants,
@@ -151,14 +172,28 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
             </div>
 
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-date" className="text-right">
-                Date
+              <Label htmlFor="edit-startDate" className="text-right">
+                Date de début
               </Label>
               <Input
-                id="edit-date"
+                id="edit-startDate"
                 type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="col-span-3"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="edit-endDate" className="text-right">
+                Date de fin
+              </Label>
+              <Input
+                id="edit-endDate"
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
                 className="col-span-3"
                 required
               />

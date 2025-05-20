@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { CheckCircle2, Clock, MapPin, Users, Film, Martini, Map } from "lucide-react";
+import { CheckCircle2, Clock, MapPin, Users, Film, Martini, Map, Calendar } from "lucide-react";
 import LoisirsRegistrationForm from "./LoisirsRegistrationForm";
 
 interface Loisir {
@@ -11,7 +11,8 @@ interface Loisir {
   title: string;
   description: string;
   location: string;
-  date: string;
+  start_date: string;
+  end_date: string;
   max_participants: number;
   current_participants: number;
   image: string;
@@ -31,6 +32,23 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
     if (title.includes("Balade") || title.includes("Randonnée") || title.includes("forêt")) return <Map className="h-4 w-4 text-creole-blue" />;
     return <CheckCircle2 className="h-4 w-4 text-creole-blue" />;
   };
+
+  // Format dates for display
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('fr-FR', { 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric' 
+      });
+    } catch (e) {
+      return dateString;
+    }
+  };
+
+  // Check if the dates are different
+  const hasDifferentDates = loisir.start_date !== loisir.end_date;
 
   return (
     <Card key={loisir.id} className="overflow-hidden flex flex-col h-full">
@@ -55,8 +73,13 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
             <span className="text-sm">{loisir.location}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-creole-blue" />
-            <span className="text-sm">{loisir.date}</span>
+            <Calendar className="h-4 w-4 text-creole-blue" />
+            <span className="text-sm">
+              {hasDifferentDates 
+                ? `Du ${formatDate(loisir.start_date)} au ${formatDate(loisir.end_date)}`
+                : `Le ${formatDate(loisir.start_date)}`
+              }
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-creole-blue" />

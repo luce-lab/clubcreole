@@ -28,7 +28,8 @@ export const CreateLoisirDialog = ({ open, onOpenChange, onSuccess }: CreateLois
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
-  const [date, setDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [image, setImage] = useState("https://source.unsplash.com/random/300x200/?activity");
   const [maxParticipants, setMaxParticipants] = useState(10);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,13 +38,25 @@ export const CreateLoisirDialog = ({ open, onOpenChange, onSuccess }: CreateLois
     setTitle("");
     setDescription("");
     setLocation("");
-    setDate("");
+    setStartDate("");
+    setEndDate("");
     setImage("https://source.unsplash.com/random/300x200/?activity");
     setMaxParticipants(10);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate that end date is not before start date
+    if (new Date(endDate) < new Date(startDate)) {
+      toast({
+        variant: "destructive",
+        title: "Erreur de date",
+        description: "La date de fin ne peut pas être antérieure à la date de début",
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
@@ -51,7 +64,8 @@ export const CreateLoisirDialog = ({ open, onOpenChange, onSuccess }: CreateLois
         title,
         description,
         location,
-        date,
+        start_date: startDate,
+        end_date: endDate,
         image,
         max_participants: maxParticipants,
         current_participants: 0,
@@ -143,14 +157,28 @@ export const CreateLoisirDialog = ({ open, onOpenChange, onSuccess }: CreateLois
             </div>
 
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="date" className="text-right">
-                Date
+              <Label htmlFor="startDate" className="text-right">
+                Date de début
               </Label>
               <Input
-                id="date"
+                id="startDate"
                 type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="col-span-3"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="endDate" className="text-right">
+                Date de fin
+              </Label>
+              <Input
+                id="endDate"
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
                 className="col-span-3"
                 required
               />
