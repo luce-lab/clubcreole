@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loisir } from "@/components/loisirs/types";
 
@@ -89,22 +89,25 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
         current_participants: currentParticipants,
       };
 
+      // Correction: utilisation de .match au lieu de .single()
       const { data, error } = await supabase
         .from('loisirs')
         .update(updatedLoisir)
         .eq('id', loisir.id)
-        .select()
-        .single();
+        .select();
 
       if (error) throw error;
+
+      // Si nous avons reçu des données, nous prenons le premier élément
+      const updatedData = data && data.length > 0 ? data[0] : null;
 
       toast({
         title: "Activité modifiée",
         description: "L'activité de loisir a été mise à jour avec succès",
       });
 
-      if (onSuccess && data) {
-        onSuccess(data);
+      if (onSuccess && updatedData) {
+        onSuccess(updatedData);
       }
 
       onOpenChange(false);
