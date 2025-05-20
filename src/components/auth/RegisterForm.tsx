@@ -45,7 +45,9 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
     setIsFormSubmitting(true);
     
     try {
+      console.log("Tentative d'inscription avec email:", email);
       const { success, message } = await signUp(email, password);
+      console.log("Résultat de l'inscription:", { success, message });
       
       if (!success) {
         toast({
