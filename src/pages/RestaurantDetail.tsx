@@ -34,6 +34,8 @@ const RestaurantDetail = () => {
           throw new Error("Invalid restaurant ID");
         }
 
+        console.log("Fetching restaurant with ID:", numericId);
+
         const { data, error } = await supabase
           .from('restaurants')
           .select('*')
@@ -41,13 +43,19 @@ const RestaurantDetail = () => {
           .single();
 
         if (error) {
+          console.error('Database error:', error);
           throw error;
         }
 
+        if (!data) {
+          throw new Error("Restaurant not found");
+        }
+
+        console.log("Restaurant data fetched:", data);
         setRestaurant(data);
       } catch (err) {
-        console.error('Erreur lors du chargement du restaurant:', err);
-        setError("Impossible de charger les détails du restaurant. Veuillez réessayer plus tard.");
+        console.error('Error loading restaurant:', err);
+        setError(err instanceof Error ? err.message : "Impossible de charger les détails du restaurant. Veuillez réessayer plus tard.");
       } finally {
         setLoading(false);
       }
@@ -61,11 +69,11 @@ const RestaurantDetail = () => {
   }
 
   if (error || !restaurant) {
-    return <RestaurantDetailError error={error || ""} />;
+    return <RestaurantDetailError error={error || "Restaurant non trouvé"} />;
   }
 
-  // Photos exemplaires du restaurant
-  const photos = [
+  // Add additional photos for the gallery
+  const galleryPhotos = [
     restaurant.image,
     "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
     "https://images.unsplash.com/photo-1592861956120-e524fc739696?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
@@ -77,7 +85,6 @@ const RestaurantDetail = () => {
       <RestaurantHeader />
       
       <div className="max-w-5xl mx-auto mt-8">
-        {/* En-tête du restaurant */}
         <RestaurantDetailHeader
           name={restaurant.name}
           type={restaurant.type}
@@ -86,18 +93,14 @@ const RestaurantDetail = () => {
           onShowReservationForm={() => setShowReservationForm(true)}
         />
 
-        {/* Grille principale */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Colonne principale - Photos et informations */}
           <div className="md:col-span-2 space-y-8">
-            {/* Galerie de photos */}
             <RestaurantGallery 
-              mainImage={photos[0]} 
-              photos={photos.slice(1)}
+              mainImage={galleryPhotos[0]} 
+              photos={galleryPhotos.slice(1)}
               restaurantName={restaurant.name}
             />
 
-            {/* Onglets d'information */}
             <RestaurantTabs 
               description={restaurant.description}
               type={restaurant.type}
@@ -105,7 +108,6 @@ const RestaurantDetail = () => {
             />
           </div>
 
-          {/* Colonne latérale - Formulaire de réservation */}
           <div className="md:col-span-1">
             <div className="sticky top-8">
               <RestaurantReservationForm 

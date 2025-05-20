@@ -8,6 +8,8 @@ interface RestaurantGalleryProps {
 }
 
 const RestaurantGallery = ({ mainImage, photos, restaurantName }: RestaurantGalleryProps) => {
+  console.log("Gallery images:", { mainImage, additionalPhotos: photos });
+  
   return (
     <div className="grid grid-cols-2 gap-4">
       <div className="col-span-2">
