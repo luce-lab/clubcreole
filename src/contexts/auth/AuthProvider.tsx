@@ -34,6 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setTimeout(async () => {
             try {
               const userWithRole = await fetchUserProfile(currentSession.user);
+              console.log('User profile retrieved:', userWithRole);
               setUser(userWithRole);
             } catch (err) {
               console.error('Error in profile fetch:', err);

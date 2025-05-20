@@ -30,6 +30,11 @@ const Dashboard = () => {
     navigate("/login");
   }
 
+  // Force reload function to refresh the page completely
+  const forceReload = () => {
+    window.location.reload();
+  };
+
   return (
     <DashboardLayout>
       {/* Diagnostic Alert - temporaire */}
@@ -54,9 +59,7 @@ const Dashboard = () => {
             <Button 
               variant="outline" 
               size="sm"
-              onClick={() => {
-                window.location.href = "/dashboard";
-              }}
+              onClick={forceReload}
               className="border-blue-500 text-blue-700 hover:bg-blue-100"
             >
               Actualiser la page
