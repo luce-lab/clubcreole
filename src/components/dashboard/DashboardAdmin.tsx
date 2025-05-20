@@ -16,7 +16,14 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, ShoppingBag, Activity, CreditCard, Calendar, Palmtree } from "lucide-react";
+import { 
+  Users, 
+  ShoppingBag, 
+  Activity, 
+  CreditCard, 
+  Calendar,
+  Palmtree
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UsersList } from "./UsersList";
 
@@ -41,6 +48,29 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
 
   return (
     <div className="space-y-6">
+      {/* Ajout d'une bannière très visible pour la gestion des loisirs */}
+      <div className="bg-gradient-to-r from-creole-green/20 to-creole-green/10 p-4 rounded-lg border border-creole-green/30 shadow-sm">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-creole-green rounded-full p-2">
+              <Palmtree className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-creole-green">Gestion des Loisirs</h2>
+              <p className="text-sm text-gray-600">Créez et gérez toutes vos activités de loisirs</p>
+            </div>
+          </div>
+          <Button 
+            onClick={() => navigate("/loisirs-management")} 
+            size="lg"
+            className="bg-creole-green hover:bg-creole-green/90 shadow-md"
+          >
+            <Palmtree className="mr-2 h-5 w-5" />
+            Accéder à la gestion des loisirs
+          </Button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">

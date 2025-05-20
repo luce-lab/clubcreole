@@ -62,9 +62,14 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ userRole }) => {
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Loisirs" onClick={() => navigate("/loisirs-management")} isActive={isActive("/loisirs-management")}>
-              <Palmtree className="h-5 w-5" />
-              <span>Gérer les loisirs</span>
+            <SidebarMenuButton 
+              tooltip="Loisirs" 
+              onClick={() => navigate("/loisirs-management")} 
+              isActive={isActive("/loisirs-management")}
+              className="bg-creole-green/10 hover:bg-creole-green/20 font-medium"
+            >
+              <Palmtree className="h-5 w-5 text-creole-green" />
+              <span className="font-semibold">Gérer les loisirs</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
