@@ -153,114 +153,114 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
         </Card>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 justify-between">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <div className="flex flex-col sm:flex-row gap-4 justify-between">
           <TabsList className="grid w-full md:w-auto grid-cols-2 md:grid-cols-3 h-auto">
             <TabsTrigger value="partners">Partenaires</TabsTrigger>
             <TabsTrigger value="users">Utilisateurs</TabsTrigger>
             <TabsTrigger value="consumption">Consommation</TabsTrigger>
           </TabsList>
-        </Tabs>
-      </div>
-        
-      <TabsContent value="partners" className="mt-4">
-        <Card>
-          <CardHeader className="flex justify-between">
-            <div>
-              <CardTitle>Derniers partenaires inscrits</CardTitle>
-            </div>
-            <Button onClick={() => navigate("/partners")} variant="outline" size="sm">
-              Voir tous les partenaires
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nom</TableHead>
-                  <TableHead>Service</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead>Date d'inscription</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium">Aqua Plongée</TableCell>
-                  <TableCell>Plongée</TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                      Actif
-                    </span>
-                  </TableCell>
-                  <TableCell>12/04/2025</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Jet Aventure</TableCell>
-                  <TableCell>Jet-Ski</TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                      Actif
-                    </span>
-                  </TableCell>
-                  <TableCell>10/04/2025</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Resto Creole</TableCell>
-                  <TableCell>Restauration</TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
-                      En attente
-                    </span>
-                  </TableCell>
-                  <TableCell>08/04/2025</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Hotel Karibea</TableCell>
-                  <TableCell>Hébergement</TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                      Actif
-                    </span>
-                  </TableCell>
-                  <TableCell>05/04/2025</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </TabsContent>
-      
-      <TabsContent value="users" className="mt-4">
-        <Card>
-          <CardHeader className="flex justify-between">
-            <div>
-              <CardTitle>Utilisateurs récents</CardTitle>
-            </div>
-            <Button onClick={() => navigate("/users")} variant="outline" size="sm">
-              Gérer tous les utilisateurs
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <UsersList onSelectUser={onSelectUser} />
-          </CardContent>
-        </Card>
-      </TabsContent>
-      
-      <TabsContent value="consumption" className="mt-4">
-        <div className="mb-4">
-          {selectedUserId && (
-            <button 
-              onClick={() => onSelectUser && onSelectUser(null)} 
-              className="text-blue-600 hover:underline flex items-center"
-            >
-              ← Retour à la liste des utilisateurs
-            </button>
-          )}
         </div>
-        <Suspense fallback={<div>Chargement...</div>}>
-          <UserConsumptionHistory userId={selectedUserId || undefined} />
-        </Suspense>
-      </TabsContent>
+          
+        <TabsContent value="partners" className="mt-4">
+          <Card>
+            <CardHeader className="flex justify-between">
+              <div>
+                <CardTitle>Derniers partenaires inscrits</CardTitle>
+              </div>
+              <Button onClick={() => navigate("/partners")} variant="outline" size="sm">
+                Voir tous les partenaires
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nom</TableHead>
+                    <TableHead>Service</TableHead>
+                    <TableHead>Statut</TableHead>
+                    <TableHead>Date d'inscription</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell className="font-medium">Aqua Plongée</TableCell>
+                    <TableCell>Plongée</TableCell>
+                    <TableCell>
+                      <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                        Actif
+                      </span>
+                    </TableCell>
+                    <TableCell>12/04/2025</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Jet Aventure</TableCell>
+                    <TableCell>Jet-Ski</TableCell>
+                    <TableCell>
+                      <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                        Actif
+                      </span>
+                    </TableCell>
+                    <TableCell>10/04/2025</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Resto Creole</TableCell>
+                    <TableCell>Restauration</TableCell>
+                    <TableCell>
+                      <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+                        En attente
+                      </span>
+                    </TableCell>
+                    <TableCell>08/04/2025</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Hotel Karibea</TableCell>
+                    <TableCell>Hébergement</TableCell>
+                    <TableCell>
+                      <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                        Actif
+                      </span>
+                    </TableCell>
+                    <TableCell>05/04/2025</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="users" className="mt-4">
+          <Card>
+            <CardHeader className="flex justify-between">
+              <div>
+                <CardTitle>Utilisateurs récents</CardTitle>
+              </div>
+              <Button onClick={() => navigate("/users")} variant="outline" size="sm">
+                Gérer tous les utilisateurs
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <UsersList onSelectUser={onSelectUser} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="consumption" className="mt-4">
+          <div className="mb-4">
+            {selectedUserId && (
+              <button 
+                onClick={() => onSelectUser && onSelectUser(null)} 
+                className="text-blue-600 hover:underline flex items-center"
+              >
+                ← Retour à la liste des utilisateurs
+              </button>
+            )}
+          </div>
+          <Suspense fallback={<div>Chargement...</div>}>
+            <UserConsumptionHistory userId={selectedUserId || undefined} />
+          </Suspense>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
