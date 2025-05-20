@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { 
   Table, 
@@ -49,6 +48,7 @@ export const UsersList = ({
       try {
         setIsLoading(true);
         const usersData = await fetchUsers();
+        // Les données retournées par fetchUsers() respectent maintenant le type UserSubscription[]
         setUsers(usersData);
         setError(null);
       } catch (err: any) {

@@ -57,7 +57,7 @@ export const createUser = async (userData: UserFormData) => {
   return authData.user;
 };
 
-// Nouvelle fonction pour récupérer la liste des utilisateurs
+// Amélioration de la fonction pour récupérer la liste des utilisateurs avec les types corrects
 export const fetchUsers = async () => {
   // Récupérer les profils des utilisateurs
   const { data: profiles, error: profilesError } = await supabase
@@ -86,17 +86,22 @@ export const fetchUsers = async () => {
     const lastActivity = new Date(profile.updated_at);
     const formattedLastActivity = lastActivity.toISOString().split('T')[0];
     
-    // Construction de l'objet utilisateur
+    // Déterminer le statut de l'abonnement (avec un type correct)
+    const subscriptionStatus = clientData ? "active" : "none";
+    
+    // Déterminer le type d'abonnement (avec un type correct)
+    const subscriptionType = clientData ? "basic" : "none";
+    
+    // Construction de l'objet utilisateur avec les types corrects
     return {
       id: profile.id,
       name: profile.first_name || profile.email?.split('@')[0] || 'Utilisateur',
       email: profile.email,
-      subscriptionStatus: clientData ? 'active' : 'none',
-      subscriptionType: clientData ? 'basic' : 'none',
+      subscriptionStatus: subscriptionStatus as "active" | "none" | "pending" | "expired",
+      subscriptionType: subscriptionType as "basic" | "premium" | "none",
       subscriptionEndDate: null,
       registeredDate: formattedCreatedAt,
       lastActivity: formattedLastActivity,
-      // Autres informations si nécessaire
     };
   }));
 
