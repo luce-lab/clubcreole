@@ -56,3 +56,49 @@ export const createUser = async (userData: UserFormData) => {
   
   return authData.user;
 };
+
+// Nouvelle fonction pour récupérer la liste des utilisateurs
+export const fetchUsers = async () => {
+  // Récupérer les profils des utilisateurs
+  const { data: profiles, error: profilesError } = await supabase
+    .from('profiles')
+    .select('*');
+
+  if (profilesError) {
+    console.error("Erreur lors de la récupération des profils:", profilesError);
+    throw profilesError;
+  }
+
+  // Pour chaque profil, récupérer des informations supplémentaires si nécessaire
+  const usersWithDetails = await Promise.all(profiles.map(async (profile) => {
+    // Récupérer les informations du client si elles existent
+    const { data: clientData } = await supabase
+      .from('clients')
+      .select('*')
+      .eq('id', profile.id)
+      .single();
+    
+    // Convertir les dates au format souhaité
+    const createdAt = new Date(profile.created_at);
+    const formattedCreatedAt = createdAt.toISOString().split('T')[0];
+    
+    // Par défaut, on utilise la dernière date de mise à jour comme dernière activité
+    const lastActivity = new Date(profile.updated_at);
+    const formattedLastActivity = lastActivity.toISOString().split('T')[0];
+    
+    // Construction de l'objet utilisateur
+    return {
+      id: profile.id,
+      name: profile.first_name || profile.email?.split('@')[0] || 'Utilisateur',
+      email: profile.email,
+      subscriptionStatus: clientData ? 'active' : 'none',
+      subscriptionType: clientData ? 'basic' : 'none',
+      subscriptionEndDate: null,
+      registeredDate: formattedCreatedAt,
+      lastActivity: formattedLastActivity,
+      // Autres informations si nécessaire
+    };
+  }));
+
+  return usersWithDetails;
+};

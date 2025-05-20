@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
@@ -24,6 +25,7 @@ const UsersManagement = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState<boolean>(false);
   const [isEditUserDialogOpen, setIsEditUserDialogOpen] = useState<boolean>(false);
+  const [refreshCounter, setRefreshCounter] = useState<number>(0);
   
   const handleSelectUser = (userId: string) => {
     setSelectedUserId(userId);
@@ -33,6 +35,11 @@ const UsersManagement = () => {
   const handleEditUser = (userId: string) => {
     setSelectedUserId(userId);
     setIsEditUserDialogOpen(true);
+  };
+
+  const handleUserAdded = () => {
+    // Incrémenter le compteur pour déclencher un rafraîchissement
+    setRefreshCounter(prev => prev + 1);
   };
 
   return (
@@ -88,6 +95,7 @@ const UsersManagement = () => {
                   onSelectUser={handleSelectUser} 
                   onEditUser={handleEditUser}
                   searchQuery={searchQuery}
+                  refreshTrigger={refreshCounter}
                 />
               </TabsContent>
               
@@ -111,7 +119,8 @@ const UsersManagement = () => {
         
         <AddUserDialog 
           open={isAddUserDialogOpen} 
-          onClose={() => setIsAddUserDialogOpen(false)} 
+          onClose={() => setIsAddUserDialogOpen(false)}
+          onSuccess={handleUserAdded}
         />
         
         {selectedUserId && (

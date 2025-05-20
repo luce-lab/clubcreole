@@ -8,16 +8,11 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Edit, History, Calendar } from "lucide-react";
+import { Edit, History } from "lucide-react";
+import { fetchUsers } from "./users/userUtils";
 
 // Types pour les utilisateurs et leurs abonnements
 interface UserSubscription {
@@ -35,62 +30,42 @@ interface UsersListProps {
   onSelectUser?: (userId: string) => void;
   onEditUser?: (userId: string) => void;
   searchQuery?: string;
+  refreshTrigger?: number; // Ajout d'un déclencheur de rafraîchissement
 }
 
-export const UsersList = ({ onSelectUser, onEditUser, searchQuery = "" }: UsersListProps) => {
+export const UsersList = ({ 
+  onSelectUser, 
+  onEditUser, 
+  searchQuery = "",
+  refreshTrigger = 0
+}: UsersListProps) => {
   const { toast } = useToast();
-  const [users, setUsers] = useState<UserSubscription[]>([
-    {
-      id: "1",
-      name: "Jean Dupont",
-      email: "jean.dupont@example.com",
-      subscriptionStatus: "active",
-      subscriptionType: "premium",
-      subscriptionEndDate: "2025-07-15",
-      registeredDate: "2024-01-10",
-      lastActivity: "2025-05-12",
-    },
-    {
-      id: "2",
-      name: "Marie Lambert",
-      email: "marie.lambert@example.com",
-      subscriptionStatus: "active",
-      subscriptionType: "basic",
-      subscriptionEndDate: "2025-06-22",
-      registeredDate: "2024-02-05",
-      lastActivity: "2025-05-17",
-    },
-    {
-      id: "3",
-      name: "Thomas Martin",
-      email: "thomas.martin@example.com",
-      subscriptionStatus: "expired",
-      subscriptionType: "basic",
-      subscriptionEndDate: "2025-04-30",
-      registeredDate: "2024-01-25",
-      lastActivity: "2025-04-28",
-    },
-    {
-      id: "4",
-      name: "Sophie Dubois",
-      email: "sophie.dubois@example.com",
-      subscriptionStatus: "pending",
-      subscriptionType: "premium",
-      subscriptionEndDate: null,
-      registeredDate: "2024-05-01",
-      lastActivity: "2025-05-16",
-    },
-    {
-      id: "5",
-      name: "Michel Blanc",
-      email: "michel.blanc@example.com",
-      subscriptionStatus: "none",
-      subscriptionType: "none",
-      subscriptionEndDate: null,
-      registeredDate: "2024-03-15",
-      lastActivity: "2025-04-10",
-    },
-  ]);
+  const [users, setUsers] = useState<UserSubscription[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        setIsLoading(true);
+        const usersData = await fetchUsers();
+        setUsers(usersData);
+        setError(null);
+      } catch (err: any) {
+        console.error("Erreur lors du chargement des utilisateurs:", err);
+        setError("Impossible de charger les utilisateurs");
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: err.message || "Impossible de charger les utilisateurs",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadUsers();
+  }, [toast, refreshTrigger]); // Rafraîchir lorsque refreshTrigger change
 
   // Filtrer les utilisateurs en fonction de la recherche
   const filteredUsers = searchQuery 
@@ -151,6 +126,29 @@ export const UsersList = ({ onSelectUser, onEditUser, searchQuery = "" }: UsersL
         );
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="w-full text-center py-8">
+        <p className="text-gray-500">Chargement des utilisateurs...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full text-center py-8">
+        <p className="text-red-500">{error}</p>
+        <Button 
+          variant="outline" 
+          className="mt-4"
+          onClick={() => setError(null)}
+        >
+          Réessayer
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
