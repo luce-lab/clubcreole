@@ -50,11 +50,19 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
   // Check if the dates are different
   const hasDifferentDates = loisir.start_date !== loisir.end_date;
 
+  // Remplacer l'image pour "Sortie en boite - La Creolita"
+  const getImageForActivity = (loisir: Loisir) => {
+    if (loisir.title.includes("Sortie en boite") && loisir.title.includes("La Creolita")) {
+      return "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80";
+    }
+    return loisir.image;
+  };
+
   return (
     <Card key={loisir.id} className="overflow-hidden flex flex-col h-full">
       <div className="h-48 overflow-hidden">
         <img 
-          src={loisir.image} 
+          src={getImageForActivity(loisir)} 
           alt={loisir.title} 
           className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
         />
