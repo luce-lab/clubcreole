@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { 
   Table, 
@@ -54,11 +55,12 @@ export const UsersList = ({
         setError(null);
       } catch (err: any) {
         console.error("Erreur lors du chargement des utilisateurs:", err);
-        setError("Impossible de charger les utilisateurs: " + (err.message || "Erreur inconnue"));
+        const errorMessage = err.message || "Erreur inconnue";
+        setError("Impossible de charger les utilisateurs: " + errorMessage);
         toast({
           variant: "destructive",
           title: "Erreur",
-          description: err.message || "Impossible de charger les utilisateurs",
+          description: errorMessage,
         });
         // Réinitialiser la liste d'utilisateurs en cas d'erreur
         setUsers([]);

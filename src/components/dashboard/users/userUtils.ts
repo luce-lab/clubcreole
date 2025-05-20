@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { UserFormData } from "./UserForm";
 
@@ -62,9 +63,10 @@ export const fetchUsers = async () => {
     console.log("Tentative de récupération des utilisateurs...");
     
     // Récupérer les profils des utilisateurs (qui contiennent les informations de base)
+    // En utilisant une requête plus simple sans tenter d'accéder à l'API admin
     const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
-      .select('*');
+      .select('id, email, first_name, last_name, created_at, updated_at, role');
     
     if (profilesError) {
       console.error("Erreur lors de la récupération des profils:", profilesError);
@@ -76,7 +78,7 @@ export const fetchUsers = async () => {
       return [];
     }
     
-    console.log(`${profiles.length} utilisateurs trouvés`);
+    console.log(`${profiles.length} utilisateurs trouvés:`, profiles);
     
     // Transformer les données des profils au format requis pour UserSubscription[]
     const formattedUsers = profiles.map(profile => {
@@ -88,7 +90,6 @@ export const fetchUsers = async () => {
       const lastActivity = new Date(profile.updated_at || profile.created_at);
       const formattedLastActivity = lastActivity.toISOString().split('T')[0];
       
-      // Construire l'objet utilisateur avec les types corrects
       return {
         id: profile.id,
         name: profile.first_name || profile.email?.split('@')[0] || 'Utilisateur',
