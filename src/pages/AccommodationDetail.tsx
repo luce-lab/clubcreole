@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { AccommodationHeader } from "@/components/accommodation/AccommodationHeader";
 import { AccommodationGallery } from "@/components/accommodation/AccommodationGallery";
@@ -70,7 +69,6 @@ const AccommodationDetail = () => {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
         <main className="flex-grow container mx-auto px-4 py-12">
           <div className="flex flex-col items-center justify-center h-full">
             <p className="text-xl text-red-500 mb-4">{error}</p>
@@ -86,7 +84,6 @@ const AccommodationDetail = () => {
   if (loading || !accommodation) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
         <main className="flex-grow container mx-auto px-4 py-12">
           <div className="flex flex-col items-center justify-center h-full">
             <Loader2 className="h-12 w-12 text-creole-blue animate-spin mb-4" />
@@ -100,7 +97,6 @@ const AccommodationDetail = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
       <main className="flex-grow container mx-auto px-4 py-8">
         <AccommodationHeader 
           name={accommodation.name}
