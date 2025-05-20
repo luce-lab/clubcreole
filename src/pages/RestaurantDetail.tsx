@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,10 +25,18 @@ const RestaurantDetail = () => {
           throw new Error("Restaurant ID is missing");
         }
 
+        // Convert string ID to number before using it in the query
+        const numericId = parseInt(id, 10);
+        
+        // Check if conversion resulted in a valid number
+        if (isNaN(numericId)) {
+          throw new Error("Invalid restaurant ID");
+        }
+
         const { data, error } = await supabase
           .from('restaurants')
           .select('*')
-          .eq('id', id)
+          .eq('id', numericId)
           .single();
 
         if (error) {
