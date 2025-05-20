@@ -16,7 +16,8 @@ import {
   LogOut, 
   Home, 
   User,
-  CalendarClock
+  CalendarClock,
+  Palmtree
 } from "lucide-react";
 
 interface DashboardSidebarProps {
@@ -54,6 +55,18 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ userRole }) => {
       {/* Menu pour les administrateurs */}
       {userRole === "admin" && (
         <>
+          <SidebarMenuItem>
+            <SidebarMenuButton tooltip="Dashboard" onClick={() => navigate("/dashboard")} isActive={isActive("/dashboard")}>
+              <LineChart className="h-5 w-5" />
+              <span>Dashboard</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton tooltip="Loisirs" onClick={() => navigate("/loisirs-management")} isActive={isActive("/loisirs-management")}>
+              <Palmtree className="h-5 w-5" />
+              <span>Gérer les loisirs</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton tooltip="Utilisateurs" onClick={() => navigate("/users")} isActive={isActive("/users")}>
               <Users className="h-5 w-5" />

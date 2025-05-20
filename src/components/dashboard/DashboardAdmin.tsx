@@ -1,3 +1,4 @@
+
 import { useState, useEffect, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -15,10 +16,9 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, ShoppingBag, Activity, CreditCard, Calendar } from "lucide-react";
+import { Users, ShoppingBag, Activity, CreditCard, Calendar, Palmtree } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UsersList } from "./UsersList";
-import { ConsumptionHistoryProps } from "./consumption/types";
 
 interface DashboardAdminProps {
   selectedUserId?: string | null;
@@ -84,6 +84,45 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
         </Card>
       </div>
 
+      {/* Section des liens de gestion rapides */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 hover:shadow-md transition-all">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg font-medium text-blue-800">Gestion des Loisirs</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-4 text-blue-700">
+              Créez, modifiez ou supprimez des activités de loisirs et gérez les inscriptions
+            </p>
+            <Button 
+              onClick={() => navigate("/loisirs-management")} 
+              className="bg-creole-green hover:bg-creole-green/90"
+            >
+              <Palmtree className="mr-2 h-4 w-4" />
+              Accéder à la gestion des loisirs
+            </Button>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200 hover:shadow-md transition-all">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg font-medium text-purple-800">Gestion des Utilisateurs</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-4 text-purple-700">
+              Consultez les informations des utilisateurs, modifiez leurs profils et leurs rôles
+            </p>
+            <Button 
+              onClick={() => navigate("/users")} 
+              className="bg-purple-600 hover:bg-purple-700"
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Gérer les utilisateurs
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="flex flex-col sm:flex-row gap-4 justify-between">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full md:w-auto grid-cols-2 md:grid-cols-3 h-auto">
@@ -92,17 +131,6 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
             <TabsTrigger value="consumption">Consommation</TabsTrigger>
           </TabsList>
         </Tabs>
-        
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate("/loisirs-management")}
-            className="flex items-center"
-          >
-            <Calendar className="mr-2 h-4 w-4" />
-            Gérer les loisirs
-          </Button>
-        </div>
       </div>
         
       <TabsContent value="partners" className="mt-4">
