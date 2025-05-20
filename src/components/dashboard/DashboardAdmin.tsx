@@ -161,7 +161,7 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
             <TabsTrigger value="consumption">Consommation</TabsTrigger>
           </TabsList>
         </div>
-          
+        
         <TabsContent value="partners" className="mt-4">
           <Card>
             <CardHeader className="flex justify-between">
