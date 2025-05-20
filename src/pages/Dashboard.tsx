@@ -7,7 +7,7 @@ import { DashboardAdmin } from "@/components/dashboard/DashboardAdmin";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { InfoCircledIcon } from "@radix-ui/react-icons";
+import { Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
@@ -33,7 +33,7 @@ const Dashboard = () => {
     <DashboardLayout>
       {userRole !== "admin" && (
         <Alert className="mb-6 border-amber-500 bg-amber-50">
-          <InfoCircledIcon className="h-4 w-4 text-amber-600" />
+          <Info className="h-4 w-4 text-amber-600" />
           <AlertTitle className="text-amber-800">Accès limité</AlertTitle>
           <AlertDescription className="text-amber-700">
             <p>Vous êtes actuellement connecté en tant que <strong className="font-semibold">{userRole === "client" ? "client" : userRole === "partner" ? "partenaire" : "utilisateur"}</strong>. La gestion des loisirs est réservée aux administrateurs.</p>
