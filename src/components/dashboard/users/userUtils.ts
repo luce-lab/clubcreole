@@ -57,13 +57,26 @@ export const createUser = async (userData: UserFormData) => {
   return authData.user;
 };
 
-// Mise à jour de la fonction pour récupérer la liste des utilisateurs sans utiliser l'API admin
+// Mise à jour de la fonction pour récupérer la liste des utilisateurs de manière fiable
 export const fetchUsers = async () => {
   try {
     console.log("Tentative de récupération des utilisateurs...");
     
-    // Récupérer les profils des utilisateurs (qui contiennent les informations de base)
-    // En utilisant une requête plus simple sans tenter d'accéder à l'API admin
+    // Utiliser une requête RPC pour éviter les problèmes de récursivité RLS
+    // Cette approche contourne les problèmes de sécurité en utilisant une fonction déjà définie dans la base de données
+    const { data: currentUserRole, error: roleError } = await supabase
+      .rpc('get_current_user_role');
+    
+    if (roleError) {
+      console.error("Erreur lors de la récupération du rôle:", roleError);
+      throw new Error(`Erreur d'autorisation: vous n'avez pas les droits nécessaires pour afficher les utilisateurs`);
+    }
+    
+    if (currentUserRole !== 'admin') {
+      throw new Error("Accès non autorisé: seuls les administrateurs peuvent voir tous les utilisateurs");
+    }
+    
+    // Une fois confirmé que l'utilisateur est admin, récupérer les profils
     const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
       .select('id, email, first_name, last_name, created_at, updated_at, role');
