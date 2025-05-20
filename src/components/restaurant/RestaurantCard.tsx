@@ -1,6 +1,7 @@
 
 import { Coffee, MapPin, Pizza, Salad, Star, Tag, Wine } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +14,7 @@ interface RestaurantCardProps {
 
 const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const navigate = useNavigate();
   
   // Mapping des icônes en fonction du type stocké dans la base de données
   const getIconComponent = (iconName: string) => {
@@ -23,6 +25,10 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
       case "Coffee": return <Coffee className="w-4 h-4 mr-1" />;
       default: return <Salad className="w-4 h-4 mr-1" />;
     }
+  };
+
+  const handleViewDetails = () => {
+    navigate(`/restaurant/${restaurant.id}`);
   };
 
   return (
@@ -67,45 +73,11 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
           <DialogTrigger asChild>
             <Button 
               className="w-full bg-creole-green hover:bg-creole-green/90"
+              onClick={handleViewDetails}
             >
               Voir les détails
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>{restaurant.name}</DialogTitle>
-              <DialogDescription className="flex items-center">
-                <MapPin className="h-4 w-4 mr-1" /> {restaurant.location}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <img 
-                src={restaurant.image} 
-                alt={restaurant.name} 
-                className="w-full h-56 object-cover rounded-md"
-              />
-              <p className="text-gray-700">{restaurant.description}</p>
-              <div className="bg-green-50 p-4 rounded-md border border-green-200">
-                <h3 className="font-semibold text-creole-green flex items-center">
-                  <Tag className="h-4 w-4 mr-2" />
-                  Offre spéciale Club Créole
-                </h3>
-                <p className="mt-1 text-gray-700">{restaurant.offer}</p>
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center">
-                  <span className="text-gray-700 mr-2">Note:</span>
-                  <div className="flex items-center text-yellow-500">
-                    <Star className="fill-yellow-500 h-5 w-5" />
-                    <span className="ml-1 text-gray-700">{restaurant.rating}/5</span>
-                  </div>
-                </div>
-                <Button className="bg-creole-green hover:bg-creole-green/90">
-                  Réserver une table
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
         </Dialog>
       </CardFooter>
     </Card>
