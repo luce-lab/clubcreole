@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { UserFormData } from "./UserForm";
 
@@ -59,51 +58,50 @@ export const createUser = async (userData: UserFormData) => {
 
 // Amélioration de la fonction pour récupérer la liste des utilisateurs avec les types corrects
 export const fetchUsers = async () => {
-  // Récupérer les profils des utilisateurs
-  const { data: profiles, error: profilesError } = await supabase
-    .from('profiles')
-    .select('*');
-
-  if (profilesError) {
-    console.error("Erreur lors de la récupération des profils:", profilesError);
-    throw profilesError;
+  try {
+    console.log("Tentative de récupération des utilisateurs...");
+    
+    // Récupérer directement les utilisateurs depuis l'API auth (sans utiliser profiles)
+    const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+    
+    if (authError) {
+      console.error("Erreur lors de la récupération des utilisateurs:", authError);
+      throw authError;
+    }
+    
+    if (!authUsers || !authUsers.users) {
+      console.log("Aucun utilisateur trouvé");
+      return [];
+    }
+    
+    console.log(`${authUsers.users.length} utilisateurs trouvés`);
+    
+    // Transformer les données des utilisateurs au format requis
+    const formattedUsers = authUsers.users.map(user => {
+      // Convertir les dates au format souhaité
+      const createdAt = new Date(user.created_at);
+      const formattedCreatedAt = createdAt.toISOString().split('T')[0];
+      
+      // Utiliser la dernière date de mise à jour comme dernière activité
+      const lastActivity = new Date(user.updated_at || user.created_at);
+      const formattedLastActivity = lastActivity.toISOString().split('T')[0];
+      
+      // Construire l'objet utilisateur avec les types corrects
+      return {
+        id: user.id,
+        name: user.user_metadata?.name || user.email?.split('@')[0] || 'Utilisateur',
+        email: user.email || '',
+        subscriptionStatus: "none" as "active" | "none" | "pending" | "expired",
+        subscriptionType: "none" as "basic" | "premium" | "none",
+        subscriptionEndDate: null,
+        registeredDate: formattedCreatedAt,
+        lastActivity: formattedLastActivity,
+      };
+    });
+    
+    return formattedUsers;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des utilisateurs:", error);
+    throw error;
   }
-
-  // Pour chaque profil, récupérer des informations supplémentaires si nécessaire
-  const usersWithDetails = await Promise.all(profiles.map(async (profile) => {
-    // Récupérer les informations du client si elles existent
-    const { data: clientData } = await supabase
-      .from('clients')
-      .select('*')
-      .eq('id', profile.id)
-      .single();
-    
-    // Convertir les dates au format souhaité
-    const createdAt = new Date(profile.created_at);
-    const formattedCreatedAt = createdAt.toISOString().split('T')[0];
-    
-    // Par défaut, on utilise la dernière date de mise à jour comme dernière activité
-    const lastActivity = new Date(profile.updated_at);
-    const formattedLastActivity = lastActivity.toISOString().split('T')[0];
-    
-    // Déterminer le statut de l'abonnement (avec un type correct)
-    const subscriptionStatus = clientData ? "active" : "none";
-    
-    // Déterminer le type d'abonnement (avec un type correct)
-    const subscriptionType = clientData ? "basic" : "none";
-    
-    // Construction de l'objet utilisateur avec les types corrects
-    return {
-      id: profile.id,
-      name: profile.first_name || profile.email?.split('@')[0] || 'Utilisateur',
-      email: profile.email,
-      subscriptionStatus: subscriptionStatus as "active" | "none" | "pending" | "expired",
-      subscriptionType: subscriptionType as "basic" | "premium" | "none",
-      subscriptionEndDate: null,
-      registeredDate: formattedCreatedAt,
-      lastActivity: formattedLastActivity,
-    };
-  }));
-
-  return usersWithDetails;
 };

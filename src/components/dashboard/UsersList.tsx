@@ -46,9 +46,10 @@ export const UsersList = ({
   useEffect(() => {
     const loadUsers = async () => {
       try {
+        console.log("Chargement des utilisateurs...");
         setIsLoading(true);
         const usersData = await fetchUsers();
-        // Les données retournées par fetchUsers() respectent maintenant le type UserSubscription[]
+        console.log("Données récupérées:", usersData);
         setUsers(usersData);
         setError(null);
       } catch (err: any) {
@@ -65,7 +66,7 @@ export const UsersList = ({
     };
 
     loadUsers();
-  }, [toast, refreshTrigger]); // Rafraîchir lorsque refreshTrigger change
+  }, [toast, refreshTrigger]); 
 
   // Filtrer les utilisateurs en fonction de la recherche
   const filteredUsers = searchQuery 
