@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,6 +28,7 @@ import UsersManagement from "./pages/UsersManagement";
 import Reservations from "./pages/Reservations";
 import Clients from "./pages/Clients";
 import Offers from "./pages/Offers";
+import LoisirsManagement from "./pages/LoisirsManagement";
 import { AuthProvider } from "./contexts/auth";
 
 const queryClient = new QueryClient({
@@ -60,6 +62,7 @@ const App = () => (
             <Route path="/clients" element={<Clients />} />
             <Route path="/offers" element={<Offers />} />
             <Route path="/loisirs" element={<LoisirsActivity />} />
+            <Route path="/loisirs-management" element={<LoisirsManagement />} />
             <Route path="/restauration" element={<RestaurantActivity />} />
             <Route path="/location" element={<CarRentalActivity />} />
             <Route path="/location/:id" element={<CarRentalDetail />} />

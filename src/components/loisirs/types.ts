@@ -9,3 +9,12 @@ export interface Loisir {
   current_participants: number;
   image: string;
 }
+
+export interface Inscription {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  loisir_id: number;
+  inscription_date: string;
+}
