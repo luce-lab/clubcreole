@@ -54,12 +54,14 @@ export const UsersList = ({
         setError(null);
       } catch (err: any) {
         console.error("Erreur lors du chargement des utilisateurs:", err);
-        setError("Impossible de charger les utilisateurs");
+        setError("Impossible de charger les utilisateurs: " + (err.message || "Erreur inconnue"));
         toast({
           variant: "destructive",
           title: "Erreur",
           description: err.message || "Impossible de charger les utilisateurs",
         });
+        // Réinitialiser la liste d'utilisateurs en cas d'erreur
+        setUsers([]);
       } finally {
         setIsLoading(false);
       }
@@ -143,7 +145,7 @@ export const UsersList = ({
         <Button 
           variant="outline" 
           className="mt-4"
-          onClick={() => setError(null)}
+          onClick={() => window.location.reload()}
         >
           Réessayer
         </Button>

@@ -56,41 +56,43 @@ export const createUser = async (userData: UserFormData) => {
   return authData.user;
 };
 
-// Amélioration de la fonction pour récupérer la liste des utilisateurs avec les types corrects
+// Mise à jour de la fonction pour récupérer la liste des utilisateurs sans utiliser l'API admin
 export const fetchUsers = async () => {
   try {
     console.log("Tentative de récupération des utilisateurs...");
     
-    // Récupérer directement les utilisateurs depuis l'API auth (sans utiliser profiles)
-    const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+    // Récupérer les profils des utilisateurs (qui contiennent les informations de base)
+    const { data: profiles, error: profilesError } = await supabase
+      .from('profiles')
+      .select('*');
     
-    if (authError) {
-      console.error("Erreur lors de la récupération des utilisateurs:", authError);
-      throw authError;
+    if (profilesError) {
+      console.error("Erreur lors de la récupération des profils:", profilesError);
+      throw profilesError;
     }
     
-    if (!authUsers || !authUsers.users) {
+    if (!profiles || profiles.length === 0) {
       console.log("Aucun utilisateur trouvé");
       return [];
     }
     
-    console.log(`${authUsers.users.length} utilisateurs trouvés`);
+    console.log(`${profiles.length} utilisateurs trouvés`);
     
-    // Transformer les données des utilisateurs au format requis
-    const formattedUsers = authUsers.users.map(user => {
+    // Transformer les données des profils au format requis pour UserSubscription[]
+    const formattedUsers = profiles.map(profile => {
       // Convertir les dates au format souhaité
-      const createdAt = new Date(user.created_at);
+      const createdAt = new Date(profile.created_at);
       const formattedCreatedAt = createdAt.toISOString().split('T')[0];
       
       // Utiliser la dernière date de mise à jour comme dernière activité
-      const lastActivity = new Date(user.updated_at || user.created_at);
+      const lastActivity = new Date(profile.updated_at || profile.created_at);
       const formattedLastActivity = lastActivity.toISOString().split('T')[0];
       
       // Construire l'objet utilisateur avec les types corrects
       return {
-        id: user.id,
-        name: user.user_metadata?.name || user.email?.split('@')[0] || 'Utilisateur',
-        email: user.email || '',
+        id: profile.id,
+        name: profile.first_name || profile.email?.split('@')[0] || 'Utilisateur',
+        email: profile.email || '',
         subscriptionStatus: "none" as "active" | "none" | "pending" | "expired",
         subscriptionType: "none" as "basic" | "premium" | "none",
         subscriptionEndDate: null,
