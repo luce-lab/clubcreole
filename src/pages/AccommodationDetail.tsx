@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
@@ -12,6 +11,12 @@ import { ReservationCard } from "@/components/accommodation/ReservationCard";
 import { Accommodation, Amenity } from "@/components/accommodation/AccommodationTypes";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
+
+// Définir un type pour les données brutes d'aménités
+type RawAmenity = {
+  name: string;
+  available: boolean;
+};
 
 const AccommodationDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -36,8 +41,8 @@ const AccommodationDetail = () => {
         if (error) throw error;
         
         // Transformer les données JSON de la base avec un typage explicite
-        const amenitiesArray = data.amenities as any[];
-        const typedAmenities: Amenity[] = amenitiesArray.map((amenity: any) => ({
+        const amenitiesArray = data.amenities as RawAmenity[];
+        const typedAmenities: Amenity[] = amenitiesArray.map((amenity: RawAmenity) => ({
           name: amenity.name || "",
           available: amenity.available || false
         }));
