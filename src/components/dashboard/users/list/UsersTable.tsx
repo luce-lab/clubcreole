@@ -14,9 +14,10 @@ interface UsersTableProps {
   users: UserSubscription[];
   onSelectUser: (userId: string) => void;
   onEditUser: (userId: string) => void;
+  isSuperAdmin: boolean;
 }
 
-export const UsersTable = ({ users, onSelectUser, onEditUser }: UsersTableProps) => {
+export const UsersTable = ({ users, onSelectUser, onEditUser, isSuperAdmin }: UsersTableProps) => {
   if (users.length === 0) {
     return (
       <Table>
@@ -64,6 +65,7 @@ export const UsersTable = ({ users, onSelectUser, onEditUser }: UsersTableProps)
             user={user} 
             onSelectUser={onSelectUser} 
             onEditUser={onEditUser} 
+            isSuperAdmin={isSuperAdmin}
           />
         ))}
       </TableBody>

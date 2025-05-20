@@ -8,8 +8,10 @@ import UserConsumptionHistory from "@/components/dashboard/consumption/UserConsu
 import { UsersHeader } from "./users/UsersHeader";
 import { UsersLayout } from "./users/UsersLayout";
 import { UserDetails } from "./users/UserDetails";
+import { useAuth } from "@/contexts/auth";
 
 const UsersManagement = () => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<string>("list");
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -17,12 +19,15 @@ const UsersManagement = () => {
   const [isEditUserDialogOpen, setIsEditUserDialogOpen] = useState<boolean>(false);
   const [refreshCounter, setRefreshCounter] = useState<number>(0);
   
+  const isSuperAdmin = user?.email === "admin@clubcreole.com";
+  
   const handleSelectUser = (userId: string) => {
     setSelectedUserId(userId);
     setActiveTab("details");
   };
 
   const handleEditUser = (userId: string) => {
+    if (!isSuperAdmin) return;
     setSelectedUserId(userId);
     setIsEditUserDialogOpen(true);
   };
@@ -35,7 +40,10 @@ const UsersManagement = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <UsersHeader onAddUser={() => setIsAddUserDialogOpen(true)} />
+        <UsersHeader 
+          onAddUser={() => isSuperAdmin && setIsAddUserDialogOpen(true)} 
+          isSuperAdmin={isSuperAdmin}
+        />
         
         <UsersLayout
           activeTab={activeTab}
@@ -54,7 +62,8 @@ const UsersManagement = () => {
           detailsContent={
             <UserDetails 
               userId={selectedUserId!} 
-              onEdit={() => setIsEditUserDialogOpen(true)}
+              onEdit={() => isSuperAdmin && setIsEditUserDialogOpen(true)}
+              isSuperAdmin={isSuperAdmin}
             />
           }
           consumptionContent={
@@ -62,13 +71,15 @@ const UsersManagement = () => {
           }
         />
         
-        <AddUserDialog 
-          open={isAddUserDialogOpen} 
-          onClose={() => setIsAddUserDialogOpen(false)}
-          onSuccess={handleUserAdded}
-        />
+        {isSuperAdmin && (
+          <AddUserDialog 
+            open={isAddUserDialogOpen} 
+            onClose={() => setIsAddUserDialogOpen(false)}
+            onSuccess={handleUserAdded}
+          />
+        )}
         
-        {selectedUserId && (
+        {isSuperAdmin && selectedUserId && (
           <EditUserDialog 
             open={isEditUserDialogOpen} 
             onClose={() => setIsEditUserDialogOpen(false)} 

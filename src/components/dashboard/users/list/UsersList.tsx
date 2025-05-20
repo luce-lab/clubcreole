@@ -6,6 +6,8 @@ import { UsersTable } from "./UsersTable";
 import { LoadingState } from "./LoadingState";
 import { ErrorState } from "./ErrorState";
 import { UserSubscription, UsersListProps } from "./types";
+import { useAuth } from "@/contexts/auth";
+import { UnauthorizedState } from "./UnauthorizedState";
 
 export const UsersList = ({ 
   onSelectUser = () => {}, 
@@ -14,9 +16,11 @@ export const UsersList = ({
   refreshTrigger = 0
 }: UsersListProps) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [users, setUsers] = useState<UserSubscription[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isSuperAdmin = user?.email === "admin@clubcreole.com";
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -62,11 +66,16 @@ export const UsersList = ({
     return <ErrorState error={error} />;
   }
 
+  if (!isSuperAdmin) {
+    return <UnauthorizedState />;
+  }
+
   return (
     <UsersTable 
       users={filteredUsers} 
       onSelectUser={onSelectUser} 
       onEditUser={onEditUser} 
+      isSuperAdmin={isSuperAdmin}
     />
   );
 };

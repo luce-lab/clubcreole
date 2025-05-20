@@ -6,13 +6,16 @@ import {
   CardHeader,
   CardTitle 
 } from "@/components/ui/card";
+import { Lock } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface UserDetailsProps {
   userId: string;
   onEdit: () => void;
+  isSuperAdmin: boolean;
 }
 
-export const UserDetails = ({ userId, onEdit }: UserDetailsProps) => {
+export const UserDetails = ({ userId, onEdit, isSuperAdmin }: UserDetailsProps) => {
   // Pour la démo, on utilise des données fictives
   // Dans un vrai cas d'usage, ces données viendraient d'un appel API
   const user = {
@@ -40,7 +43,24 @@ export const UserDetails = ({ userId, onEdit }: UserDetailsProps) => {
           <h3 className="text-xl font-semibold mb-1">{user.name}</h3>
           <p className="text-sm text-gray-500">Inscrit le {user.registeredDate}</p>
         </div>
-        <Button onClick={onEdit}>Modifier l'utilisateur</Button>
+        
+        {isSuperAdmin ? (
+          <Button onClick={onEdit}>Modifier l'utilisateur</Button>
+        ) : (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" disabled>
+                  <Lock className="mr-2 h-4 w-4" />
+                  Édition restreinte
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Seul l'administrateur principal peut modifier les utilisateurs</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
       </div>
       
       <div className="grid md:grid-cols-2 gap-6">
