@@ -78,7 +78,7 @@ export const LoisirsAdminList = ({ loisirs, onAdd, onUpdate, onDelete }: Loisirs
               loisirs.map((loisir) => (
                 <TableRow key={loisir.id}>
                   <TableCell className="font-medium">{loisir.title}</TableCell>
-                  <TableCell>{formatDate(loisir.date)}</TableCell>
+                  <TableCell>{formatDate(loisir.start_date)}</TableCell>
                   <TableCell>{loisir.location}</TableCell>
                   <TableCell className="text-center">
                     {loisir.current_participants} / {loisir.max_participants}

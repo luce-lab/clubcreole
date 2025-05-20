@@ -1,16 +1,6 @@
 
 import ActivityCard from "./ActivityCard";
-
-interface Loisir {
-  id: number;
-  title: string;
-  description: string;
-  location: string;
-  date: string;
-  max_participants: number;
-  current_participants: number;
-  image: string;
-}
+import { Loisir } from "./types";
 
 interface LoisirsGridProps {
   loisirs: Loisir[];
