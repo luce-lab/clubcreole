@@ -9,7 +9,7 @@ interface ReservationFormActionsProps {
   nextStep: () => void;
   isSubmitting: boolean;
   canContinue: boolean;
-  onSubmit: () => void;
+  onSubmit: (e?: React.FormEvent) => void;
 }
 
 export const ReservationFormActions = ({
@@ -49,7 +49,7 @@ export const ReservationFormActions = ({
           type="button" 
           className="ml-auto bg-emerald-700 hover:bg-emerald-800"
           disabled={isSubmitting}
-          onClick={onSubmit}
+          onClick={() => onSubmit()}
         >
           {isSubmitting ? "Traitement en cours..." : "Confirmer la réservation"}
         </Button>

@@ -44,8 +44,10 @@ export const useRestaurantReservation = ({
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
     
     if (!formData.date || !formData.time || !formData.name || !formData.email || !formData.phone) {
       toast({
