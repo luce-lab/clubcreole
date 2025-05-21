@@ -378,6 +378,56 @@ export type Database = {
           },
         ]
       }
+      restaurant_reservations: {
+        Row: {
+          created_at: string
+          email: string
+          guests: number
+          id: string
+          name: string
+          notes: string | null
+          phone: string
+          reservation_date: string
+          reservation_time: string
+          restaurant_id: number
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          guests: number
+          id?: string
+          name: string
+          notes?: string | null
+          phone: string
+          reservation_date: string
+          reservation_time: string
+          restaurant_id: number
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          guests?: number
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string
+          reservation_date?: string
+          reservation_time?: string
+          restaurant_id?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "restaurant_reservations_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       restaurants: {
         Row: {
           description: string

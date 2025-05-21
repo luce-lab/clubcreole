@@ -5,6 +5,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { 
   Select,
   SelectContent,
@@ -15,6 +16,7 @@ import {
 import { Calendar as CalendarIcon, Clock, Users } from "lucide-react";
 import { fr } from 'date-fns/locale';
 import { format } from "date-fns";
+import { createRestaurantReservation } from "@/services/restaurantService";
 
 interface RestaurantReservationFormProps {
   restaurantId: number;
@@ -43,7 +45,7 @@ export const RestaurantReservationForm = ({
   const lunchTimeOptions = ["12:00", "12:30", "13:00", "13:30", "14:00", "14:30"];
   const dinnerTimeOptions = ["19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00"];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!date || !time || !name || !email || !phone) {
@@ -57,8 +59,19 @@ export const RestaurantReservationForm = ({
 
     setIsSubmitting(true);
 
-    // Simuler un envoi de réservation
-    setTimeout(() => {
+    try {
+      // Créer la réservation dans la base de données
+      await createRestaurantReservation({
+        restaurant_id: restaurantId,
+        reservation_date: date.toISOString(),
+        reservation_time: time,
+        guests: parseInt(guests),
+        name,
+        email,
+        phone,
+        notes: notes || undefined
+      });
+
       toast({
         title: "Réservation confirmée !",
         description: `Votre table pour ${guests} personne(s) au ${restaurantName} est réservée le ${format(date, 'dd/MM/yyyy')} à ${time}.`,
@@ -72,12 +85,20 @@ export const RestaurantReservationForm = ({
       setEmail("");
       setPhone("");
       setNotes("");
-      setIsSubmitting(false);
       
       if (onClose) {
         onClose();
       }
-    }, 1500);
+    } catch (error) {
+      console.error("Erreur lors de la création de la réservation:", error);
+      toast({
+        title: "Erreur",
+        description: "Un problème est survenu lors de la réservation. Veuillez réessayer plus tard.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!showForm) {
@@ -203,11 +224,13 @@ export const RestaurantReservationForm = ({
         
         <div className="space-y-2">
           <Label htmlFor="notes">Demandes spéciales</Label>
-          <Input
+          <Textarea
             id="notes"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Allergie, occasion spéciale, etc."
+            className="resize-none"
+            rows={3}
           />
         </div>
         

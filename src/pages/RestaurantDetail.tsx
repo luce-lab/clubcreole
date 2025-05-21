@@ -34,8 +34,6 @@ const RestaurantDetail = () => {
           throw new Error("Invalid restaurant ID");
         }
 
-        console.log("Fetching restaurant with ID:", numericId);
-
         const { data, error } = await supabase
           .from('restaurants')
           .select('*')
@@ -51,7 +49,6 @@ const RestaurantDetail = () => {
           throw new Error("Restaurant not found");
         }
 
-        console.log("Restaurant data fetched:", data);
         setRestaurant(data);
       } catch (err) {
         console.error('Error loading restaurant:', err);
@@ -117,7 +114,9 @@ const RestaurantDetail = () => {
                 onClose={() => setShowReservationForm(false)}
               />
               
-              <RestaurantSidebar offer={restaurant.offer} />
+              <div className="mt-6">
+                <RestaurantSidebar offer={restaurant.offer} />
+              </div>
             </div>
           </div>
         </div>
