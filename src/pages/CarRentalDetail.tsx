@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { carRentals } from "@/components/car-rental/carRentalData";
+import BackButton from "@/components/common/BackButton";
 import RentalDetailHeader from "@/components/car-rental/RentalDetailHeader";
 import RentalDescription from "@/components/car-rental/RentalDescription";
 import RentalModels from "@/components/car-rental/RentalModels";
@@ -27,7 +28,7 @@ const CarRentalDetail = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <RentalDetailHeader rental={carRental} />
+      <BackButton backTo="/location" />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left column - Images & Description */}

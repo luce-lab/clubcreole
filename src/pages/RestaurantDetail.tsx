@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Restaurant } from "@/components/restaurant/types";
 import { RestaurantReservationForm } from "@/components/restaurant/RestaurantReservationForm";
-import RestaurantHeader from "@/components/restaurant/RestaurantHeader";
+import BackButton from "@/components/common/BackButton";
 import RestaurantDetailHeader from "@/components/restaurant/RestaurantDetailHeader";
 import RestaurantGallery from "@/components/restaurant/RestaurantGallery";
 import RestaurantTabs from "@/components/restaurant/RestaurantTabs";
@@ -82,7 +82,7 @@ const RestaurantDetail = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <RestaurantHeader />
+      <BackButton backTo="/restaurants" />
       
       <div className="max-w-5xl mx-auto mt-8">
         <RestaurantDetailHeader

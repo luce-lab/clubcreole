@@ -9,7 +9,7 @@ interface ConcertPageHeaderProps {
 const ConcertPageHeader: React.FC<ConcertPageHeaderProps> = ({ title, description }) => {
   return (
     <>
-      <BackButton backTo="/concerts" />
+      <BackButton backTo="/" />
 
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-creole-blue">{title}</h1>

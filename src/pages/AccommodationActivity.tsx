@@ -1,6 +1,4 @@
-
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accommodation } from "@/components/accommodation/AccommodationTypes";
@@ -12,6 +10,7 @@ import { AccommodationLoading } from "@/components/accommodation/AccommodationLo
 import { AccommodationError } from "@/components/accommodation/AccommodationError";
 import { AccommodationEmptyState } from "@/components/accommodation/AccommodationEmptyState";
 import { fetchAccommodations } from "@/services/accommodationService";
+import BackButton from "@/components/common/BackButton";
 
 const AccommodationActivity = () => {
   const navigate = useNavigate();
@@ -61,14 +60,7 @@ const AccommodationActivity = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => navigate(-1)}
-        className="mb-4"
-      >
-        <ArrowLeft className="h-6 w-6" />
-      </Button>
+      <BackButton backTo="/" />
 
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-creole-blue">Hébergements en Guadeloupe</h1>

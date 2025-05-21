@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { nightEvents } from "@/components/nightlife/NightlifeTypes";
+import BackButton from "@/components/common/BackButton";
 
 // Imported components
 import EventHeader from "@/components/nightlife/EventHeader";
@@ -71,14 +70,7 @@ const NightlifeDetail = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => navigate(-1)}
-        className="mb-4"
-      >
-        <ArrowLeft className="h-6 w-6" />
-      </Button>
+      <BackButton backTo="/soiree" />
 
       {/* Image et titre */}
       <EventHeader event={event} />

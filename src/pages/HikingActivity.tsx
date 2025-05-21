@@ -1,17 +1,15 @@
-
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Mountain, ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Mountain } from "lucide-react";
+import BackButton from "@/components/common/BackButton";
 
 const HikingActivity = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string>("");
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   const availableTimes = ["09:00", "11:00", "14:00", "16:00"];
   const price = 35;
@@ -47,14 +45,7 @@ const HikingActivity = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => navigate(-1)}
-        className="mb-4"
-      >
-        <ArrowLeft className="h-6 w-6" />
-      </Button>
+      <BackButton backTo="/loisirs" />
 
       <div className="flex items-center gap-4 mb-8">
         <Mountain className="h-8 w-8 text-creole-green" />
