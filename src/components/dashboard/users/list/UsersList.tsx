@@ -66,7 +66,7 @@ export const UsersList = ({
     return <ErrorState error={error} />;
   }
 
-  if (!isSuperAdmin) {
+  if (!isSuperAdmin && user?.role !== 'admin') {
     return <UnauthorizedState />;
   }
 
