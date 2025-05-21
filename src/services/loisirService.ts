@@ -13,6 +13,7 @@ export const updateLoisir = async (
     image: string;
     max_participants: number;
     current_participants: number;
+    gallery_images?: string[];
   }
 ): Promise<Loisir> => {
   const { data, error } = await supabase

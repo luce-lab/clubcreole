@@ -4,19 +4,19 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface LoisirsGalleryProps {
   mainImage: string;
-  additionalImages?: string[];
+  galleryImages?: string[];
   title: string;
 }
 
-const LoisirsGallery = ({ mainImage, additionalImages = [], title }: LoisirsGalleryProps) => {
-  // Si nous n'avons pas d'images supplémentaires, nous utilisons uniquement l'image principale
-  const images = [mainImage, ...additionalImages].filter(Boolean);
+const LoisirsGallery = ({ mainImage, galleryImages = [], title }: LoisirsGalleryProps) => {
+  // Nous combinons l'image principale avec les images de la galerie
+  const allImages = [mainImage, ...(galleryImages || [])].filter(Boolean);
   
   return (
     <div className="mb-8">
       <Carousel className="w-full">
         <CarouselContent>
-          {images.map((image, index) => (
+          {allImages.map((image, index) => (
             <CarouselItem key={index} className="basis-full md:basis-1/2 lg:basis-1/3">
               <AspectRatio ratio={16 / 9}>
                 <img 

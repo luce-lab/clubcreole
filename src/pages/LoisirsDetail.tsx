@@ -66,20 +66,13 @@ const LoisirsDetail = () => {
     return <LoisirsDetailError error={error || "Activité non trouvée"} />;
   }
 
-  // Pour la démo, on utilise l'image principale et quelques images génériques
-  // Dans un cas réel, ces images supplémentaires proviendraient de la base de données
-  const additionalImages = [
-    "https://images.unsplash.com/photo-1472396961693-142e6e269027",
-    "https://images.unsplash.com/photo-1498936178812-4b2e558d2937"
-  ];
-
   return (
     <div className="container mx-auto px-4 py-8">
       <LoisirsDetailHeader title={loisir.title} />
       
       <LoisirsGallery 
         mainImage={loisir.image} 
-        additionalImages={additionalImages} 
+        galleryImages={loisir.gallery_images as string[]} 
         title={loisir.title} 
       />
       

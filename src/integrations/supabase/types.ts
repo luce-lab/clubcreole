@@ -100,6 +100,7 @@ export type Database = {
           current_participants: number
           description: string
           end_date: string
+          gallery_images: Json | null
           id: number
           image: string
           location: string
@@ -111,6 +112,7 @@ export type Database = {
           current_participants?: number
           description: string
           end_date?: string
+          gallery_images?: Json | null
           id?: number
           image: string
           location: string
@@ -122,6 +124,7 @@ export type Database = {
           current_participants?: number
           description?: string
           end_date?: string
+          gallery_images?: Json | null
           id?: number
           image?: string
           location?: string

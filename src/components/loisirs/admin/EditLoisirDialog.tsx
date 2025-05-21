@@ -32,10 +32,16 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
     image: string;
     maxParticipants: number;
     currentParticipants: number;
+    galleryImages?: string;
   }) => {
     setIsSubmitting(true);
 
     try {
+      // Conversion des URLs des images de la galerie en tableau
+      const galleryImages = formData.galleryImages
+        ? formData.galleryImages.split('\n').map(url => url.trim()).filter(Boolean)
+        : [];
+
       const updatedLoisir = {
         title: formData.title,
         description: formData.description,
@@ -45,6 +51,7 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
         image: formData.image,
         max_participants: formData.maxParticipants,
         current_participants: formData.currentParticipants,
+        gallery_images: galleryImages
       };
 
       const result = await updateLoisir(loisir.id, updatedLoisir);

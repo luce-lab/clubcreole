@@ -9,6 +9,7 @@ export interface Loisir {
   max_participants: number;
   current_participants: number;
   image: string;
+  gallery_images?: string[];
 }
 
 export interface Inscription {

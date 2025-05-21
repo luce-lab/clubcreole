@@ -18,6 +18,7 @@ interface LoisirFormProps {
     image: string;
     maxParticipants: number;
     currentParticipants: number;
+    galleryImages?: string;
   }) => Promise<void>;
   onCancel: () => void;
 }
@@ -30,6 +31,7 @@ export const LoisirForm = ({ loisir, isSubmitting, onSubmit, onCancel }: LoisirF
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [image, setImage] = useState(loisir.image);
+  const [galleryImages, setGalleryImages] = useState("");
   const [maxParticipants, setMaxParticipants] = useState(loisir.max_participants);
   const [currentParticipants, setCurrentParticipants] = useState(loisir.current_participants);
 
@@ -49,6 +51,11 @@ export const LoisirForm = ({ loisir, isSubmitting, onSubmit, onCancel }: LoisirF
       // Fallback if date parsing fails
       setStartDate(loisir.start_date);
       setEndDate(loisir.end_date);
+    }
+
+    // Convertir le tableau d'images en texte avec une URL par ligne
+    if (loisir.gallery_images && Array.isArray(loisir.gallery_images)) {
+      setGalleryImages(loisir.gallery_images.join('\n'));
     }
 
     setTitle(loisir.title);
@@ -80,7 +87,8 @@ export const LoisirForm = ({ loisir, isSubmitting, onSubmit, onCancel }: LoisirF
       endDate,
       image,
       maxParticipants,
-      currentParticipants
+      currentParticipants,
+      galleryImages
     });
   };
 
@@ -132,10 +140,19 @@ export const LoisirForm = ({ loisir, isSubmitting, onSubmit, onCancel }: LoisirF
 
         <FormField
           id="edit-image"
-          label="URL Image"
+          label="URL Image principale"
           value={image}
           onChange={(e) => setImage(e.target.value)}
           required
+        />
+
+        <FormField
+          id="edit-galleryImages"
+          label="URLs des images de la galerie (une URL par ligne)"
+          value={galleryImages}
+          onChange={(e) => setGalleryImages(e.target.value)}
+          isTextarea
+          placeholder="https://exemple.com/image1.jpg&#10;https://exemple.com/image2.jpg&#10;https://exemple.com/image3.jpg"
         />
 
         <FormField
