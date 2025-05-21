@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { createInscription } from "@/services/inscriptionService"; 
 
 interface AddParticipantDialogProps {
   open: boolean;
@@ -53,23 +54,39 @@ export const AddParticipantDialog = ({
       return;
     }
 
+    if (!name || !email || !phone) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs obligatoires",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      // Simulation d'ajout de participant
-      // Dans une application réelle, nous ferions une requête API ici
-      setTimeout(() => {
+      const result = await createInscription(loisirId, name, email, phone);
+      
+      if (result.success) {
+        toast({
+          title: "Succès",
+          description: "Le participant a été ajouté avec succès",
+        });
+        
+        resetForm();
         onSuccess({
           name,
           email,
           phone,
           loisir_id: loisirId,
         });
-
-        resetForm();
+        
         onOpenChange(false);
-      }, 500);
-    } catch (error) {
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error: any) {
       console.error("Erreur lors de l'ajout du participant:", error);
       toast({
         variant: "destructive",

@@ -5,13 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-
-interface Loisir {
-  id: number;
-  title: string;
-  current_participants: number;
-}
+import { Loader2 } from "lucide-react";
+import { Loisir } from "./types";
+import { createInscription } from "@/services/inscriptionService";
 
 interface LoisirsRegistrationFormProps {
   selectedLoisir: Loisir;
@@ -27,6 +23,7 @@ const LoisirsRegistrationForm = ({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleRegister = async () => {
     if (!name || !email || !phone) {
@@ -38,35 +35,43 @@ const LoisirsRegistrationForm = ({
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
-      const { error } = await supabase
-        .from('loisirs')
-        .update({ current_participants: selectedLoisir.current_participants + 1 })
-        .eq('id', selectedLoisir.id);
-      
-      if (error) throw error;
-      
-      toast({
-        title: "Inscription réussie !",
-        description: `Vous êtes inscrit à "${selectedLoisir.title}". Un email de confirmation a été envoyé à ${email}.`,
-      });
-      
-      onSuccess({
-        ...selectedLoisir,
-        current_participants: selectedLoisir.current_participants + 1
-      });
-      
-      setName("");
-      setEmail("");
-      setPhone("");
-      onClose();
-    } catch (error) {
+      const result = await createInscription(
+        selectedLoisir.id,
+        name,
+        email,
+        phone
+      );
+
+      if (result.success) {
+        toast({
+          title: "Inscription réussie !",
+          description: `Vous êtes inscrit à "${selectedLoisir.title}". Un email de confirmation a été envoyé à ${email}.`,
+        });
+        
+        onSuccess({
+          ...selectedLoisir,
+          current_participants: selectedLoisir.current_participants + 1
+        });
+        
+        setName("");
+        setEmail("");
+        setPhone("");
+        onClose();
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error: any) {
       console.error("Erreur lors de l'inscription:", error);
       toast({
         title: "Erreur",
         description: "Une erreur s'est produite lors de l'inscription. Veuillez réessayer.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -89,6 +94,7 @@ const LoisirsRegistrationForm = ({
             onChange={(e) => setName(e.target.value)}
             className="col-span-3"
             required
+            disabled={isSubmitting}
           />
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
@@ -102,6 +108,7 @@ const LoisirsRegistrationForm = ({
             onChange={(e) => setEmail(e.target.value)}
             className="col-span-3"
             required
+            disabled={isSubmitting}
           />
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
@@ -115,12 +122,24 @@ const LoisirsRegistrationForm = ({
             onChange={(e) => setPhone(e.target.value)}
             className="col-span-3"
             required
+            disabled={isSubmitting}
           />
         </div>
       </div>
       <DialogFooter>
-        <Button type="submit" onClick={handleRegister}>
-          Confirmer l'inscription
+        <Button 
+          type="submit" 
+          onClick={handleRegister}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Inscription en cours...
+            </>
+          ) : (
+            "Confirmer l'inscription"
+          )}
         </Button>
       </DialogFooter>
     </DialogContent>

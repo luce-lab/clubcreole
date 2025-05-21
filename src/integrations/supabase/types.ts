@@ -134,6 +134,44 @@ export type Database = {
         }
         Relationships: []
       }
+      loisirs_inscriptions: {
+        Row: {
+          confirmation_sent: boolean
+          email: string
+          id: number
+          inscription_date: string
+          loisir_id: number
+          name: string
+          phone: string
+        }
+        Insert: {
+          confirmation_sent?: boolean
+          email: string
+          id?: number
+          inscription_date?: string
+          loisir_id: number
+          name: string
+          phone: string
+        }
+        Update: {
+          confirmation_sent?: boolean
+          email?: string
+          id?: number
+          inscription_date?: string
+          loisir_id?: number
+          name?: string
+          phone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loisirs_inscriptions_loisir_id_fkey"
+            columns: ["loisir_id"]
+            isOneToOne: false
+            referencedRelation: "loisirs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       newsletter_subscriptions: {
         Row: {
           created_at: string

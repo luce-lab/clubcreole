@@ -16,19 +16,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Loader2, Download, UserPlus } from "lucide-react";
+import { Loader2, Download, UserPlus, RefreshCcw } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { Loisir } from "@/components/loisirs/types";
+import { Loisir, Inscription } from "@/components/loisirs/types";
 import { AddParticipantDialog } from "./AddParticipantDialog";
-
-interface Participant {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  loisir_id: number;
-  inscription_date: string;
-}
+import { getInscriptionsByLoisirId } from "@/services/inscriptionService";
 
 interface InscriptionsDialogProps {
   open: boolean;
@@ -42,50 +34,35 @@ export const InscriptionsDialog = ({
   loisir,
 }: InscriptionsDialogProps) => {
   const { toast } = useToast();
-  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [participants, setParticipants] = useState<Inscription[]>([]);
   const [loading, setLoading] = useState(true);
   const [addParticipantOpen, setAddParticipantOpen] = useState(false);
 
-  // Pour l'instant, nous utilisons des données fictives
+  const fetchInscriptions = async () => {
+    setLoading(true);
+    try {
+      const inscriptions = await getInscriptionsByLoisirId(loisir.id);
+      setParticipants(inscriptions);
+    } catch (error) {
+      console.error("Erreur lors du chargement des inscriptions:", error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Impossible de charger les inscriptions",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (open) {
-      // Simuler le chargement des participants
-      const mockParticipants: Participant[] = [
-        {
-          id: 1,
-          name: "Jean Dupont",
-          email: "jean.dupont@example.com",
-          phone: "0612345678",
-          loisir_id: loisir.id,
-          inscription_date: new Date().toISOString(),
-        },
-        {
-          id: 2,
-          name: "Marie Martin",
-          email: "marie.martin@example.com",
-          phone: "0698765432",
-          loisir_id: loisir.id,
-          inscription_date: new Date().toISOString(),
-        },
-      ];
-
-      setTimeout(() => {
-        setParticipants(mockParticipants);
-        setLoading(false);
-      }, 500);
-    } else {
-      setLoading(true);
+      fetchInscriptions();
     }
   }, [open, loisir.id]);
 
-  const handleAddParticipant = (participant: Omit<Participant, "id" | "inscription_date">) => {
-    const newParticipant: Participant = {
-      ...participant,
-      id: participants.length + 1,
-      inscription_date: new Date().toISOString(),
-    };
-    
-    setParticipants([...participants, newParticipant]);
+  const handleAddParticipant = (participant: Omit<Inscription, "id" | "inscription_date" | "confirmation_sent">) => {
+    fetchInscriptions(); // Recharger la liste après l'ajout
     toast({
       title: "Participant ajouté",
       description: "Le participant a été ajouté avec succès",
@@ -95,12 +72,13 @@ export const InscriptionsDialog = ({
   const handleExportCSV = () => {
     try {
       // Créer le contenu CSV
-      const headers = ["Nom", "Email", "Téléphone", "Date d'inscription"];
+      const headers = ["Nom", "Email", "Téléphone", "Date d'inscription", "Email envoyé"];
       const rows = participants.map(p => [
         p.name, 
         p.email, 
         p.phone, 
-        new Date(p.inscription_date).toLocaleDateString('fr-FR')
+        new Date(p.inscription_date).toLocaleDateString('fr-FR'),
+        p.confirmation_sent ? "Oui" : "Non"
       ]);
       
       const csvContent = [
@@ -137,7 +115,13 @@ export const InscriptionsDialog = ({
 
   const formatDate = (dateString: string) => {
     try {
-      return new Date(dateString).toLocaleDateString('fr-FR');
+      return new Date(dateString).toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
     } catch (error) {
       return dateString;
     }
@@ -157,14 +141,25 @@ export const InscriptionsDialog = ({
           </DialogHeader>
 
           <div className="flex justify-between mb-4">
-            <Button
-              variant="outline"
-              onClick={() => setAddParticipantOpen(true)}
-              disabled={loisir.current_participants >= loisir.max_participants}
-            >
-              <UserPlus className="mr-2 h-4 w-4" />
-              Ajouter un participant
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setAddParticipantOpen(true)}
+                disabled={loisir.current_participants >= loisir.max_participants}
+              >
+                <UserPlus className="mr-2 h-4 w-4" />
+                Ajouter un participant
+              </Button>
+
+              <Button 
+                variant="outline" 
+                onClick={fetchInscriptions}
+                size="icon"
+                title="Rafraîchir la liste"
+              >
+                <RefreshCcw className="h-4 w-4" />
+              </Button>
+            </div>
 
             <Button 
               variant="outline" 
@@ -189,12 +184,13 @@ export const InscriptionsDialog = ({
                     <TableHead>Email</TableHead>
                     <TableHead>Téléphone</TableHead>
                     <TableHead>Date d'inscription</TableHead>
+                    <TableHead className="text-center">Confirmation</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {participants.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="h-24 text-center">
+                      <TableCell colSpan={5} className="h-24 text-center">
                         Aucun participant inscrit
                       </TableCell>
                     </TableRow>
@@ -205,6 +201,17 @@ export const InscriptionsDialog = ({
                         <TableCell>{participant.email}</TableCell>
                         <TableCell>{participant.phone}</TableCell>
                         <TableCell>{formatDate(participant.inscription_date)}</TableCell>
+                        <TableCell className="text-center">
+                          {participant.confirmation_sent ? (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              Envoyé
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                              En attente
+                            </span>
+                          )}
+                        </TableCell>
                       </TableRow>
                     ))
                   )}
