@@ -105,6 +105,7 @@ export const ReservationDateTimeSelector = ({
                         : "bg-white hover:bg-gray-100"
                     )}
                     onClick={() => setTime(timeOption)}
+                    type="button"
                   >
                     {timeOption}
                   </Button>
@@ -126,6 +127,7 @@ export const ReservationDateTimeSelector = ({
                         : "bg-white hover:bg-gray-100"
                     )}
                     onClick={() => setTime(timeOption)}
+                    type="button"
                   >
                     {timeOption}
                   </Button>

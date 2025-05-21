@@ -42,6 +42,11 @@ export const useRestaurantReservation = ({
 
   const updateField = <K extends keyof ReservationFormData>(key: K, value: ReservationFormData[K]) => {
     setFormData(prev => ({ ...prev, [key]: value }));
+    
+    // Automatically go to next step when selecting a time in step 2
+    if (key === 'time' && step === 2) {
+      nextStep();
+    }
   };
 
   const handleSubmit = async (e?: React.FormEvent) => {
@@ -114,15 +119,7 @@ export const useRestaurantReservation = ({
       return;
     }
     
-    if (step === 2 && !formData.time) {
-      toast({
-        title: "Heure manquante", 
-        description: "Veuillez sélectionner une heure",
-        variant: "destructive"
-      });
-      return;
-    }
-    
+    // Remove validation for step 2 since we automatically advance when selecting a time
     setStep(step + 1);
   };
 
