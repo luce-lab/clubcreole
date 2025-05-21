@@ -1,9 +1,5 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Accommodation } from "@/components/accommodation/AccommodationTypes";
 import { AccommodationSearch } from "@/components/accommodation/AccommodationSearch";
 import { AccommodationGrid } from "@/components/accommodation/AccommodationGrid";
 import { AccommodationAdvantages } from "@/components/accommodation/AccommodationAdvantages";
@@ -11,6 +7,7 @@ import { MembershipCard } from "@/components/accommodation/MembershipCard";
 import { AccommodationLoading } from "@/components/accommodation/AccommodationLoading";
 import { AccommodationError } from "@/components/accommodation/AccommodationError";
 import { AccommodationEmptyState } from "@/components/accommodation/AccommodationEmptyState";
+import { Accommodation } from "@/components/accommodation/AccommodationTypes";
 import { fetchAccommodations } from "@/services/accommodationService";
 import BackButton from "@/components/common/BackButton";
 

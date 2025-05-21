@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
@@ -11,7 +12,6 @@ import { ReservationCard } from "@/components/accommodation/ReservationCard";
 import { Accommodation, Amenity } from "@/components/accommodation/AccommodationTypes";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
-import BackButton from "@/components/common/BackButton";
 
 // Définir un type pour les données brutes d'aménités
 type RawAmenity = {
@@ -104,8 +104,6 @@ const AccommodationDetail = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow container mx-auto px-4 py-8">
-        <BackButton backTo="/hebergements" />
-        
         <AccommodationHeader 
           name={accommodation.name}
           location={accommodation.location}
