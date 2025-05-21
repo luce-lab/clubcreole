@@ -6,4 +6,6 @@ export interface Inscription {
   phone: string;
   loisir_id: number;
   inscription_date: string;
+  confirmation_sent: boolean;
 }
+
