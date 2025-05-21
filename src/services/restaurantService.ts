@@ -36,6 +36,9 @@ export const createRestaurantReservation = async (reservation: Omit<RestaurantRe
     }
     
     // Envoyer l'email de confirmation via l'Edge Function
+    let emailSuccess = true;
+    let emailMessage = "";
+    
     try {
       const response = await fetch("https://psryoyugyimibjhwhvlh.supabase.co/functions/v1/restaurant-confirmation", {
         method: "POST",
@@ -60,16 +63,29 @@ export const createRestaurantReservation = async (reservation: Omit<RestaurantRe
         })
       });
 
+      const emailResult = await response.json();
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Erreur lors de l'envoi de l'email de confirmation:", errorData);
+        console.warn("Problème lors de l'envoi de l'email de confirmation:", emailResult);
+        emailSuccess = false;
+        emailMessage = "L'email de confirmation n'a pas pu être envoyé, mais votre réservation a bien été enregistrée.";
+      } else if (emailResult.emailResponse && emailResult.emailResponse.error) {
+        // Le service d'email a retourné une erreur (ex: en mode test)
+        console.warn("Avertissement du service d'email:", emailResult.emailResponse);
+        emailSuccess = false;
+        emailMessage = "Note: En mode test, l'email n'a pas été envoyé à votre adresse, mais votre réservation est confirmée.";
       }
     } catch (emailError) {
       console.error("Erreur lors de l'envoi de l'email de confirmation:", emailError);
-      // On ne relance pas l'erreur ici pour ne pas bloquer la réservation en cas de problème d'email
+      emailSuccess = false;
+      emailMessage = "L'email de confirmation n'a pas pu être envoyé en raison d'un problème technique, mais votre réservation a bien été enregistrée.";
     }
     
-    return data?.[0];
+    return { 
+      reservation: data?.[0], 
+      emailSuccess, 
+      emailMessage 
+    };
   } catch (err) {
     console.error("Erreur lors de la création de la réservation:", err);
     throw err;

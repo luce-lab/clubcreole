@@ -66,7 +66,7 @@ export const useRestaurantReservation = ({
     setIsSubmitting(true);
 
     try {
-      await createRestaurantReservation({
+      const result = await createRestaurantReservation({
         restaurant_id: restaurantId,
         reservation_date: formData.date.toISOString(),
         reservation_time: formData.time,
@@ -77,9 +77,10 @@ export const useRestaurantReservation = ({
         notes: formData.notes || undefined
       }, restaurantName, restaurantLocation);
 
+      // Notification de réservation
       toast({
         title: "Réservation confirmée !",
-        description: `Votre table pour ${formData.guests} personne(s) au ${restaurantName} est réservée le ${format(formData.date, 'dd/MM/yyyy')} à ${formData.time}. Un email de confirmation a été envoyé.`,
+        description: `Votre table pour ${formData.guests} personne(s) au ${restaurantName} est réservée le ${format(formData.date, 'dd/MM/yyyy')} à ${formData.time}.${!result.emailSuccess ? " " + result.emailMessage : " Un email de confirmation a été envoyé."}`,
       });
       
       // Reset form
