@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import {
   Dialog,
@@ -84,7 +85,15 @@ export const CreateLoisirDialog = ({ open, onOpenChange, onSuccess }: CreateLois
       });
 
       if (onSuccess && data) {
-        onSuccess(data);
+        // Conversion du champ gallery_images de Json à string[]
+        const formattedLoisir = {
+          ...data,
+          gallery_images: Array.isArray(data.gallery_images) 
+            ? data.gallery_images 
+            : []
+        } as Loisir;
+        
+        onSuccess(formattedLoisir);
       }
 
       resetForm();
