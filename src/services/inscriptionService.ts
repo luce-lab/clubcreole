@@ -22,10 +22,20 @@ export const createInscription = async (
     const loisir = loisirData as Loisir;
 
     // 2. Insérer l'inscription dans la base de données
+    // Utilisation du timestamp actuel pour inscription_date
+    const inscriptionDate = new Date().toISOString();
+    
     const { data, error } = await supabase
       .from('loisirs_inscriptions')
       .insert([
-        { loisir_id: loisirId, name, email, phone }
+        { 
+          loisir_id: loisirId, 
+          name, 
+          email, 
+          phone, 
+          inscription_date: inscriptionDate,
+          confirmation_sent: false
+        }
       ])
       .select()
       .single();
@@ -42,11 +52,14 @@ export const createInscription = async (
 
     // 4. Envoyer l'email de confirmation
     try {
-      const response = await fetch(`${import.meta.env.VITE_APP_URL}/functions/send-confirmation`, {
+      // Création de l'URL complète pour la fonction
+      const functionUrl = 'https://psryoyugyimibjhwhvlh.supabase.co/functions/v1/send-confirmation';
+      
+      const response = await fetch(functionUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY}`,
+          'Authorization': `Bearer ${supabase.auth.anon_key}`,
         },
         body: JSON.stringify({
           name,
