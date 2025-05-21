@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { CheckCircle2, Clock, MapPin, Users, Film, Martini, Map, Calendar, ArrowRight } from "lucide-react";
+import { CheckCircle2, MapPin, Users, Film, Martini, Map, Calendar, ArrowRight } from "lucide-react";
 import LoisirsRegistrationForm from "./LoisirsRegistrationForm";
+import { format, parseISO } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface Loisir {
   id: number;
@@ -38,13 +40,27 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
   // Format dates for display
   const formatDate = (dateString: string) => {
     try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('fr-FR', { 
-        day: 'numeric', 
-        month: 'short', 
-        year: 'numeric' 
-      });
+      // Essayer d'abord comme date ISO
+      let date = parseISO(dateString);
+      
+      // Vérifier si la date est valide
+      if (isNaN(date.getTime())) {
+        // Essayer le format DD/MM/YYYY
+        if (dateString.includes('/')) {
+          const [day, month, year] = dateString.split('/');
+          date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+        }
+      }
+      
+      // Vérifier si la date est maintenant valide
+      if (!isNaN(date.getTime())) {
+        return format(date, "d MMM yyyy", { locale: fr });
+      }
+      
+      // Retourner la chaîne originale si tous les essais échouent
+      return dateString;
     } catch (e) {
+      console.error("Erreur de format de date:", e);
       return dateString;
     }
   };

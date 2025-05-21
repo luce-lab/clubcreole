@@ -1,6 +1,8 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { Loisir, Inscription } from "@/components/loisirs/types";
+import { format, parseISO } from "date-fns";
+import { fr } from "date-fns/locale";
 
 export const createInscription = async (
   loisirId: number,
@@ -55,6 +57,9 @@ export const createInscription = async (
       // Création de l'URL complète pour la fonction
       const functionUrl = 'https://psryoyugyimibjhwhvlh.supabase.co/functions/v1/send-confirmation';
       
+      // Formater les dates pour l'email
+      const formattedDate = formatDate(loisir.start_date);
+      
       const response = await fetch(functionUrl, {
         method: 'POST',
         headers: {
@@ -69,6 +74,7 @@ export const createInscription = async (
             title: loisir.title,
             location: loisir.location,
             start_date: loisir.start_date,
+            formattedDate: formattedDate
           },
         }),
       });
@@ -115,5 +121,32 @@ export const getInscriptionsByLoisirId = async (loisirId: number): Promise<Inscr
   } catch (error) {
     console.error("Erreur lors de la récupération des inscriptions:", error);
     return [];
+  }
+};
+
+// Fonction utilitaire pour formater les dates
+export const formatDate = (dateString: string): string => {
+  try {
+    // Essayer d'abord de parser comme une date ISO
+    const date = parseISO(dateString);
+    if (!isNaN(date.getTime())) {
+      return format(date, 'dd MMMM yyyy', { locale: fr });
+    }
+    
+    // Si ce n'est pas une date ISO, essayer d'autres formats
+    if (dateString.includes('/')) {
+      const [day, month, year] = dateString.split('/');
+      // Créer une date au format ISO
+      const formattedDate = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+      if (!isNaN(formattedDate.getTime())) {
+        return format(formattedDate, 'dd MMMM yyyy', { locale: fr });
+      }
+    }
+    
+    // Par défaut retourner la chaîne telle quelle
+    return dateString;
+  } catch (error) {
+    console.error("Erreur de formatage de date:", error);
+    return dateString;
   }
 };

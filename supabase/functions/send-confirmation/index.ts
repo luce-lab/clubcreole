@@ -19,6 +19,7 @@ interface EmailData {
     title: string;
     location: string;
     start_date: string;
+    formattedDate?: string; // Date formatée en français
   };
 }
 
@@ -35,11 +36,8 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Sending confirmation email to:", email);
     console.log("Activity details:", activity);
 
-    const formattedDate = new Date(activity.start_date).toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
+    // Utiliser la date formatée si disponible, sinon essayer de la formater
+    const formattedDate = activity.formattedDate || activity.start_date;
 
     const emailResponse = await resend.emails.send({
       from: "Club Créole <onboarding@resend.dev>",

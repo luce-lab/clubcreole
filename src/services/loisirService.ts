@@ -1,6 +1,38 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { Loisir } from "@/components/loisirs/types";
+import { parseISO, format } from "date-fns";
+
+// Fonction utilitaire pour valider et formater les dates
+const validateAndFormatDate = (dateString: string): string => {
+  try {
+    // Essayer de parser comme date ISO
+    const date = parseISO(dateString);
+    if (!isNaN(date.getTime())) {
+      return date.toISOString().split('T')[0]; // Format YYYY-MM-DD
+    }
+    
+    // Essayer de parser d'autres formats communs
+    if (dateString.includes('/')) {
+      const parts = dateString.split('/');
+      // Supposer format DD/MM/YYYY
+      if (parts.length === 3) {
+        const [day, month, year] = parts;
+        const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        // Vérifier que c'est une date valide
+        if (!isNaN(new Date(formattedDate).getTime())) {
+          return formattedDate;
+        }
+      }
+    }
+    
+    // Si on ne peut pas formater, retourner la chaîne d'origine
+    return dateString;
+  } catch (error) {
+    console.error("Erreur de validation/formatage de date:", error);
+    return dateString;
+  }
+};
 
 export const updateLoisir = async (
   loisirId: number,
@@ -16,9 +48,16 @@ export const updateLoisir = async (
     gallery_images?: string[];
   }
 ): Promise<Loisir> => {
+  // Valider et formater les dates avant de les envoyer à la base de données
+  const formattedData = {
+    ...updatedData,
+    start_date: validateAndFormatDate(updatedData.start_date),
+    end_date: validateAndFormatDate(updatedData.end_date)
+  };
+
   const { data, error } = await supabase
     .from('loisirs')
-    .update(updatedData)
+    .update(formattedData)
     .eq('id', loisirId)
     .select();
 

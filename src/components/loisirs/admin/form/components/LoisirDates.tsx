@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from "react";
-import { FormField } from "../FormField";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -29,14 +28,36 @@ export const LoisirDates = ({
   useEffect(() => {
     try {
       if (startDate) {
-        const date = parseISO(startDate);
+        // Essayer d'abord comme date ISO
+        let date = parseISO(startDate);
+        
+        // Vérifier si la date est valide
+        if (isNaN(date.getTime())) {
+          // Essayer le format DD/MM/YYYY
+          if (startDate.includes('/')) {
+            const [day, month, year] = startDate.split('/');
+            date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+          }
+        }
+        
         if (!isNaN(date.getTime())) {
           setStartDateObj(date);
         }
       }
       
       if (endDate) {
-        const date = parseISO(endDate);
+        // Essayer d'abord comme date ISO
+        let date = parseISO(endDate);
+        
+        // Vérifier si la date est valide
+        if (isNaN(date.getTime())) {
+          // Essayer le format DD/MM/YYYY
+          if (endDate.includes('/')) {
+            const [day, month, year] = endDate.split('/');
+            date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+          }
+        }
+        
         if (!isNaN(date.getTime())) {
           setEndDateObj(date);
         }
@@ -128,7 +149,7 @@ export const LoisirDates = ({
               onSelect={handleEndDateSelect}
               initialFocus
               className={cn("p-3 pointer-events-auto")}
-              disabled={(date) => date < startDateObj!}
+              disabled={(date) => startDateObj ? date < startDateObj : false}
             />
           </PopoverContent>
         </Popover>

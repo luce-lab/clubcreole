@@ -1,5 +1,5 @@
 
-import { Calendar, Clock, MapPin, Users } from "lucide-react";
+import { Calendar, MapPin, Users } from "lucide-react";
 import { format, isAfter, isBefore, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -25,8 +25,25 @@ const LoisirsDetailDescription = ({
   // Formatter les dates pour l'affichage
   const formatDate = (dateString: string) => {
     try {
-      const date = parseISO(dateString);
-      return format(date, "d MMMM yyyy", { locale: fr });
+      // Essayer d'abord comme date ISO
+      let date = parseISO(dateString);
+      
+      // Vérifier si la date est valide
+      if (isNaN(date.getTime())) {
+        // Essayer le format DD/MM/YYYY
+        if (dateString.includes('/')) {
+          const [day, month, year] = dateString.split('/');
+          date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+        }
+      }
+      
+      // Vérifier si la date est maintenant valide
+      if (!isNaN(date.getTime())) {
+        return format(date, "d MMMM yyyy", { locale: fr });
+      }
+      
+      // Retourner la chaîne originale si tous les essais échouent
+      return dateString;
     } catch (e) {
       console.error("Erreur de format de date:", e);
       return dateString;
@@ -35,8 +52,34 @@ const LoisirsDetailDescription = ({
 
   // Déterminer si l'activité est à venir, en cours ou terminée
   const now = new Date();
-  const start = parseISO(startDate);
-  const end = parseISO(endDate);
+  
+  // Essayer de parser les dates de différentes manières
+  let start: Date;
+  let end: Date;
+  
+  try {
+    // Essayer d'abord comme date ISO
+    start = parseISO(startDate);
+    if (isNaN(start.getTime()) && startDate.includes('/')) {
+      const [day, month, year] = startDate.split('/');
+      start = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+    }
+    
+    end = parseISO(endDate);
+    if (isNaN(end.getTime()) && endDate.includes('/')) {
+      const [day, month, year] = endDate.split('/');
+      end = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+    }
+    
+    // Si les dates sont toujours invalides, utiliser des valeurs par défaut
+    if (isNaN(start.getTime())) start = new Date();
+    if (isNaN(end.getTime())) end = new Date();
+    
+  } catch (e) {
+    console.error("Erreur lors du parsing des dates:", e);
+    start = new Date();
+    end = new Date();
+  }
   
   const isUpcoming = isAfter(start, now);
   const isPast = isBefore(end, now);
