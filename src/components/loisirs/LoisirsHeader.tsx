@@ -1,21 +1,10 @@
 
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import BackButton from "@/components/common/BackButton";
 
 const LoisirsHeader = () => {
-  const navigate = useNavigate();
-
   return (
     <>
-      <Button 
-        onClick={() => navigate(-1)} 
-        variant="ghost" 
-        className="mb-6 group flex items-center gap-1 hover:gap-2 transition-all"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        <span>Retour</span>
-      </Button>
+      <BackButton backTo="/" />
       
       <h1 className="text-3xl md:text-4xl font-bold text-center text-creole-blue mb-8">
         Nos Activités de Loisirs
