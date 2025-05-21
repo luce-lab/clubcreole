@@ -11,12 +11,10 @@ export const ReservationCompactForm = ({
 }: ReservationCompactFormProps) => {
   return (
     <div className="bg-white border rounded-lg p-6 shadow-sm">
-      <h3 className="font-semibold text-lg mb-4">Réservez une table</h3>
-      <p className="text-gray-700 mb-4">
-        Réservez votre table et profitez d'une expérience gastronomique exceptionnelle.
-      </p>
+      <h3 className="font-semibold text-xl mb-2">Réservez une table</h3>
+      <p className="text-gray-500 text-sm mb-5">Gratuitement</p>
       <Button 
-        className="w-full bg-creole-green hover:bg-creole-green/90"
+        className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-medium"
         onClick={onShowFullForm}
       >
         <CalendarIcon className="mr-2 h-4 w-4" />

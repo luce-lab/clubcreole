@@ -1,6 +1,8 @@
 
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface ReservationGuestsSelectorProps {
   guests: string;
@@ -12,21 +14,39 @@ export const ReservationGuestsSelector = ({
   setGuests
 }: ReservationGuestsSelectorProps) => {
   return (
-    <div className="space-y-2">
-      <Label htmlFor="guests">Nombre de personnes *</Label>
-      <Select value={guests} onValueChange={setGuests}>
-        <SelectTrigger id="guests">
-          <SelectValue placeholder="Nombre de personnes" />
-        </SelectTrigger>
-        <SelectContent>
-          {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
-            <SelectItem key={num} value={num.toString()}>
-              {num} personne{num > 1 ? "s" : ""}
-            </SelectItem>
-          ))}
-          <SelectItem value="9+">Plus de 8 personnes</SelectItem>
-        </SelectContent>
-      </Select>
+    <div className="space-y-3">
+      <Label htmlFor="guests">Combien de personnes ?</Label>
+      <div className="grid grid-cols-4 gap-2 md:grid-cols-8">
+        {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
+          <Button
+            key={num}
+            type="button"
+            variant={guests === num.toString() ? "default" : "outline"}
+            className={cn(
+              "h-12 w-12", 
+              guests === num.toString() 
+                ? "bg-emerald-700 hover:bg-emerald-800" 
+                : "bg-white hover:bg-gray-100"
+            )}
+            onClick={() => setGuests(num.toString())}
+          >
+            {num}
+          </Button>
+        ))}
+        <Button
+          type="button"
+          variant={guests === "9+" ? "default" : "outline"}
+          className={cn(
+            "h-12", 
+            guests === "9+" 
+              ? "bg-emerald-700 hover:bg-emerald-800" 
+              : "bg-white hover:bg-gray-100"
+          )}
+          onClick={() => setGuests("9+")}
+        >
+          9+
+        </Button>
+      </div>
     </div>
   );
 };

@@ -9,6 +9,7 @@ import { ReservationCompactForm } from "./ReservationCompactForm";
 import { ReservationDateTimeSelector } from "./ReservationDateTimeSelector";
 import { ReservationGuestsSelector } from "./ReservationGuestsSelector";
 import { ReservationContactInfo } from "./ReservationContactInfo";
+import { cn } from "@/lib/utils";
 
 interface RestaurantReservationFormProps {
   restaurantId: number;
@@ -32,6 +33,7 @@ export const RestaurantReservationForm = ({
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [step, setStep] = useState(1);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,6 +75,7 @@ export const RestaurantReservationForm = ({
       setEmail("");
       setPhone("");
       setNotes("");
+      setStep(1);
       
       if (onClose) {
         onClose();
@@ -89,53 +92,110 @@ export const RestaurantReservationForm = ({
     }
   };
 
+  const nextStep = () => {
+    if (step === 1 && !date) {
+      toast({
+        title: "Date manquante",
+        description: "Veuillez sélectionner une date",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (step === 1 && !time) {
+      toast({
+        title: "Heure manquante", 
+        description: "Veuillez sélectionner une heure",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setStep(step + 1);
+  };
+
+  const prevStep = () => {
+    setStep(step - 1);
+  };
+
   if (!showForm) {
     return <ReservationCompactForm onShowFullForm={onClose || (() => {})} />;
   }
 
   return (
-    <div className="bg-white border rounded-lg p-6 shadow-sm">
-      <h3 className="font-semibold text-lg mb-4">Réservez votre table</h3>
+    <div className="bg-white border rounded-lg shadow-sm">
+      <div className="p-6 border-b">
+        <h3 className="font-semibold text-xl mb-1">Réservez votre table</h3>
+        <p className="text-sm text-gray-500">Au restaurant {restaurantName}</p>
+      </div>
       
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <ReservationDateTimeSelector 
-          date={date}
-          time={time}
-          setDate={setDate}
-          setTime={setTime}
-        />
+      <form onSubmit={handleSubmit}>
+        <div className="p-6">
+          {step === 1 && (
+            <ReservationDateTimeSelector 
+              date={date}
+              time={time}
+              setDate={setDate}
+              setTime={setTime}
+            />
+          )}
+          
+          {step === 2 && (
+            <ReservationGuestsSelector
+              guests={guests}
+              setGuests={setGuests}
+            />
+          )}
+          
+          {step === 3 && (
+            <ReservationContactInfo
+              name={name}
+              email={email}
+              phone={phone}
+              notes={notes}
+              setName={setName}
+              setEmail={setEmail}
+              setPhone={setPhone}
+              setNotes={setNotes}
+            />
+          )}
+        </div>
         
-        <ReservationGuestsSelector
-          guests={guests}
-          setGuests={setGuests}
-        />
-        
-        <ReservationContactInfo
-          name={name}
-          email={email}
-          phone={phone}
-          notes={notes}
-          setName={setName}
-          setEmail={setEmail}
-          setPhone={setPhone}
-          setNotes={setNotes}
-        />
-        
-        <div className="pt-2">
-          <Button 
-            type="submit" 
-            className="w-full bg-creole-green hover:bg-creole-green/90"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              "Traitement en cours..."
-            ) : (
-              <>
-                <Clock className="mr-2 h-4 w-4" />
-                Confirmer la réservation
-              </>
-            )}
-          </Button>
+        <div className="border-t p-4 flex justify-between">
+          {step > 1 && (
+            <Button 
+              type="button" 
+              variant="outline"
+              onClick={prevStep}
+            >
+              Retour
+            </Button>
+          )}
+          
+          {step < 3 ? (
+            <Button 
+              type="button" 
+              className="ml-auto bg-emerald-700 hover:bg-emerald-800"
+              onClick={nextStep}
+            >
+              Continuer
+            </Button>
+          ) : (
+            <Button 
+              type="submit" 
+              className="ml-auto bg-emerald-700 hover:bg-emerald-800"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                "Traitement en cours..."
+              ) : (
+                <>
+                  <Clock className="mr-2 h-4 w-4" />
+                  Confirmer la réservation
+                </>
+              )}
+            </Button>
+          )}
         </div>
       </form>
     </div>

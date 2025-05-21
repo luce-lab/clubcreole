@@ -25,7 +25,9 @@ export const ReservationContactInfo = ({
   setNotes
 }: ReservationContactInfoProps) => {
   return (
-    <>
+    <div className="space-y-4">
+      <h3 className="font-medium text-lg mb-2">Vos coordonnées</h3>
+      
       <div className="space-y-2">
         <Label htmlFor="name">Nom et prénom *</Label>
         <Input
@@ -34,6 +36,7 @@ export const ReservationContactInfo = ({
           onChange={(e) => setName(e.target.value)}
           placeholder="Votre nom complet"
           required
+          className="border-gray-300 focus-visible:ring-emerald-700"
         />
       </div>
       
@@ -46,6 +49,7 @@ export const ReservationContactInfo = ({
           onChange={(e) => setEmail(e.target.value)}
           placeholder="votre@email.com"
           required
+          className="border-gray-300 focus-visible:ring-emerald-700"
         />
       </div>
       
@@ -57,6 +61,7 @@ export const ReservationContactInfo = ({
           onChange={(e) => setPhone(e.target.value)}
           placeholder="06 XX XX XX XX"
           required
+          className="border-gray-300 focus-visible:ring-emerald-700"
         />
       </div>
       
@@ -67,10 +72,10 @@ export const ReservationContactInfo = ({
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Allergie, occasion spéciale, etc."
-          className="resize-none"
+          className="resize-none border-gray-300 focus-visible:ring-emerald-700"
           rows={3}
         />
       </div>
-    </>
+    </div>
   );
 };
