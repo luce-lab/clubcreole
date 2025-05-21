@@ -13,6 +13,7 @@ interface FormFieldProps {
   max?: string | number;
   required?: boolean;
   isTextarea?: boolean;
+  placeholder?: string;
 }
 
 export const FormField = ({
@@ -24,7 +25,8 @@ export const FormField = ({
   min,
   max,
   required = false,
-  isTextarea = false
+  isTextarea = false,
+  placeholder
 }: FormFieldProps) => {
   return (
     <div className="grid grid-cols-4 items-center gap-4">
@@ -38,6 +40,7 @@ export const FormField = ({
           onChange={onChange}
           className="col-span-3"
           required={required}
+          placeholder={placeholder}
         />
       ) : (
         <Input
@@ -49,6 +52,7 @@ export const FormField = ({
           onChange={onChange}
           className="col-span-3"
           required={required}
+          placeholder={placeholder}
         />
       )}
     </div>

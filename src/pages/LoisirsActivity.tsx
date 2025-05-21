@@ -25,7 +25,15 @@ const LoisirsActivity = () => {
         }
         
         if (data) {
-          setLoisirs(data);
+          // Conversion du champ gallery_images pour chaque loisir
+          const formattedLoisirs = data.map(loisir => ({
+            ...loisir,
+            gallery_images: Array.isArray(loisir.gallery_images) 
+              ? loisir.gallery_images 
+              : []
+          })) as Loisir[];
+          
+          setLoisirs(formattedLoisirs);
         }
       } catch (error) {
         console.error("Erreur lors du chargement des loisirs:", error);

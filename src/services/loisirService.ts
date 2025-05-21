@@ -28,7 +28,13 @@ export const updateLoisir = async (
   const updatedLoisir = data && data.length > 0 ? data[0] : null;
   if (!updatedLoisir) throw new Error("Aucune donnée mise à jour n'a été retournée");
   
-  return updatedLoisir;
+  // Conversion du champ gallery_images de Json à string[]
+  return {
+    ...updatedLoisir,
+    gallery_images: Array.isArray(updatedLoisir.gallery_images) 
+      ? updatedLoisir.gallery_images 
+      : []
+  } as Loisir;
 };
 
 export const getLoisirById = async (id: number): Promise<Loisir> => {
@@ -41,5 +47,11 @@ export const getLoisirById = async (id: number): Promise<Loisir> => {
   if (error) throw error;
   if (!data) throw new Error("Activité non trouvée");
   
-  return data;
+  // Conversion du champ gallery_images de Json à string[]
+  return {
+    ...data,
+    gallery_images: Array.isArray(data.gallery_images) 
+      ? data.gallery_images 
+      : []
+  } as Loisir;
 };
