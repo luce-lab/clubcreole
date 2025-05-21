@@ -3,10 +3,10 @@ export interface UserSubscription {
   id: string;
   name: string;
   email: string;
-  subscriptionStatus: "active" | "pending" | "expired" | "none";
+  subscriptionStatus: "active" | "none" | "pending" | "expired";
   subscriptionType: "basic" | "premium" | "none";
   subscriptionEndDate: string | null;
-  registeredDate: string;
+  registrationDate: string; // Changed from registeredDate to registrationDate to match the data structure
   lastActivity: string;
 }
 

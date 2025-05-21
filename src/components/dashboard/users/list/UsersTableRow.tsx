@@ -51,7 +51,7 @@ export const UsersTableRow = ({
       <TableCell
         onClick={() => onSelectUser(user.id)}
       >
-        {user.registeredDate}
+        {user.registrationDate}
       </TableCell>
       <TableCell
         onClick={() => onSelectUser(user.id)}
