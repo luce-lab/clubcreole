@@ -1,27 +1,17 @@
 
-import { ArrowLeft, MapPin, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { MapPin, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useNavigate } from "react-router-dom";
 import { CarRental } from "./CarRentalTypes";
+import BackButton from "@/components/common/BackButton";
 
 interface RentalDetailHeaderProps {
   rental: CarRental;
 }
 
 const RentalDetailHeader = ({ rental }: RentalDetailHeaderProps) => {
-  const navigate = useNavigate();
-  
   return (
     <>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => navigate(-1)}
-        className="mb-4"
-      >
-        <ArrowLeft className="h-6 w-6" />
-      </Button>
+      <BackButton backTo="/location" />
 
       <div className="mb-8 flex items-center justify-between">
         <div>

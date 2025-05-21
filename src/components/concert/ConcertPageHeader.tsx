@@ -1,7 +1,5 @@
 
-import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import BackButton from "@/components/common/BackButton";
 
 interface ConcertPageHeaderProps {
   title: string;
@@ -9,18 +7,9 @@ interface ConcertPageHeaderProps {
 }
 
 const ConcertPageHeader: React.FC<ConcertPageHeaderProps> = ({ title, description }) => {
-  const navigate = useNavigate();
-  
   return (
     <>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => navigate(-1)}
-        className="mb-4"
-      >
-        <ArrowLeft className="h-6 w-6" />
-      </Button>
+      <BackButton backTo="/concerts" />
 
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-creole-blue">{title}</h1>

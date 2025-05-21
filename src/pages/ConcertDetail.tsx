@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -11,6 +10,7 @@ import ConcertInfo from "@/components/concert/ConcertInfo";
 import ConcertAdvantage from "@/components/concert/ConcertAdvantage";
 import ConcertAdditionalInfo from "@/components/concert/ConcertAdditionalInfo";
 import ReservationCard from "@/components/concert/ReservationCard";
+import BackButton from "@/components/common/BackButton";
 
 const ConcertDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -60,14 +60,7 @@ const ConcertDetail = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => navigate(-1)}
-        className="mb-4"
-      >
-        <ArrowLeft className="h-6 w-6" />
-      </Button>
+      <BackButton backTo="/concerts" />
 
       <ConcertHeader concert={concert} />
 

@@ -1,8 +1,6 @@
 
 import { Star, MapPin } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import BackButton from "@/components/common/BackButton";
 
 interface AccommodationHeaderProps {
   name: string;
@@ -11,18 +9,9 @@ interface AccommodationHeaderProps {
 }
 
 export const AccommodationHeader = ({ name, location, rating }: AccommodationHeaderProps) => {
-  const navigate = useNavigate();
-
   return (
     <>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => navigate(-1)}
-        className="mb-4"
-      >
-        <ArrowLeft className="h-6 w-6" />
-      </Button>
+      <BackButton backTo="/hebergements" />
 
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-creole-blue">{name}</h1>
