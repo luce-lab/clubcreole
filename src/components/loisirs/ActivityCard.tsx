@@ -4,22 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { CheckCircle2, MapPin, Users, Film, Martini, Map, Calendar, ArrowRight } from "lucide-react";
+import { CheckCircle2, MapPin, Users, Film, Martini, Map, Calendar, ArrowRight, AlertCircle } from "lucide-react";
 import LoisirsRegistrationForm from "./LoisirsRegistrationForm";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, isValid } from "date-fns";
 import { fr } from "date-fns/locale";
-
-interface Loisir {
-  id: number;
-  title: string;
-  description: string;
-  location: string;
-  start_date: string;
-  end_date: string;
-  max_participants: number;
-  current_participants: number;
-  image: string;
-}
+import { Loisir } from "./types";
+import { isActivityPast, isDateValid } from "@/services/loisirService";
+import LoisirsInvitationForm from "./LoisirsInvitationForm";
 
 interface ActivityCardProps {
   loisir: Loisir;
@@ -28,6 +19,7 @@ interface ActivityCardProps {
 
 const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
   const [openDialog, setOpenDialog] = useState(false);
+  const [openInvitationDialog, setOpenInvitationDialog] = useState(false);
   const navigate = useNavigate();
 
   const getActivityIcon = (title: string) => {
@@ -44,7 +36,7 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
       let date = parseISO(dateString);
       
       // Vérifier si la date est valide
-      if (isNaN(date.getTime())) {
+      if (!isValid(date)) {
         // Essayer le format DD/MM/YYYY
         if (dateString.includes('/')) {
           const [day, month, year] = dateString.split('/');
@@ -53,15 +45,15 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
       }
       
       // Vérifier si la date est maintenant valide
-      if (!isNaN(date.getTime())) {
+      if (isValid(date)) {
         return format(date, "d MMM yyyy", { locale: fr });
       }
       
-      // Retourner la chaîne originale si tous les essais échouent
-      return dateString;
+      // Retourner une indication si la date n'est pas valide
+      return "Date à confirmer";
     } catch (e) {
       console.error("Erreur de format de date:", e);
-      return dateString;
+      return "Date à confirmer";
     }
   };
 
@@ -75,6 +67,14 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
     }
     return loisir.image;
   };
+
+  // Vérifier si les dates sont valides
+  const isStartDateValid = isDateValid(loisir.start_date);
+  const isEndDateValid = isDateValid(loisir.end_date);
+  const areDatesValid = isStartDateValid && isEndDateValid;
+  
+  // Vérifier si l'activité est passée
+  const isPastActivity = isActivityPast(loisir.end_date);
 
   const handleViewDetails = () => {
     navigate(`/loisirs/${loisir.id}`);
@@ -111,6 +111,7 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
                 ? `Du ${formatDate(loisir.start_date)} au ${formatDate(loisir.end_date)}`
                 : `Le ${formatDate(loisir.start_date)}`
               }
+              {!areDatesValid && <span className="text-yellow-600 ml-1">(À confirmer)</span>}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -120,22 +121,36 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
         </div>
       </CardContent>
       <CardFooter className="flex gap-2">
-        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-          <DialogTrigger asChild>
-            <Button 
-              variant="outline" 
-              className="flex-1"
-              disabled={loisir.current_participants >= loisir.max_participants}
-            >
-              {loisir.current_participants >= loisir.max_participants ? 'Complet' : "S'inscrire"}
-            </Button>
-          </DialogTrigger>
-          <LoisirsRegistrationForm 
-            selectedLoisir={loisir}
-            onSuccess={onUpdateLoisir}
-            onClose={() => setOpenDialog(false)}
-          />
-        </Dialog>
+        {!areDatesValid || isPastActivity ? (
+          <Dialog open={openInvitationDialog} onOpenChange={setOpenInvitationDialog}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="flex-1">
+                <AlertCircle className="mr-1 h-4 w-4" /> M'informer des prochaines dates
+              </Button>
+            </DialogTrigger>
+            <LoisirsInvitationForm 
+              loisirTitle={loisir.title}
+              onClose={() => setOpenInvitationDialog(false)}
+            />
+          </Dialog>
+        ) : (
+          <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+            <DialogTrigger asChild>
+              <Button 
+                variant="outline" 
+                className="flex-1"
+                disabled={loisir.current_participants >= loisir.max_participants}
+              >
+                {loisir.current_participants >= loisir.max_participants ? 'Complet' : "S'inscrire"}
+              </Button>
+            </DialogTrigger>
+            <LoisirsRegistrationForm 
+              selectedLoisir={loisir}
+              onSuccess={onUpdateLoisir}
+              onClose={() => setOpenDialog(false)}
+            />
+          </Dialog>
+        )}
         <Button 
           className="bg-creole-green hover:bg-creole-green/90" 
           onClick={handleViewDetails}

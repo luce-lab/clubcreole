@@ -1,7 +1,8 @@
 
 import { Calendar, MapPin, Users } from "lucide-react";
-import { format, isAfter, isBefore, parseISO } from "date-fns";
+import { format, isAfter, isBefore, parseISO, isValid } from "date-fns";
 import { fr } from "date-fns/locale";
+import { isActivityPast, isDateValid } from "@/services/loisirService";
 
 interface LoisirsDetailDescriptionProps {
   title: string;
@@ -29,7 +30,7 @@ const LoisirsDetailDescription = ({
       let date = parseISO(dateString);
       
       // Vérifier si la date est valide
-      if (isNaN(date.getTime())) {
+      if (!isValid(date)) {
         // Essayer le format DD/MM/YYYY
         if (dateString.includes('/')) {
           const [day, month, year] = dateString.split('/');
@@ -38,15 +39,15 @@ const LoisirsDetailDescription = ({
       }
       
       // Vérifier si la date est maintenant valide
-      if (!isNaN(date.getTime())) {
+      if (isValid(date)) {
         return format(date, "d MMMM yyyy", { locale: fr });
       }
       
       // Retourner la chaîne originale si tous les essais échouent
-      return dateString;
+      return "Date indisponible";
     } catch (e) {
       console.error("Erreur de format de date:", e);
-      return dateString;
+      return "Date indisponible";
     }
   };
 
@@ -54,42 +55,44 @@ const LoisirsDetailDescription = ({
   const now = new Date();
   
   // Essayer de parser les dates de différentes manières
-  let start: Date;
-  let end: Date;
+  let start: Date | null = null;
+  let end: Date | null = null;
+  let isStartDateValid = false;
+  let isEndDateValid = false;
   
   try {
     // Essayer d'abord comme date ISO
     start = parseISO(startDate);
-    if (isNaN(start.getTime()) && startDate.includes('/')) {
+    if (!isValid(start) && startDate.includes('/')) {
       const [day, month, year] = startDate.split('/');
       start = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
     }
+    isStartDateValid = isValid(start);
     
     end = parseISO(endDate);
-    if (isNaN(end.getTime()) && endDate.includes('/')) {
+    if (!isValid(end) && endDate.includes('/')) {
       const [day, month, year] = endDate.split('/');
       end = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
     }
-    
-    // Si les dates sont toujours invalides, utiliser des valeurs par défaut
-    if (isNaN(start.getTime())) start = new Date();
-    if (isNaN(end.getTime())) end = new Date();
-    
+    isEndDateValid = isValid(end);
   } catch (e) {
     console.error("Erreur lors du parsing des dates:", e);
-    start = new Date();
-    end = new Date();
   }
   
-  const isUpcoming = isAfter(start, now);
-  const isPast = isBefore(end, now);
-  const isOngoing = !isUpcoming && !isPast;
+  // Déterminer le statut de l'activité
+  const isUpcoming = isStartDateValid && isAfter(start!, now);
+  const isPast = isEndDateValid && isBefore(end!, now);
+  const isOngoing = isStartDateValid && isEndDateValid && !isUpcoming && !isPast;
+  const isDatesInvalid = !isStartDateValid || !isEndDateValid;
 
   // Définir le statut et la couleur associée
   let statusText = "";
   let statusClass = "";
   
-  if (isUpcoming) {
+  if (isDatesInvalid) {
+    statusText = "Dates non valides";
+    statusClass = "bg-yellow-100 text-yellow-800";
+  } else if (isUpcoming) {
     statusText = "À venir";
     statusClass = "bg-blue-100 text-blue-800";
   } else if (isOngoing) {
@@ -117,6 +120,7 @@ const LoisirsDetailDescription = ({
               ? `Le ${formatDate(startDate)}`
               : `Du ${formatDate(startDate)} au ${formatDate(endDate)}`
             }
+            {isDatesInvalid && " (Dates à confirmer)"}
           </span>
         </div>
         

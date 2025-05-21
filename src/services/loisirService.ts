@@ -1,36 +1,86 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { Loisir } from "@/components/loisirs/types";
-import { parseISO, format } from "date-fns";
+import { parseISO, format, isValid } from "date-fns";
 
 // Fonction utilitaire pour valider et formater les dates
 const validateAndFormatDate = (dateString: string): string => {
   try {
     // Essayer de parser comme date ISO
-    const date = parseISO(dateString);
-    if (!isNaN(date.getTime())) {
-      return date.toISOString().split('T')[0]; // Format YYYY-MM-DD
-    }
+    let date = parseISO(dateString);
     
-    // Essayer de parser d'autres formats communs
-    if (dateString.includes('/')) {
+    // Si ce n'est pas une date ISO valide, essayer d'autres formats
+    if (!isValid(date) && dateString.includes('/')) {
       const parts = dateString.split('/');
       // Supposer format DD/MM/YYYY
       if (parts.length === 3) {
         const [day, month, year] = parts;
-        const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-        // Vérifier que c'est une date valide
-        if (!isNaN(new Date(formattedDate).getTime())) {
-          return formattedDate;
-        }
+        date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
       }
     }
     
+    // Vérifier si la date est maintenant valide
+    if (isValid(date)) {
+      return date.toISOString().split('T')[0]; // Format YYYY-MM-DD
+    }
+    
     // Si on ne peut pas formater, retourner la chaîne d'origine
+    console.warn("Date non valide:", dateString);
     return dateString;
   } catch (error) {
     console.error("Erreur de validation/formatage de date:", error);
     return dateString;
+  }
+};
+
+// Vérifier si une date est valide (passée ou future)
+export const isDateValid = (dateString: string): boolean => {
+  try {
+    // Essayer de parser comme date ISO
+    let date = parseISO(dateString);
+    
+    // Si ce n'est pas une date ISO valide, essayer d'autres formats
+    if (!isValid(date) && dateString.includes('/')) {
+      const parts = dateString.split('/');
+      // Supposer format DD/MM/YYYY
+      if (parts.length === 3) {
+        const [day, month, year] = parts;
+        date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+      }
+    }
+    
+    return isValid(date);
+  } catch {
+    return false;
+  }
+};
+
+// Vérifier si une activité est terminée
+export const isActivityPast = (endDate: string): boolean => {
+  try {
+    // Essayer de parser comme date ISO
+    let date = parseISO(endDate);
+    
+    // Si ce n'est pas une date ISO valide, essayer d'autres formats
+    if (!isValid(date) && endDate.includes('/')) {
+      const parts = endDate.split('/');
+      // Supposer format DD/MM/YYYY
+      if (parts.length === 3) {
+        const [day, month, year] = parts;
+        date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+      }
+    }
+    
+    if (!isValid(date)) {
+      console.warn("Date de fin non valide:", endDate);
+      return false; // Si la date n'est pas valide, considérer que l'activité n'est pas terminée
+    }
+    
+    const now = new Date();
+    return date < now;
+  } catch (error) {
+    console.error("Erreur lors de la vérification de la date de fin:", error);
+    return false;
   }
 };
 

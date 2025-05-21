@@ -1,8 +1,9 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { Loisir, Inscription } from "@/components/loisirs/types";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, isValid } from "date-fns";
 import { fr } from "date-fns/locale";
+import { isDateValid } from "./loisirService";
 
 export const createInscription = async (
   loisirId: number,
@@ -22,6 +23,14 @@ export const createInscription = async (
     if (!loisirData) throw new Error("Activité non trouvée");
 
     const loisir = loisirData as Loisir;
+    
+    // Vérifier que la date de l'activité est valide avant de permettre l'inscription
+    const isStartDateValid = isDateValid(loisir.start_date);
+    const isEndDateValid = isDateValid(loisir.end_date);
+    
+    if (!isStartDateValid || !isEndDateValid) {
+      throw new Error("Les dates de cette activité ne sont pas encore confirmées");
+    }
 
     // 2. Insérer l'inscription dans la base de données
     // Utilisation du timestamp actuel pour inscription_date
@@ -128,25 +137,26 @@ export const getInscriptionsByLoisirId = async (loisirId: number): Promise<Inscr
 export const formatDate = (dateString: string): string => {
   try {
     // Essayer d'abord de parser comme une date ISO
-    const date = parseISO(dateString);
-    if (!isNaN(date.getTime())) {
-      return format(date, 'dd MMMM yyyy', { locale: fr });
-    }
+    let date = parseISO(dateString);
     
-    // Si ce n'est pas une date ISO, essayer d'autres formats
-    if (dateString.includes('/')) {
-      const [day, month, year] = dateString.split('/');
-      // Créer une date au format ISO
-      const formattedDate = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
-      if (!isNaN(formattedDate.getTime())) {
-        return format(formattedDate, 'dd MMMM yyyy', { locale: fr });
+    // Vérifier si la date est valide
+    if (!isValid(date)) {
+      // Essayer le format DD/MM/YYYY
+      if (dateString.includes('/')) {
+        const [day, month, year] = dateString.split('/');
+        date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
       }
     }
     
-    // Par défaut retourner la chaîne telle quelle
-    return dateString;
+    // Vérifier si la date est maintenant valide
+    if (isValid(date)) {
+      return format(date, 'dd MMMM yyyy', { locale: fr });
+    }
+    
+    // Par défaut retourner "Date à confirmer"
+    return "Date à confirmer";
   } catch (error) {
     console.error("Erreur de formatage de date:", error);
-    return dateString;
+    return "Date à confirmer";
   }
 };

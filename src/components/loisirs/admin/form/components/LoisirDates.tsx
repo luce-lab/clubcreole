@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
-import { format, parseISO } from "date-fns";
+import { CalendarIcon, AlertCircle } from "lucide-react";
+import { format, parseISO, isValid } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +23,8 @@ export const LoisirDates = ({
 }: LoisirDatesProps) => {
   const [startDateObj, setStartDateObj] = useState<Date | undefined>(undefined);
   const [endDateObj, setEndDateObj] = useState<Date | undefined>(undefined);
+  const [startDateError, setStartDateError] = useState<boolean>(false);
+  const [endDateError, setEndDateError] = useState<boolean>(false);
 
   // Convertir les chaînes de caractères en objets Date
   useEffect(() => {
@@ -32,7 +34,7 @@ export const LoisirDates = ({
         let date = parseISO(startDate);
         
         // Vérifier si la date est valide
-        if (isNaN(date.getTime())) {
+        if (!isValid(date)) {
           // Essayer le format DD/MM/YYYY
           if (startDate.includes('/')) {
             const [day, month, year] = startDate.split('/');
@@ -40,8 +42,11 @@ export const LoisirDates = ({
           }
         }
         
-        if (!isNaN(date.getTime())) {
+        if (isValid(date)) {
           setStartDateObj(date);
+          setStartDateError(false);
+        } else {
+          setStartDateError(true);
         }
       }
       
@@ -50,7 +55,7 @@ export const LoisirDates = ({
         let date = parseISO(endDate);
         
         // Vérifier si la date est valide
-        if (isNaN(date.getTime())) {
+        if (!isValid(date)) {
           // Essayer le format DD/MM/YYYY
           if (endDate.includes('/')) {
             const [day, month, year] = endDate.split('/');
@@ -58,8 +63,11 @@ export const LoisirDates = ({
           }
         }
         
-        if (!isNaN(date.getTime())) {
+        if (isValid(date)) {
           setEndDateObj(date);
+          setEndDateError(false);
+        } else {
+          setEndDateError(true);
         }
       }
     } catch (error) {
@@ -73,6 +81,7 @@ export const LoisirDates = ({
       setStartDateObj(date);
       const formattedDate = format(date, 'yyyy-MM-dd');
       onStartDateChange(formattedDate);
+      setStartDateError(false);
     }
   };
 
@@ -81,14 +90,20 @@ export const LoisirDates = ({
       setEndDateObj(date);
       const formattedDate = format(date, 'yyyy-MM-dd');
       onEndDateChange(formattedDate);
+      setEndDateError(false);
     }
   };
 
   return (
     <>
       <div className="grid gap-2">
-        <label htmlFor="startDate" className="text-sm font-medium">
+        <label htmlFor="startDate" className="text-sm font-medium flex items-center">
           Date de début
+          {startDateError && (
+            <span className="ml-2 text-xs text-red-500 flex items-center">
+              <AlertCircle className="h-3 w-3 mr-1" /> Format de date invalide
+            </span>
+          )}
         </label>
         <Popover>
           <PopoverTrigger asChild>
@@ -97,14 +112,15 @@ export const LoisirDates = ({
               variant="outline"
               className={cn(
                 "w-full justify-start text-left font-normal",
-                !startDateObj && "text-muted-foreground"
+                !startDateObj && "text-muted-foreground",
+                startDateError && "border-red-500"
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
               {startDateObj ? (
                 format(startDateObj, "dd MMMM yyyy", { locale: fr })
               ) : (
-                <span>Sélectionner une date</span>
+                <span>{startDateError ? "Date invalide - Sélectionner" : "Sélectionner une date"}</span>
               )}
             </Button>
           </PopoverTrigger>
@@ -121,8 +137,13 @@ export const LoisirDates = ({
       </div>
 
       <div className="grid gap-2">
-        <label htmlFor="endDate" className="text-sm font-medium">
+        <label htmlFor="endDate" className="text-sm font-medium flex items-center">
           Date de fin
+          {endDateError && (
+            <span className="ml-2 text-xs text-red-500 flex items-center">
+              <AlertCircle className="h-3 w-3 mr-1" /> Format de date invalide
+            </span>
+          )}
         </label>
         <Popover>
           <PopoverTrigger asChild>
@@ -131,14 +152,15 @@ export const LoisirDates = ({
               variant="outline"
               className={cn(
                 "w-full justify-start text-left font-normal",
-                !endDateObj && "text-muted-foreground"
+                !endDateObj && "text-muted-foreground",
+                endDateError && "border-red-500"
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
               {endDateObj ? (
                 format(endDateObj, "dd MMMM yyyy", { locale: fr })
               ) : (
-                <span>Sélectionner une date</span>
+                <span>{endDateError ? "Date invalide - Sélectionner" : "Sélectionner une date"}</span>
               )}
             </Button>
           </PopoverTrigger>
