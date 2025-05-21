@@ -69,11 +69,17 @@ export const createRestaurantReservation = async (reservation: Omit<RestaurantRe
         console.warn("Problème lors de l'envoi de l'email de confirmation:", emailResult);
         emailSuccess = false;
         emailMessage = "L'email de confirmation n'a pas pu être envoyé, mais votre réservation a bien été enregistrée.";
-      } else if (emailResult.emailResponse && emailResult.emailResponse.error) {
-        // Le service d'email a retourné une erreur (ex: en mode test)
-        console.warn("Avertissement du service d'email:", emailResult.emailResponse);
-        emailSuccess = false;
-        emailMessage = "Note: En mode test, l'email n'a pas été envoyé à votre adresse, mais votre réservation est confirmée.";
+      } else {
+        // Récupérer les détails du résultat d'envoi de l'email
+        emailSuccess = emailResult.emailSuccess !== false;
+        if (!emailSuccess && emailResult.emailMessage) {
+          emailMessage = emailResult.emailMessage;
+        }
+        
+        // Logs pour le débogage
+        if (!emailSuccess) {
+          console.warn("Avertissement du service d'email:", emailResult);
+        }
       }
     } catch (emailError) {
       console.error("Erreur lors de l'envoi de l'email de confirmation:", emailError);

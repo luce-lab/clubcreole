@@ -68,6 +68,9 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send the email (with appropriate error handling)
     let emailResponse;
+    let emailSuccess = true;
+    let emailMessage = "";
+    
     try {
       emailResponse = await resend.emails.send({
         from: "Club Créole <onboarding@resend.dev>",
@@ -76,22 +79,31 @@ const handler = async (req: Request): Promise<Response> => {
         html: emailHtml,
       });
       
-      console.log("Email sent successfully:", emailResponse);
+      // Check if there's an error in the response
+      if (emailResponse.error) {
+        emailSuccess = false;
+        
+        // Detect if this is a test mode restriction
+        if (emailResponse.error.message && emailResponse.error.message.includes("testing emails")) {
+          emailMessage = "En mode test, nous ne pouvons envoyer des emails qu'au propriétaire du compte Resend.";
+        } else {
+          emailMessage = emailResponse.error.message || "Problème lors de l'envoi de l'email";
+        }
+        
+        console.log("Email sending warning:", emailResponse);
+      } else {
+        console.log("Email sent successfully:", emailResponse);
+      }
     } catch (emailError: any) {
+      emailSuccess = false;
+      emailMessage = emailError.message || "Problème lors de l'envoi de l'email";
       console.error("Email sending error:", emailError);
-      
-      // We'll still return success to the client, but log the email error
-      // This prevents the reservation process from failing due to email issues
-      emailResponse = {
-        success: false,
-        error: emailError.message,
-        testMode: true
-      };
     }
 
     return new Response(JSON.stringify({ 
       success: true, 
-      emailResponse,
+      emailSuccess,
+      emailMessage,
       message: "Réservation enregistrée avec succès" 
     }), {
       status: 200,

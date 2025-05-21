@@ -77,10 +77,23 @@ export const useRestaurantReservation = ({
         notes: formData.notes || undefined
       }, restaurantName, restaurantLocation);
 
+      // Message spécifique selon le résultat de l'email
+      let emailMessage = "";
+      if (!result.emailSuccess) {
+        // Vérifier si c'est une erreur de mode test (email adresse non autorisée)
+        if (result.emailMessage && result.emailMessage.includes("test")) {
+          emailMessage = " En mode test, nous ne pouvons envoyer des emails qu'au propriétaire du compte Resend. Votre réservation est bien enregistrée.";
+        } else {
+          emailMessage = " " + result.emailMessage;
+        }
+      } else {
+        emailMessage = " Un email de confirmation a été envoyé.";
+      }
+
       // Notification de réservation
       toast({
         title: "Réservation confirmée !",
-        description: `Votre table pour ${formData.guests} personne(s) au ${restaurantName} est réservée le ${format(formData.date, 'dd/MM/yyyy')} à ${formData.time}.${!result.emailSuccess ? " " + result.emailMessage : " Un email de confirmation a été envoyé."}`,
+        description: `Votre table pour ${formData.guests} personne(s) au ${restaurantName} est réservée le ${format(formData.date, 'dd/MM/yyyy')} à ${formData.time}.${emailMessage}`,
       });
       
       // Reset form
