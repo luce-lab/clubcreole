@@ -15,7 +15,7 @@ export interface RestaurantReservation {
   status?: string;
 }
 
-export const createRestaurantReservation = async (reservation: Omit<RestaurantReservation, "id" | "status">) => {
+export const createRestaurantReservation = async (reservation: Omit<RestaurantReservation, "id" | "status">, restaurantName: string, restaurantLocation: string) => {
   try {
     // Formatage de la date au format ISO pour stockage dans la base de données
     const formattedDate = format(new Date(reservation.reservation_date), "yyyy-MM-dd");
@@ -33,6 +33,40 @@ export const createRestaurantReservation = async (reservation: Omit<RestaurantRe
     if (error) {
       console.error("Erreur lors de la création de la réservation:", error);
       throw new Error(error.message);
+    }
+    
+    // Envoyer l'email de confirmation via l'Edge Function
+    try {
+      const response = await fetch("https://psryoyugyimibjhwhvlh.supabase.co/functions/v1/restaurant-confirmation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzcnlveXVneWltaWJqaHdodmxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM4NTM2NDMsImV4cCI6MjA0OTQyOTY0M30.HqVFT7alWrZtjf1cHxeAeqpsWMjVEnnXfVtwesYga-0`,
+        },
+        body: JSON.stringify({
+          name: reservation.name,
+          email: reservation.email,
+          restaurant: {
+            id: reservation.restaurant_id,
+            name: restaurantName,
+            location: restaurantLocation
+          },
+          reservation: {
+            date: formattedDate,
+            time: reservation.reservation_time,
+            guests: reservation.guests,
+            notes: reservation.notes
+          }
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Erreur lors de l'envoi de l'email de confirmation:", errorData);
+      }
+    } catch (emailError) {
+      console.error("Erreur lors de l'envoi de l'email de confirmation:", emailError);
+      // On ne relance pas l'erreur ici pour ne pas bloquer la réservation en cas de problème d'email
     }
     
     return data?.[0];

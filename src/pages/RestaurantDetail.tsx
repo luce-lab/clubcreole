@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -110,8 +109,9 @@ const RestaurantDetail = () => {
               <RestaurantReservationForm 
                 restaurantId={restaurant.id} 
                 restaurantName={restaurant.name}
+                restaurantLocation={restaurant.location}
                 showForm={showReservationForm}
-                onClose={() => setShowReservationForm(false)}
+                onClose={() => setShowReservationForm(!showReservationForm)}
               />
               
               <div className="mt-6">

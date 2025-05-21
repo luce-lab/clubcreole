@@ -14,13 +14,15 @@ import { cn } from "@/lib/utils";
 interface RestaurantReservationFormProps {
   restaurantId: number;
   restaurantName: string;
+  restaurantLocation?: string;
   showForm?: boolean;
   onClose?: () => void;
 }
 
 export const RestaurantReservationForm = ({ 
   restaurantId, 
-  restaurantName, 
+  restaurantName,
+  restaurantLocation = "", 
   showForm = true,
   onClose 
 }: RestaurantReservationFormProps) => {
@@ -50,7 +52,7 @@ export const RestaurantReservationForm = ({
     setIsSubmitting(true);
 
     try {
-      // Créer la réservation dans la base de données
+      // Créer la réservation dans la base de données et envoyer l'email
       await createRestaurantReservation({
         restaurant_id: restaurantId,
         reservation_date: date.toISOString(),
@@ -60,11 +62,11 @@ export const RestaurantReservationForm = ({
         email,
         phone,
         notes: notes || undefined
-      });
+      }, restaurantName, restaurantLocation);
 
       toast({
         title: "Réservation confirmée !",
-        description: `Votre table pour ${guests} personne(s) au ${restaurantName} est réservée le ${format(date, 'dd/MM/yyyy')} à ${time}.`,
+        description: `Votre table pour ${guests} personne(s) au ${restaurantName} est réservée le ${format(date, 'dd/MM/yyyy')} à ${time}. Un email de confirmation a été envoyé.`,
       });
       
       // Reset form
