@@ -15,6 +15,8 @@ import { DeleteLoisirDialog } from "./DeleteLoisirDialog";
 import { InscriptionsDialog } from "./InscriptionsDialog";
 import { Loisir } from "@/components/loisirs/types";
 import { CreateLoisirDialog } from "./CreateLoisirDialog";
+import { format, parseISO } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface LoisirsAdminListProps {
   loisirs: Loisir[];
@@ -47,10 +49,29 @@ export const LoisirsAdminList = ({ loisirs, onAdd, onUpdate, onDelete }: Loisirs
 
   const formatDate = (dateString: string) => {
     try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('fr-FR');
+      // Vérifier si la chaîne est une date ISO valide
+      const date = parseISO(dateString);
+      if (isNaN(date.getTime())) {
+        throw new Error("Date invalide");
+      }
+      return format(date, 'dd/MM/yyyy', { locale: fr });
     } catch (error) {
-      return dateString;
+      // Essayer un autre format si la date n'est pas au format ISO
+      try {
+        const parts = dateString.split('/');
+        if (parts.length === 3) {
+          // Supposons que le format est dd/mm/yyyy
+          const [day, month, year] = parts;
+          const date = new Date(`${year}-${month}-${day}`);
+          if (!isNaN(date.getTime())) {
+            return format(date, 'dd/MM/yyyy', { locale: fr });
+          }
+        }
+        // En dernier recours, renvoyer la chaîne telle quelle
+        return dateString;
+      } catch (error) {
+        return dateString;
+      }
     }
   };
 
