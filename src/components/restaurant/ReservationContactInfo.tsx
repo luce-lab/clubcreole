@@ -26,7 +26,7 @@ export const ReservationContactInfo = ({
 }: ReservationContactInfoProps) => {
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-lg mb-2">Vos coordonnées</h3>
+      <h3 className="font-medium text-lg mb-4">Vos coordonnées</h3>
       
       <div className="space-y-2">
         <Label htmlFor="name">Nom et prénom *</Label>
@@ -75,6 +75,12 @@ export const ReservationContactInfo = ({
           className="resize-none border-gray-300 focus-visible:ring-emerald-700"
           rows={3}
         />
+      </div>
+
+      <div className="mt-4 p-4 bg-emerald-50 rounded-md border border-emerald-100">
+        <p className="text-sm">
+          En cliquant sur "Confirmer la réservation", vous acceptez les conditions générales de réservation et la politique de confidentialité.
+        </p>
       </div>
     </div>
   );

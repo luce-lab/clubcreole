@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Clock } from "lucide-react";
+import { Clock, Calendar, User, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
+import { fr } from 'date-fns/locale';
 import { createRestaurantReservation } from "@/services/restaurantService";
 import { ReservationCompactForm } from "./ReservationCompactForm";
 import { ReservationDateTimeSelector } from "./ReservationDateTimeSelector";
@@ -104,7 +105,7 @@ export const RestaurantReservationForm = ({
       return;
     }
     
-    if (step === 1 && !time) {
+    if (step === 2 && !time) {
       toast({
         title: "Heure manquante", 
         description: "Veuillez sélectionner une heure",
@@ -124,11 +125,33 @@ export const RestaurantReservationForm = ({
     return <ReservationCompactForm onShowFullForm={onClose || (() => {})} />;
   }
 
+  // Afficher l'étape actuelle dans l'en-tête du formulaire
+  const renderStepHeader = () => {
+    if (step === 1) {
+      return "Réservez votre table";
+    } else if (step === 2) {
+      return date ? `${format(date, 'dd MMMM', { locale: fr })}` : "Sélectionnez une heure";
+    } else if (step === 3) {
+      return `${format(date!, 'dd MMMM', { locale: fr })} · ${time}`;
+    }
+  };
+
+  // Afficher les détails de l'étape actuelle dans le sous-titre
+  const renderStepSubtitle = () => {
+    if (step === 1) {
+      return restaurantName;
+    } else if (step === 2) {
+      return "Sélectionnez une heure";
+    } else if (step === 3) {
+      return `${guests} ${parseInt(guests) > 1 ? 'personnes' : 'personne'}`;
+    }
+  };
+
   return (
     <div className="bg-white border rounded-lg shadow-sm">
       <div className="p-6 border-b">
-        <h3 className="font-semibold text-xl mb-1">Réservez votre table</h3>
-        <p className="text-sm text-gray-500">Au restaurant {restaurantName}</p>
+        <h3 className="font-semibold text-xl mb-1">{renderStepHeader()}</h3>
+        <p className="text-sm text-gray-500">{renderStepSubtitle()}</p>
       </div>
       
       <form onSubmit={handleSubmit}>
@@ -139,17 +162,28 @@ export const RestaurantReservationForm = ({
               time={time}
               setDate={setDate}
               setTime={setTime}
+              step={step}
             />
           )}
           
           {step === 2 && (
+            <ReservationDateTimeSelector 
+              date={date}
+              time={time}
+              setDate={setDate}
+              setTime={setTime}
+              step={step}
+            />
+          )}
+          
+          {step === 3 && (
             <ReservationGuestsSelector
               guests={guests}
               setGuests={setGuests}
             />
           )}
           
-          {step === 3 && (
+          {step === 4 && (
             <ReservationContactInfo
               name={name}
               email={email}
@@ -174,13 +208,17 @@ export const RestaurantReservationForm = ({
             </Button>
           )}
           
-          {step < 3 ? (
+          {step < 4 ? (
             <Button 
               type="button" 
-              className="ml-auto bg-emerald-700 hover:bg-emerald-800"
+              className={cn("ml-auto bg-emerald-700 hover:bg-emerald-800", step === 1 && !date ? "opacity-50 cursor-not-allowed" : "")}
               onClick={nextStep}
+              disabled={step === 1 && !date || step === 2 && !time}
             >
-              Continuer
+              {step === 1 && "Continuer"}
+              {step === 2 && "Continuer"}
+              {step === 3 && "Coordonnées"}
+              <ChevronRight className="ml-1 h-4 w-4" />
             </Button>
           ) : (
             <Button 
@@ -192,7 +230,6 @@ export const RestaurantReservationForm = ({
                 "Traitement en cours..."
               ) : (
                 <>
-                  <Clock className="mr-2 h-4 w-4" />
                   Confirmer la réservation
                 </>
               )}
