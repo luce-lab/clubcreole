@@ -59,7 +59,8 @@ export const createInscription = async (
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabase.auth.anon_key}`,
+          // Corriger cette ligne qui cause l'erreur TypeScript
+          // La clé d'API publique n'est pas nécessaire ici car la fonction est configurée sans vérification JWT
         },
         body: JSON.stringify({
           name,
