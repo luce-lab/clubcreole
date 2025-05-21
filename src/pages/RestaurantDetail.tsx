@@ -82,7 +82,7 @@ const RestaurantDetail = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <BackButton backTo="/restaurants" />
+      <BackButton backTo="/restauration" />
       
       <div className="max-w-5xl mx-auto mt-8">
         <RestaurantDetailHeader
