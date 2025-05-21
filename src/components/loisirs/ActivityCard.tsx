@@ -1,9 +1,10 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { CheckCircle2, Clock, MapPin, Users, Film, Martini, Map, Calendar } from "lucide-react";
+import { CheckCircle2, Clock, MapPin, Users, Film, Martini, Map, Calendar, ArrowRight } from "lucide-react";
 import LoisirsRegistrationForm from "./LoisirsRegistrationForm";
 
 interface Loisir {
@@ -25,6 +26,7 @@ interface ActivityCardProps {
 
 const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
   const [openDialog, setOpenDialog] = useState(false);
+  const navigate = useNavigate();
 
   const getActivityIcon = (title: string) => {
     if (title.includes("boite")) return <Martini className="h-4 w-4 text-creole-blue" />;
@@ -58,9 +60,13 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
     return loisir.image;
   };
 
+  const handleViewDetails = () => {
+    navigate(`/loisirs/${loisir.id}`);
+  };
+
   return (
     <Card key={loisir.id} className="overflow-hidden flex flex-col h-full">
-      <div className="h-48 overflow-hidden">
+      <div className="h-48 overflow-hidden cursor-pointer" onClick={handleViewDetails}>
         <img 
           src={getImageForActivity(loisir)} 
           alt={loisir.title} 
@@ -70,7 +76,9 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
       <CardHeader>
         <div className="flex items-center gap-2 mb-2">
           {getActivityIcon(loisir.title)}
-          <CardTitle>{loisir.title}</CardTitle>
+          <CardTitle className="cursor-pointer hover:text-creole-green" onClick={handleViewDetails}>
+            {loisir.title}
+          </CardTitle>
         </div>
         <CardDescription>{loisir.description}</CardDescription>
       </CardHeader>
@@ -95,11 +103,12 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
           </div>
         </div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex gap-2">
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>
           <DialogTrigger asChild>
             <Button 
-              className="w-full bg-creole-green hover:bg-creole-green/90"
+              variant="outline" 
+              className="flex-1"
               disabled={loisir.current_participants >= loisir.max_participants}
             >
               {loisir.current_participants >= loisir.max_participants ? 'Complet' : "S'inscrire"}
@@ -111,6 +120,12 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
             onClose={() => setOpenDialog(false)}
           />
         </Dialog>
+        <Button 
+          className="bg-creole-green hover:bg-creole-green/90" 
+          onClick={handleViewDetails}
+        >
+          Détails <ArrowRight className="ml-1 h-4 w-4" />
+        </Button>
       </CardFooter>
     </Card>
   );

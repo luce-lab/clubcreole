@@ -29,3 +29,16 @@ export const updateLoisir = async (
   
   return updatedLoisir;
 };
+
+export const getLoisirById = async (id: number): Promise<Loisir> => {
+  const { data, error } = await supabase
+    .from('loisirs')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) throw error;
+  if (!data) throw new Error("Activité non trouvée");
+  
+  return data;
+};

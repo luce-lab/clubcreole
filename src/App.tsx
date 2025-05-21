@@ -11,6 +11,7 @@ import CanoeActivity from "./pages/CanoeActivity";
 import HikingActivity from "./pages/HikingActivity";
 import JetSkiActivity from "./pages/JetSkiActivity";
 import LoisirsActivity from "./pages/LoisirsActivity";
+import LoisirsDetail from "./pages/LoisirsDetail";
 import RestaurantActivity from "./pages/RestaurantActivity";
 import RestaurantDetail from "./pages/RestaurantDetail";
 import CarRentalActivity from "./pages/CarRentalActivity";
@@ -63,6 +64,7 @@ const App = () => (
             <Route path="/clients" element={<Clients />} />
             <Route path="/offers" element={<Offers />} />
             <Route path="/loisirs" element={<LoisirsActivity />} />
+            <Route path="/loisirs/:id" element={<LoisirsDetail />} />
             <Route path="/loisirs-management" element={<LoisirsManagement />} />
             <Route path="/restauration" element={<RestaurantActivity />} />
             <Route path="/restaurant/:id" element={<RestaurantDetail />} />
