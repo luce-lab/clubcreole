@@ -91,10 +91,12 @@ export const ReservationDateTimeSelector = ({
               <SelectValue placeholder="Sélectionner une heure" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="" disabled className="font-medium">
+              {/* L'élément sélectionné pour le placeholder - utilise une valeur valide mais non sélectionnable */}
+              <SelectItem value="placeholder" disabled className="font-medium">
                 Sélectionner une heure
               </SelectItem>
               
+              {/* En-tête pour le déjeuner - utilise une valeur unique non vide */}
               <SelectItem value="lunch-header" disabled className="font-medium">
                 Déjeuner
               </SelectItem>
@@ -104,6 +106,7 @@ export const ReservationDateTimeSelector = ({
                 </SelectItem>
               ))}
               
+              {/* En-tête pour le dîner - utilise une valeur unique non vide */}
               <SelectItem value="dinner-header" disabled className="font-medium">
                 Dîner
               </SelectItem>
