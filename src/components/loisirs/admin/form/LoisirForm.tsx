@@ -1,10 +1,11 @@
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
 import { Loisir } from "@/components/loisirs/types";
-import { FormField } from "./FormField";
+import { BasicLoisirInfo } from "./components/BasicLoisirInfo";
+import { LoisirDates } from "./components/LoisirDates";
+import { ParticipantsInfo } from "./components/ParticipantsInfo";
+import { FormActions } from "./components/FormActions";
 
 interface LoisirFormProps {
   loisir: Loisir;
@@ -95,102 +96,40 @@ export const LoisirForm = ({ loisir, isSubmitting, onSubmit, onCancel }: LoisirF
   return (
     <form onSubmit={handleSubmit}>
       <div className="grid gap-4 py-4">
-        <FormField
-          id="edit-title"
-          label="Titre"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
+        <BasicLoisirInfo
+          title={title}
+          description={description}
+          location={location}
+          image={image}
+          onTitleChange={setTitle}
+          onDescriptionChange={setDescription}
+          onLocationChange={setLocation}
+          onImageChange={setImage}
         />
 
-        <FormField
-          id="edit-description"
-          label="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-          isTextarea
+        <LoisirDates
+          startDate={startDate}
+          endDate={endDate}
+          onStartDateChange={setStartDate}
+          onEndDateChange={setEndDate}
         />
 
-        <FormField
-          id="edit-location"
-          label="Lieu"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          required
-        />
-
-        <FormField
-          id="edit-startDate"
-          label="Date de début"
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          required
-        />
-
-        <FormField
-          id="edit-endDate"
-          label="Date de fin"
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          required
-        />
-
-        <FormField
-          id="edit-image"
-          label="URL Image principale"
-          value={image}
-          onChange={(e) => setImage(e.target.value)}
-          required
-        />
-
-        <FormField
-          id="edit-galleryImages"
-          label="URLs des images de la galerie (une URL par ligne)"
-          value={galleryImages}
-          onChange={(e) => setGalleryImages(e.target.value)}
-          isTextarea
-          placeholder="https://exemple.com/image1.jpg&#10;https://exemple.com/image2.jpg&#10;https://exemple.com/image3.jpg"
-        />
-
-        <FormField
-          id="edit-maxParticipants"
-          label="Participants max"
-          type="number"
-          min={currentParticipants}
-          value={maxParticipants}
-          onChange={(e) => setMaxParticipants(parseInt(e.target.value))}
-          required
-        />
-
-        <FormField
-          id="edit-currentParticipants"
-          label="Inscrits actuels"
-          type="number"
-          min="0"
-          max={maxParticipants}
-          value={currentParticipants}
-          onChange={(e) => setCurrentParticipants(parseInt(e.target.value))}
-          required
+        <ParticipantsInfo
+          maxParticipants={maxParticipants}
+          currentParticipants={currentParticipants}
+          galleryImages={galleryImages}
+          onMaxParticipantsChange={setMaxParticipants}
+          onCurrentParticipantsChange={setCurrentParticipants}
+          onGalleryImagesChange={setGalleryImages}
         />
       </div>
 
-      <div className="flex justify-end space-x-2 mt-4">
-        <Button type="button" variant="outline" onClick={onCancel}>
-          Annuler
-        </Button>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Mise à jour...
-            </>
-          ) : (
-            "Enregistrer les modifications"
-          )}
-        </Button>
-      </div>
+      <FormActions
+        isSubmitting={isSubmitting}
+        onCancel={onCancel}
+        submitLabel="Enregistrer les modifications"
+        loadingLabel="Mise à jour..."
+      />
     </form>
   );
 };
