@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   Dialog,
@@ -10,7 +9,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Loisir } from "@/components/loisirs/types";
 import { LoisirForm } from "./form/LoisirForm";
-import { updateLoisir } from "@/services/loisirService";
+import { updateLoisir } from "@/services/loisirs";
 
 interface EditLoisirDialogProps {
   open: boolean;

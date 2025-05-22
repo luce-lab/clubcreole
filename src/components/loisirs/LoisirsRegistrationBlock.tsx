@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ import { fr } from "date-fns/locale";
 import LoisirsRegistrationForm from "./LoisirsRegistrationForm";
 import { Loisir } from "./types";
 import LoisirsInvitationForm from "./LoisirsInvitationForm";
-import { isActivityPast, isDateValid, parseDate } from "@/services/loisirService";
+import { isActivityPast, isDateValid, parseDate } from "@/services/loisirs";
 
 interface LoisirsRegistrationBlockProps {
   loisir: Loisir;

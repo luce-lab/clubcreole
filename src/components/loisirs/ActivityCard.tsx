@@ -8,7 +8,7 @@ import { CheckCircle2, MapPin, Users, Film, Martini, Map, Calendar, ArrowRight, 
 import { isBefore } from "date-fns"; // Ajout de l'import manquant
 import LoisirsRegistrationForm from "./LoisirsRegistrationForm";
 import { Loisir } from "./types";
-import { isActivityPast, isDateValid, formatDisplayDate, parseDate } from "@/services/loisirService";
+import { isActivityPast, isDateValid, formatDisplayDate, parseDate } from "@/services/loisirs";
 import LoisirsInvitationForm from "./LoisirsInvitationForm";
 
 interface ActivityCardProps {
