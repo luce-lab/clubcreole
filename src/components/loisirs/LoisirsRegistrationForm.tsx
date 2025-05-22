@@ -58,6 +58,7 @@ const LoisirsRegistrationForm = ({
     }
 
     setIsSubmitting(true);
+    console.log("Tentative d'inscription pour:", selectedLoisir.id, name, email, phone);
 
     try {
       const result = await createInscription(
@@ -66,6 +67,8 @@ const LoisirsRegistrationForm = ({
         email,
         phone
       );
+
+      console.log("Résultat de l'inscription:", result);
 
       if (result.success) {
         toast({

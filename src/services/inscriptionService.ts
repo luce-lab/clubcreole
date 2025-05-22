@@ -12,6 +12,8 @@ export const createInscription = async (
   phone: string
 ): Promise<{ success: boolean; error?: string; inscription?: Inscription }> => {
   try {
+    console.log("Début de l'inscription pour:", loisirId, name, email, phone);
+    
     // 1. Récupérer les détails de l'activité pour l'email
     const { data: loisirData, error: loisirError } = await supabase
       .from('loisirs')
@@ -19,22 +21,30 @@ export const createInscription = async (
       .eq('id', loisirId)
       .single();
 
-    if (loisirError) throw loisirError;
-    if (!loisirData) throw new Error("Activité non trouvée");
+    if (loisirError) {
+      console.error("Erreur lors de la récupération du loisir:", loisirError);
+      throw loisirError;
+    }
+    if (!loisirData) {
+      console.error("Activité non trouvée");
+      throw new Error("Activité non trouvée");
+    }
 
+    console.log("Données du loisir récupérées:", loisirData);
+    
     const loisir = loisirData as Loisir;
     
-    // Vérifier que la date de l'activité est valide avant de permettre l'inscription
-    const isStartDateValid = isDateValid(loisir.start_date);
-    const isEndDateValid = isDateValid(loisir.end_date);
-    
-    if (!isStartDateValid || !isEndDateValid) {
-      throw new Error("Les dates de cette activité ne sont pas encore confirmées");
+    // Vérifier que l'activité n'est pas complète
+    if (loisir.current_participants >= loisir.max_participants) {
+      console.error("L'activité est complète");
+      throw new Error("Cette activité est complète, il n'y a plus de places disponibles");
     }
 
     // 2. Insérer l'inscription dans la base de données
     // Utilisation du timestamp actuel pour inscription_date
     const inscriptionDate = new Date().toISOString();
+    
+    console.log("Insertion de l'inscription dans la base de données");
     
     const { data, error } = await supabase
       .from('loisirs_inscriptions')
@@ -48,21 +58,36 @@ export const createInscription = async (
           confirmation_sent: false
         }
       ])
-      .select()
-      .single();
+      .select();
 
-    if (error) throw error;
+    if (error) {
+      console.error("Erreur lors de l'insertion de l'inscription:", error);
+      throw error;
+    }
+
+    console.log("Inscription réussie, données:", data);
+    const inscriptionData = data && data.length > 0 ? data[0] : null;
+    
+    if (!inscriptionData) {
+      console.error("Aucune donnée d'inscription n'a été retournée");
+      throw new Error("Erreur lors de l'enregistrement de l'inscription");
+    }
 
     // 3. Mettre à jour le compteur de participants
+    console.log("Mise à jour du compteur de participants");
     const { error: updateError } = await supabase
       .from('loisirs')
       .update({ current_participants: loisir.current_participants + 1 })
       .eq('id', loisirId);
 
-    if (updateError) throw updateError;
+    if (updateError) {
+      console.error("Erreur lors de la mise à jour du compteur de participants:", updateError);
+      throw updateError;
+    }
 
     // 4. Envoyer l'email de confirmation
     try {
+      console.log("Tentative d'envoi de l'e-mail de confirmation");
       // Création de l'URL complète pour la fonction
       const functionUrl = 'https://psryoyugyimibjhwhvlh.supabase.co/functions/v1/send-confirmation';
       
@@ -92,26 +117,28 @@ export const createInscription = async (
       console.log("Email confirmation result:", result);
 
       // Si l'email a été envoyé avec succès, marquer confirmation_sent comme true
-      if (result.success && data) {
+      if (result.success && inscriptionData) {
         await supabase
           .from('loisirs_inscriptions')
           .update({ confirmation_sent: true })
-          .eq('id', data.id);
+          .eq('id', inscriptionData.id);
       }
     } catch (emailError) {
       console.error("Erreur lors de l'envoi de l'email:", emailError);
       // Ne pas bloquer l'inscription si l'envoi de l'email échoue
     }
 
+    console.log("Inscription complétée avec succès");
+    
     return { 
       success: true, 
-      inscription: data as Inscription 
+      inscription: inscriptionData as Inscription 
     };
   } catch (error: any) {
     console.error("Erreur lors de l'inscription:", error);
     return { 
       success: false, 
-      error: error.message 
+      error: error.message || "Une erreur inconnue est survenue" 
     };
   }
 };
@@ -153,10 +180,10 @@ export const formatDate = (dateString: string): string => {
       return format(date, 'dd MMMM yyyy', { locale: fr });
     }
     
-    // Par défaut retourner "Date à confirmer"
-    return "Date à confirmer";
+    // Par défaut retourner la date originale
+    return dateString;
   } catch (error) {
     console.error("Erreur de formatage de date:", error);
-    return "Date à confirmer";
+    return dateString;
   }
 };
