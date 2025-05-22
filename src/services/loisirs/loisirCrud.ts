@@ -36,29 +36,27 @@ export const updateLoisir = async (
       .from('loisirs')
       .update(formattedData)
       .eq('id', loisirId)
-      .select('*');
+      .select('*')
+      .single();
 
     if (error) {
       console.error("Erreur Supabase:", error);
       throw error;
     }
     
-    // Si nous avons reçu des données, nous prenons le premier élément
-    if (data && data.length > 0) {
-      const updatedLoisir = data[0];
-      
-      console.log("Loisir mis à jour:", updatedLoisir);
-      
-      // Conversion du champ gallery_images de Json à string[]
-      return {
-        ...updatedLoisir,
-        gallery_images: Array.isArray(updatedLoisir.gallery_images) 
-          ? updatedLoisir.gallery_images 
-          : []
-      } as Loisir;
-    } else {
+    if (!data) {
       throw new Error("Aucune donnée mise à jour n'a été retournée");
     }
+    
+    console.log("Loisir mis à jour:", data);
+    
+    // Conversion du champ gallery_images de Json à string[]
+    return {
+      ...data,
+      gallery_images: Array.isArray(data.gallery_images) 
+        ? data.gallery_images 
+        : []
+    } as Loisir;
   } catch (error) {
     console.error("Erreur lors de la mise à jour de l'activité:", error);
     throw error;
