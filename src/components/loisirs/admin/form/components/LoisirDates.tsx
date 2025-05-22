@@ -30,6 +30,7 @@ export const LoisirDates = ({
   useEffect(() => {
     try {
       if (startDate) {
+        console.log("Conversion de la date de début:", startDate);
         // Essayer d'abord comme date ISO
         let date = parseISO(startDate);
         
@@ -43,14 +44,17 @@ export const LoisirDates = ({
         }
         
         if (isValid(date)) {
+          console.log("Date de début valide:", date);
           setStartDateObj(date);
           setStartDateError(false);
         } else {
+          console.warn("Date de début invalide:", startDate);
           setStartDateError(true);
         }
       }
       
       if (endDate) {
+        console.log("Conversion de la date de fin:", endDate);
         // Essayer d'abord comme date ISO
         let date = parseISO(endDate);
         
@@ -64,9 +68,11 @@ export const LoisirDates = ({
         }
         
         if (isValid(date)) {
+          console.log("Date de fin valide:", date);
           setEndDateObj(date);
           setEndDateError(false);
         } else {
+          console.warn("Date de fin invalide:", endDate);
           setEndDateError(true);
         }
       }
@@ -80,6 +86,7 @@ export const LoisirDates = ({
     if (date) {
       setStartDateObj(date);
       const formattedDate = format(date, 'yyyy-MM-dd');
+      console.log("Nouvelle date de début sélectionnée:", formattedDate);
       onStartDateChange(formattedDate);
       setStartDateError(false);
     }
@@ -89,6 +96,7 @@ export const LoisirDates = ({
     if (date) {
       setEndDateObj(date);
       const formattedDate = format(date, 'yyyy-MM-dd');
+      console.log("Nouvelle date de fin sélectionnée:", formattedDate);
       onEndDateChange(formattedDate);
       setEndDateError(false);
     }

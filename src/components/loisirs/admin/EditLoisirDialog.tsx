@@ -37,6 +37,8 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
     setIsSubmitting(true);
 
     try {
+      console.log("Formulaire soumis avec:", formData);
+      
       // Conversion des URLs des images de la galerie en tableau
       const galleryImages = formData.galleryImages
         ? formData.galleryImages.split('\n').map(url => url.trim()).filter(Boolean)
@@ -54,7 +56,10 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
         gallery_images: galleryImages
       };
 
+      console.log("Données à envoyer:", updatedLoisir);
+
       const result = await updateLoisir(loisir.id, updatedLoisir);
+      console.log("Résultat de la mise à jour:", result);
 
       toast({
         title: "Activité modifiée",

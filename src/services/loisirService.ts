@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Loisir } from "@/components/loisirs/types";
 import { parseISO, format, isValid, isBefore, isAfter } from "date-fns";
@@ -136,32 +137,47 @@ export const updateLoisir = async (
     gallery_images?: string[];
   }
 ): Promise<Loisir> => {
-  // Valider et formater les dates avant de les envoyer à la base de données
-  const formattedData = {
-    ...updatedData,
-    start_date: validateAndFormatDate(updatedData.start_date),
-    end_date: validateAndFormatDate(updatedData.end_date)
-  };
+  try {
+    console.log("Mise à jour de l'activité:", loisirId, updatedData);
+    
+    // Valider et formater les dates avant de les envoyer à la base de données
+    const formattedData = {
+      ...updatedData,
+      start_date: validateAndFormatDate(updatedData.start_date),
+      end_date: validateAndFormatDate(updatedData.end_date)
+    };
 
-  const { data, error } = await supabase
-    .from('loisirs')
-    .update(formattedData)
-    .eq('id', loisirId)
-    .select();
+    console.log("Données formatées:", formattedData);
 
-  if (error) throw error;
-  
-  // Si nous avons reçu des données, nous prenons le premier élément
-  const updatedLoisir = data && data.length > 0 ? data[0] : null;
-  if (!updatedLoisir) throw new Error("Aucune donnée mise à jour n'a été retournée");
-  
-  // Conversion du champ gallery_images de Json à string[]
-  return {
-    ...updatedLoisir,
-    gallery_images: Array.isArray(updatedLoisir.gallery_images) 
-      ? updatedLoisir.gallery_images 
-      : []
-  } as Loisir;
+    const { data, error } = await supabase
+      .from('loisirs')
+      .update(formattedData)
+      .eq('id', loisirId)
+      .select();
+
+    if (error) {
+      console.error("Erreur Supabase:", error);
+      throw error;
+    }
+    
+    // Si nous avons reçu des données, nous prenons le premier élément
+    if (data && data.length > 0) {
+      const updatedLoisir = data[0];
+      
+      // Conversion du champ gallery_images de Json à string[]
+      return {
+        ...updatedLoisir,
+        gallery_images: Array.isArray(updatedLoisir.gallery_images) 
+          ? updatedLoisir.gallery_images 
+          : []
+      } as Loisir;
+    } else {
+      throw new Error("Aucune donnée mise à jour n'a été retournée");
+    }
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour de l'activité:", error);
+    throw error;
+  }
 };
 
 export const getLoisirById = async (id: number): Promise<Loisir> => {
