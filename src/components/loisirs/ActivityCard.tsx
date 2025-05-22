@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,9 +26,21 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
     return <CheckCircle2 className="h-4 w-4 text-creole-blue" />;
   };
 
+  // Check if the dates are valid
+  const isStartDateValid = isDateValid(loisir.start_date);
+  const isEndDateValid = isDateValid(loisir.end_date);
+  const areDatesValid = isStartDateValid && isEndDateValid;
+  
+  // Vérifier si l'activité est passée
+  const isPastActivity = isActivityPast(loisir.end_date);
+
   // Check if the dates are different
   const hasDifferentDates = loisir.start_date !== loisir.end_date;
-
+  console.log(loisir.start_date, loisir.end_date,hasDifferentDates);
+  console.log(formatDisplayDate(loisir.start_date), formatDisplayDate(loisir.end_date));  
+  
+  const isActivityInvalid = !areDatesValid || isPastActivity;
+  
   // Remplacer l'image pour "Sortie en boite - La Creolita"
   const getImageForActivity = (loisir: Loisir) => {
     if (loisir.title.includes("Sortie en boite") && loisir.title.includes("La Creolita")) {
@@ -37,14 +48,6 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
     }
     return loisir.image;
   };
-
-  // Vérifier si les dates sont valides
-  const isStartDateValid = isDateValid(loisir.start_date);
-  const isEndDateValid = isDateValid(loisir.end_date);
-  const areDatesValid = isStartDateValid && isEndDateValid;
-  
-  // Vérifier si l'activité est passée
-  const isPastActivity = isActivityPast(loisir.end_date);
 
   const handleViewDetails = () => {
     navigate(`/loisirs/${loisir.id}`);
@@ -77,11 +80,19 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-creole-blue" />
             <span className="text-sm">
-              {hasDifferentDates 
-                ? `Du ${formatDisplayDate(loisir.start_date)} au ${formatDisplayDate(loisir.end_date)}`
-                : `Le ${formatDisplayDate(loisir.start_date)}`
-              }
-              {!areDatesValid && <span className="text-yellow-600 ml-1">(À confirmer)</span>}
+              {areDatesValid ? (
+                hasDifferentDates 
+                  ? `Du ${formatDisplayDate(loisir.start_date)} au ${formatDisplayDate(loisir.end_date)}`
+                  : `Le ${formatDisplayDate(loisir.start_date)}`
+              ) : (
+                <>
+                  {hasDifferentDates 
+                    ? `Du ${loisir.start_date} au ${loisir.end_date}`
+                    : `Le ${loisir.start_date}`
+                  }
+                 
+                </>
+              )}
             </span>
           </div>
           <div className="flex items-center gap-2">

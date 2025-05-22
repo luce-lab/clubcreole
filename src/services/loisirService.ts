@@ -89,6 +89,7 @@ export const formatDisplayDate = (dateString: string): string => {
   try {
     // Essayer de parser comme date ISO
     let date = parseISO(dateString);
+    console.log(dateString, date);
     
     // Si ce n'est pas une date ISO valide, essayer d'autres formats
     if (!isValid(date) && dateString.includes('/')) {
