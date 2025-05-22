@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { CheckCircle2, MapPin, Users, Film, Martini, Map, Calendar, ArrowRight, AlertCircle } from "lucide-react";
+import { isBefore } from "date-fns"; // Ajout de l'import manquant
 import LoisirsRegistrationForm from "./LoisirsRegistrationForm";
 import { Loisir } from "./types";
 import { isActivityPast, isDateValid, formatDisplayDate, parseDate } from "@/services/loisirService";
