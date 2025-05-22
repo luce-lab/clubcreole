@@ -7,7 +7,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { CheckCircle2, MapPin, Users, Film, Martini, Map, Calendar, ArrowRight, AlertCircle } from "lucide-react";
 import LoisirsRegistrationForm from "./LoisirsRegistrationForm";
 import { Loisir } from "./types";
-import { isActivityPast, isDateValid, formatDisplayDate } from "@/services/loisirService";
+import { isActivityPast, isDateValid, formatDisplayDate, parseDate } from "@/services/loisirService";
 import LoisirsInvitationForm from "./LoisirsInvitationForm";
 
 interface ActivityCardProps {
@@ -27,19 +27,19 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
     return <CheckCircle2 className="h-4 w-4 text-creole-blue" />;
   };
 
-  // Check if the dates are valid
-  const isStartDateValid = isDateValid(loisir.start_date);
-  const isEndDateValid = isDateValid(loisir.end_date);
-  const areDatesValid = isStartDateValid && isEndDateValid;
+  // Vérifier les dates
+  const startDate = parseDate(loisir.start_date);
+  const endDate = parseDate(loisir.end_date);
+  const now = new Date();
   
-  // Vérifier si l'activité est passée
-  const isPastActivity = isActivityPast(loisir.end_date);
-
-  // Check if the dates are different
+  // Vérifier si l'activité est passée (date de fin < aujourd'hui)
+  const isPastActivity = endDate ? isBefore(endDate, now) : false;
+  
+  // Vérifier si les dates sont valides
+  const areDatesValid = startDate !== null && endDate !== null;
+  
+  // Vérifier si les dates sont différentes
   const hasDifferentDates = loisir.start_date !== loisir.end_date;
-  
-  // Fix: Only consider an activity invalid if the activity is in the past
-  const isActivityInvalid = isPastActivity;
   
   // Remplacer l'image pour "Sortie en boite - La Creolita"
   const getImageForActivity = (loisir: Loisir) => {
@@ -52,6 +52,8 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
   const handleViewDetails = () => {
     navigate(`/loisirs/${loisir.id}`);
   };
+
+  const isRegistrationAvailable = !isPastActivity && loisir.current_participants < loisir.max_participants;
 
   return (
     <Card key={loisir.id} className="overflow-hidden flex flex-col h-full">
@@ -90,7 +92,6 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
                     ? `Du ${loisir.start_date} au ${loisir.end_date}`
                     : `Le ${loisir.start_date}`
                   }
-                 
                 </>
               )}
             </span>
@@ -99,6 +100,12 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
             <Users className="h-4 w-4 text-creole-blue" />
             <span className="text-sm">{loisir.current_participants}/{loisir.max_participants} participants</span>
           </div>
+          {isPastActivity && (
+            <div className="flex items-center mt-1 text-amber-500">
+              <AlertCircle className="h-4 w-4 mr-1" />
+              <span className="text-xs">Cette activité est terminée</span>
+            </div>
+          )}
         </div>
       </CardContent>
       <CardFooter className="flex gap-2">

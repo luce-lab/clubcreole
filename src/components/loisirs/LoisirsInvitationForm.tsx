@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 interface LoisirsInvitationFormProps {
   loisirTitle: string;
@@ -14,29 +15,62 @@ interface LoisirsInvitationFormProps {
 const LoisirsInvitationForm = ({ loisirTitle, onClose }: LoisirsInvitationFormProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{name?: string, email?: string}>({});
 
-  const handleSubmit = () => {
-    if (!name || !email) {
-      toast({
-        title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires.",
-        variant: "destructive",
-      });
+  const validateForm = () => {
+    const newErrors: {name?: string, email?: string} = {};
+    let isValid = true;
+
+    if (!name.trim()) {
+      newErrors.name = "Le nom est obligatoire";
+      isValid = false;
+    }
+
+    if (!email.trim()) {
+      newErrors.email = "L'email est obligatoire";
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "Format d'email invalide";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) {
       return;
     }
 
-    // Simuler l'envoi d'une notification
-    console.log("Envoi d'une notification à:", { name, email, loisirTitle });
+    setIsSubmitting(true);
+    
+    try {
+      // Simuler un appel API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log("Demande de notification enregistrée:", { name, email, loisirTitle });
+      
+      toast({
+        title: "Demande enregistrée !",
+        description: `Vous serez informé des prochaines dates pour "${loisirTitle}".`,
+      });
 
-    toast({
-      title: "Demande enregistrée !",
-      description: "Vous serez informé des prochaines dates pour cette activité.",
-    });
-
-    // Réinitialiser le formulaire et fermer la boîte de dialogue
-    setName("");
-    setEmail("");
-    onClose();
+      // Réinitialiser le formulaire et fermer la boîte de dialogue
+      setName("");
+      setEmail("");
+      onClose();
+    } catch (error) {
+      console.error("Erreur lors de l'enregistrement de la demande:", error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur s'est produite. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -52,29 +86,48 @@ const LoisirsInvitationForm = ({ loisirTitle, onClose }: LoisirsInvitationFormPr
           <Label htmlFor="invitation-name" className="text-right">
             Nom *
           </Label>
-          <Input
-            id="invitation-name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="col-span-3"
-          />
+          <div className="col-span-3 space-y-1">
+            <Input
+              id="invitation-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className={errors.name ? "border-red-500" : ""}
+              disabled={isSubmitting}
+            />
+            {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
+          </div>
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="invitation-email" className="text-right">
             Email *
           </Label>
-          <Input
-            id="invitation-email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="col-span-3"
-          />
+          <div className="col-span-3 space-y-1">
+            <Input
+              id="invitation-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={errors.email ? "border-red-500" : ""}
+              disabled={isSubmitting}
+            />
+            {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
+          </div>
         </div>
       </div>
       <DialogFooter>
-        <Button type="submit" onClick={handleSubmit}>
-          Envoyer
+        <Button 
+          type="submit" 
+          onClick={handleSubmit} 
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Enregistrement...
+            </>
+          ) : (
+            "Envoyer"
+          )}
         </Button>
       </DialogFooter>
     </DialogContent>

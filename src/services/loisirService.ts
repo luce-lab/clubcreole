@@ -1,7 +1,6 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Loisir } from "@/components/loisirs/types";
-import { parseISO, format, isValid, isBefore } from "date-fns";
+import { parseISO, format, isValid, isBefore, isAfter } from "date-fns";
 import { fr } from "date-fns/locale";
 
 // Fonction utilitaire pour valider et formater les dates
@@ -34,51 +33,72 @@ const validateAndFormatDate = (dateString: string): string => {
   }
 };
 
-// Vérifier si une date est valide (passée ou future)
-export const isDateValid = (dateString: string): boolean => {
+// Convertit une chaîne de date en objet Date (gère différents formats)
+export const parseDate = (dateString: string): Date | null => {
   try {
-    // Essayer de parser comme date ISO
+    // Essayer d'abord de parser comme une date ISO
     let date = parseISO(dateString);
     
     // Si ce n'est pas une date ISO valide, essayer d'autres formats
-    if (!isValid(date) && dateString.includes('/')) {
-      const parts = dateString.split('/');
-      // Supposer format DD/MM/YYYY
-      if (parts.length === 3) {
-        const [day, month, year] = parts;
-        date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+    if (!isValid(date)) {
+      // Format européen DD/MM/YYYY
+      if (dateString.includes('/')) {
+        const parts = dateString.split('/');
+        if (parts.length === 3) {
+          const [day, month, year] = parts;
+          date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+        }
+      }
+      // Format avec texte comme "15 juin 2024, 14:00"
+      else if (dateString.includes(' ')) {
+        // Pour simplifier, extraire seulement la date sans l'heure
+        const frenchMonths = {
+          'janvier': '01', 'février': '02', 'mars': '03', 'avril': '04', 
+          'mai': '05', 'juin': '06', 'juillet': '07', 'août': '08', 
+          'septembre': '09', 'octobre': '10', 'novembre': '11', 'décembre': '12'
+        };
+        
+        let day, month, year;
+        
+        for (const [monthName, monthNum] of Object.entries(frenchMonths)) {
+          if (dateString.toLowerCase().includes(monthName)) {
+            const parts = dateString.split(' ');
+            day = parts[0].padStart(2, '0');
+            month = monthNum;
+            // Extraire l'année (peut avoir une virgule)
+            year = parts[2].replace(',', '');
+            date = new Date(`${year}-${month}-${day}`);
+            break;
+          }
+        }
       }
     }
     
-    return isValid(date);
-  } catch {
-    return false;
+    return isValid(date) ? date : null;
+  } catch (error) {
+    console.error("Erreur de parsing de date:", error);
+    return null;
   }
+};
+
+// Vérifier si une date est valide (passée ou future)
+export const isDateValid = (dateString: string): boolean => {
+  const date = parseDate(dateString);
+  return date !== null;
 };
 
 // Vérifier si une activité est terminée
 export const isActivityPast = (endDate: string): boolean => {
   try {
-    // Essayer de parser comme date ISO
-    let date = parseISO(endDate);
+    const parsedEndDate = parseDate(endDate);
     
-    // Si ce n'est pas une date ISO valide, essayer d'autres formats
-    if (!isValid(date) && endDate.includes('/')) {
-      const parts = endDate.split('/');
-      // Supposer format DD/MM/YYYY
-      if (parts.length === 3) {
-        const [day, month, year] = parts;
-        date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
-      }
-    }
-    
-    if (!isValid(date)) {
+    if (!parsedEndDate) {
       console.warn("Date de fin non valide:", endDate);
-      return false; // Si la date n'est pas valide, considérer que l'activité n'est pas terminée
+      return false;
     }
     
     const now = new Date();
-    return isBefore(date, now);
+    return isBefore(parsedEndDate, now);
   } catch (error) {
     console.error("Erreur lors de la vérification de la date de fin:", error);
     return false;
@@ -87,21 +107,10 @@ export const isActivityPast = (endDate: string): boolean => {
 
 export const formatDisplayDate = (dateString: string): string => {
   try {
-    // Essayer de parser comme date ISO
-    let date = parseISO(dateString);
-    
-    // Si ce n'est pas une date ISO valide, essayer d'autres formats
-    if (!isValid(date) && dateString.includes('/')) {
-      const parts = dateString.split('/');
-      // Supposer format DD/MM/YYYY
-      if (parts.length === 3) {
-        const [day, month, year] = parts;
-        date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
-      }
-    }
+    const date = parseDate(dateString);
     
     // Vérifier si la date est maintenant valide
-    if (isValid(date)) {
+    if (date && isValid(date)) {
       return format(date, "d MMMM yyyy", { locale: fr });
     }
     

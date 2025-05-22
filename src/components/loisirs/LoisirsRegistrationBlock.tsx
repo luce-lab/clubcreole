@@ -9,7 +9,7 @@ import { fr } from "date-fns/locale";
 import LoisirsRegistrationForm from "./LoisirsRegistrationForm";
 import { Loisir } from "./types";
 import LoisirsInvitationForm from "./LoisirsInvitationForm";
-import { isActivityPast, isDateValid } from "@/services/loisirService";
+import { isActivityPast, isDateValid, parseDate } from "@/services/loisirService";
 
 interface LoisirsRegistrationBlockProps {
   loisir: Loisir;
@@ -20,13 +20,16 @@ const LoisirsRegistrationBlock = ({ loisir, onUpdateLoisir }: LoisirsRegistratio
   const [openRegistration, setOpenRegistration] = useState(false);
   const [openInvitation, setOpenInvitation] = useState(false);
 
+  // Parse les dates
+  const startDate = parseDate(loisir.start_date);
+  const endDate = parseDate(loisir.end_date);
+  const now = new Date();
+  
   // Vérifier si les dates sont valides
-  const isStartDateValid = isDateValid(loisir.start_date);
-  const isEndDateValid = isDateValid(loisir.end_date);
-  const areDatesValid = isStartDateValid && isEndDateValid;
+  const areDatesValid = startDate !== null && endDate !== null;
   
   // Vérifier si l'activité est terminée (seulement si les dates sont valides)
-  const isPast = areDatesValid && isActivityPast(loisir.end_date);
+  const isPast = endDate ? isBefore(endDate, now) : false;
 
   // Vérifier si l'activité est complète
   const isFull = loisir.current_participants >= loisir.max_participants;
@@ -79,6 +82,15 @@ const LoisirsRegistrationBlock = ({ loisir, onUpdateLoisir }: LoisirsRegistratio
             <AlertCircle className="h-5 w-5 text-yellow-500" />
             <span className="text-sm text-yellow-700">
               Les dates pour cette activité ne sont pas encore confirmées.
+            </span>
+          </div>
+        )}
+        
+        {isPast && (
+          <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-md">
+            <AlertCircle className="h-5 w-5 text-amber-500" />
+            <span className="text-sm text-amber-700">
+              Cette activité est terminée.
             </span>
           </div>
         )}
