@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { DatePicker } from "./date-utils/DatePicker";
+import { parseDateString } from "./date-utils/parseDateString";
 
 interface LoisirDatesProps {
   startDate: string;
@@ -21,9 +22,9 @@ export const LoisirDates = ({
   useEffect(() => {
     try {
       if (startDate) {
-        const date = new Date(startDate);
-        if (!isNaN(date.getTime())) {
-          setStartDateObj(date);
+        const result = parseDateString(startDate);
+        if (result.isValid && result.date) {
+          setStartDateObj(result.date);
         }
       }
     } catch (error) {

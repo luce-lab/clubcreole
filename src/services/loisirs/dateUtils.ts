@@ -1,5 +1,4 @@
-
-import { parseISO, format, isValid, isBefore, isAfter } from "date-fns";
+import { parseISO, format, isValid, isBefore, isAfter, parse } from "date-fns";
 import { fr } from "date-fns/locale";
 
 /**
@@ -17,6 +16,17 @@ export const validateAndFormatDate = (dateString: string): string => {
       if (parts.length === 3) {
         const [day, month, year] = parts;
         date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+      }
+    }
+    
+    // Essayer le format français "15 juillet 2025, 16:00"
+    if (!isValid(date) && dateString.includes(' ')) {
+      try {
+        // Enlever la partie heure si présente
+        const datePart = dateString.split(',')[0];
+        date = parse(datePart, 'd MMMM yyyy', new Date(), { locale: fr });
+      } catch (e) {
+        console.error("Échec du parsing de la date au format français:", e);
       }
     }
     
@@ -54,25 +64,12 @@ export const parseDate = (dateString: string): Date | null => {
       }
       // Format avec texte comme "15 juin 2024, 14:00"
       else if (dateString.includes(' ')) {
-        // Pour simplifier, extraire seulement la date sans l'heure
-        const frenchMonths = {
-          'janvier': '01', 'février': '02', 'mars': '03', 'avril': '04', 
-          'mai': '05', 'juin': '06', 'juillet': '07', 'août': '08', 
-          'septembre': '09', 'octobre': '10', 'novembre': '11', 'décembre': '12'
-        };
-        
-        let day, month, year;
-        
-        for (const [monthName, monthNum] of Object.entries(frenchMonths)) {
-          if (dateString.toLowerCase().includes(monthName)) {
-            const parts = dateString.split(' ');
-            day = parts[0].padStart(2, '0');
-            month = monthNum;
-            // Extraire l'année (peut avoir une virgule)
-            year = parts[2].replace(',', '');
-            date = new Date(`${year}-${month}-${day}`);
-            break;
-          }
+        try {
+          // Enlever la partie heure si présente
+          const datePart = dateString.split(',')[0];
+          date = parse(datePart, 'd MMMM yyyy', new Date(), { locale: fr });
+        } catch (e) {
+          console.error("Échec du parsing de la date au format français:", e);
         }
       }
     }

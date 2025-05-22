@@ -1,5 +1,6 @@
 
-import { parseISO, isValid } from "date-fns";
+import { parseISO, isValid, parse } from "date-fns";
+import { fr } from "date-fns/locale";
 
 /**
  * Parse a date string into a Date object, handling different formats
@@ -23,6 +24,18 @@ export const parseDateString = (dateString: string): {
     if (!isValid(date) && dateString.includes('/')) {
       const [day, month, year] = dateString.split('/');
       date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+    }
+    
+    // Try French format like "12 juillet 2025, 16:00"
+    if (!isValid(date) && dateString.includes(' ')) {
+      // Handle format like "12 juillet 2025" or "12 juillet 2025, 16:00"
+      try {
+        // Remove time part if present
+        const datePart = dateString.split(',')[0];
+        date = parse(datePart, 'd MMMM yyyy', new Date(), { locale: fr });
+      } catch (e) {
+        console.error("Failed to parse French date format:", e);
+      }
     }
     
     // Check if the date is now valid

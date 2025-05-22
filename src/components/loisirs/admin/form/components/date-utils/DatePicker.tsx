@@ -32,7 +32,7 @@ export const DatePicker = ({
   useEffect(() => {
     const result = parseDateString(value);
     setDateObj(result.date);
-    setHasError(!result.isValid);
+    setHasError(!result.isValid && value !== "");
     setErrorMessage(result.errorMessage);
   }, [value]);
 
@@ -40,6 +40,7 @@ export const DatePicker = ({
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
       setDateObj(date);
+      // Format as ISO string (YYYY-MM-DD)
       const formattedDate = format(date, 'yyyy-MM-dd');
       console.log(`New ${label} selected:`, formattedDate);
       onChange(formattedDate);
@@ -84,6 +85,7 @@ export const DatePicker = ({
             onSelect={handleDateSelect}
             initialFocus
             disabled={minDate ? (date) => date < minDate : undefined}
+            locale={fr}
             className={cn("p-3 pointer-events-auto")}
           />
         </PopoverContent>
