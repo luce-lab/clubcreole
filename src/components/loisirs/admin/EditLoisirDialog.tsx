@@ -44,7 +44,7 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
         ? formData.galleryImages.split('\n').map(url => url.trim()).filter(Boolean)
         : [];
 
-      const updatedLoisir = {
+      const updatedData = {
         title: formData.title,
         description: formData.description,
         location: formData.location,
@@ -56,9 +56,9 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
         gallery_images: galleryImages
       };
 
-      console.log("Données à envoyer:", updatedLoisir);
+      console.log("Données à envoyer:", updatedData);
 
-      const result = await updateLoisir(loisir.id, updatedLoisir);
+      const result = await updateLoisir(loisir.id, updatedData);
       console.log("Résultat de la mise à jour:", result);
 
       toast({

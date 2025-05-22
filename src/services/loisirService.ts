@@ -153,7 +153,7 @@ export const updateLoisir = async (
       .from('loisirs')
       .update(formattedData)
       .eq('id', loisirId)
-      .select();
+      .select('*');
 
     if (error) {
       console.error("Erreur Supabase:", error);
@@ -163,6 +163,8 @@ export const updateLoisir = async (
     // Si nous avons reçu des données, nous prenons le premier élément
     if (data && data.length > 0) {
       const updatedLoisir = data[0];
+      
+      console.log("Loisir mis à jour:", updatedLoisir);
       
       // Conversion du champ gallery_images de Json à string[]
       return {
