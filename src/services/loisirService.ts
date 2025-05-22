@@ -1,7 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { Loisir } from "@/components/loisirs/types";
-import { parseISO, format, isValid } from "date-fns";
+import { parseISO, format, isValid, isBefore } from "date-fns";
 import { fr } from "date-fns/locale";
 
 // Fonction utilitaire pour valider et formater les dates
@@ -78,7 +78,7 @@ export const isActivityPast = (endDate: string): boolean => {
     }
     
     const now = new Date();
-    return date < now;
+    return isBefore(date, now);
   } catch (error) {
     console.error("Erreur lors de la vérification de la date de fin:", error);
     return false;
@@ -89,7 +89,6 @@ export const formatDisplayDate = (dateString: string): string => {
   try {
     // Essayer de parser comme date ISO
     let date = parseISO(dateString);
-    console.log(dateString, date);
     
     // Si ce n'est pas une date ISO valide, essayer d'autres formats
     if (!isValid(date) && dateString.includes('/')) {

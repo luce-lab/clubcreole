@@ -38,9 +38,8 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
   // Check if the dates are different
   const hasDifferentDates = loisir.start_date !== loisir.end_date;
   
-  // Fix: Only consider an activity invalid if both conditions are met:
-  // either the dates are invalid OR the activity is in the past
-  const isActivityInvalid = !areDatesValid || isPastActivity;
+  // Fix: Only consider an activity invalid if the activity is in the past
+  const isActivityInvalid = isPastActivity;
   
   // Remplacer l'image pour "Sortie en boite - La Creolita"
   const getImageForActivity = (loisir: Loisir) => {
