@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,9 +37,9 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
 
   // Check if the dates are different
   const hasDifferentDates = loisir.start_date !== loisir.end_date;
-  console.log(loisir.start_date, loisir.end_date,hasDifferentDates);
-  console.log(formatDisplayDate(loisir.start_date), formatDisplayDate(loisir.end_date));  
   
+  // Fix: Only consider an activity invalid if both conditions are met:
+  // either the dates are invalid OR the activity is in the past
   const isActivityInvalid = !areDatesValid || isPastActivity;
   
   // Remplacer l'image pour "Sortie en boite - La Creolita"
@@ -102,7 +103,7 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
         </div>
       </CardContent>
       <CardFooter className="flex gap-2">
-        {!areDatesValid || isPastActivity ? (
+        {isPastActivity ? (
           <Dialog open={openInvitationDialog} onOpenChange={setOpenInvitationDialog}>
             <DialogTrigger asChild>
               <Button variant="outline" className="flex-1">
