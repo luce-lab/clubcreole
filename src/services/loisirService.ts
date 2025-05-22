@@ -2,6 +2,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Loisir } from "@/components/loisirs/types";
 import { parseISO, format, isValid } from "date-fns";
+import { fr } from "date-fns/locale";
 
 // Fonction utilitaire pour valider et formater les dates
 const validateAndFormatDate = (dateString: string): string => {
@@ -21,7 +22,7 @@ const validateAndFormatDate = (dateString: string): string => {
     
     // Vérifier si la date est maintenant valide
     if (isValid(date)) {
-      return date.toISOString().split('T')[0]; // Format YYYY-MM-DD
+      return format(date, "yyyy-MM-dd", { locale: fr }); // Format YYYY-MM-DD
     }
     
     // Si on ne peut pas formater, retourner la chaîne d'origine
@@ -81,6 +82,34 @@ export const isActivityPast = (endDate: string): boolean => {
   } catch (error) {
     console.error("Erreur lors de la vérification de la date de fin:", error);
     return false;
+  }
+};
+
+export const formatDisplayDate = (dateString: string): string => {
+  try {
+    // Essayer de parser comme date ISO
+    let date = parseISO(dateString);
+    
+    // Si ce n'est pas une date ISO valide, essayer d'autres formats
+    if (!isValid(date) && dateString.includes('/')) {
+      const parts = dateString.split('/');
+      // Supposer format DD/MM/YYYY
+      if (parts.length === 3) {
+        const [day, month, year] = parts;
+        date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+      }
+    }
+    
+    // Vérifier si la date est maintenant valide
+    if (isValid(date)) {
+      return format(date, "d MMMM yyyy", { locale: fr });
+    }
+    
+    // Retourner une indication si la date n'est pas valide
+    return "Date à confirmer";
+  } catch (e) {
+    console.error("Erreur de format de date:", e);
+    return "Date à confirmer";
   }
 };
 

@@ -1,8 +1,8 @@
 
 import { Calendar, MapPin, Users } from "lucide-react";
+import { isActivityPast, isDateValid, formatDisplayDate } from "@/services/loisirService";
 import { format, isAfter, isBefore, parseISO, isValid } from "date-fns";
 import { fr } from "date-fns/locale";
-import { isActivityPast, isDateValid } from "@/services/loisirService";
 
 interface LoisirsDetailDescriptionProps {
   title: string;
@@ -23,34 +23,6 @@ const LoisirsDetailDescription = ({
   currentParticipants,
   maxParticipants
 }: LoisirsDetailDescriptionProps) => {
-  // Formatter les dates pour l'affichage
-  const formatDate = (dateString: string) => {
-    try {
-      // Essayer d'abord comme date ISO
-      let date = parseISO(dateString);
-      
-      // Vérifier si la date est valide
-      if (!isValid(date)) {
-        // Essayer le format DD/MM/YYYY
-        if (dateString.includes('/')) {
-          const [day, month, year] = dateString.split('/');
-          date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
-        }
-      }
-      
-      // Vérifier si la date est maintenant valide
-      if (isValid(date)) {
-        return format(date, "d MMMM yyyy", { locale: fr });
-      }
-      
-      // Retourner la chaîne originale si tous les essais échouent
-      return "Date indisponible";
-    } catch (e) {
-      console.error("Erreur de format de date:", e);
-      return "Date indisponible";
-    }
-  };
-
   // Déterminer si l'activité est à venir, en cours ou terminée
   const now = new Date();
   
@@ -117,8 +89,8 @@ const LoisirsDetailDescription = ({
           <Calendar className="h-5 w-5 text-creole-green" />
           <span>
             {startDate === endDate 
-              ? `Le ${formatDate(startDate)}`
-              : `Du ${formatDate(startDate)} au ${formatDate(endDate)}`
+              ? `Le ${formatDisplayDate(startDate)}`
+              : `Du ${formatDisplayDate(startDate)} au ${formatDisplayDate(endDate)}`
             }
             {isDatesInvalid && " (Dates à confirmer)"}
           </span>

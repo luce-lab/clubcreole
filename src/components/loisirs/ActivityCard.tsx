@@ -6,10 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { CheckCircle2, MapPin, Users, Film, Martini, Map, Calendar, ArrowRight, AlertCircle } from "lucide-react";
 import LoisirsRegistrationForm from "./LoisirsRegistrationForm";
-import { format, parseISO, isValid } from "date-fns";
-import { fr } from "date-fns/locale";
 import { Loisir } from "./types";
-import { isActivityPast, isDateValid } from "@/services/loisirService";
+import { isActivityPast, isDateValid, formatDisplayDate } from "@/services/loisirService";
 import LoisirsInvitationForm from "./LoisirsInvitationForm";
 
 interface ActivityCardProps {
@@ -27,34 +25,6 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
     if (title.includes("cinéma")) return <Film className="h-4 w-4 text-creole-blue" />;
     if (title.includes("Balade") || title.includes("Randonnée") || title.includes("forêt")) return <Map className="h-4 w-4 text-creole-blue" />;
     return <CheckCircle2 className="h-4 w-4 text-creole-blue" />;
-  };
-
-  // Format dates for display
-  const formatDate = (dateString: string) => {
-    try {
-      // Essayer d'abord comme date ISO
-      let date = parseISO(dateString);
-      
-      // Vérifier si la date est valide
-      if (!isValid(date)) {
-        // Essayer le format DD/MM/YYYY
-        if (dateString.includes('/')) {
-          const [day, month, year] = dateString.split('/');
-          date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
-        }
-      }
-      
-      // Vérifier si la date est maintenant valide
-      if (isValid(date)) {
-        return format(date, "d MMM yyyy", { locale: fr });
-      }
-      
-      // Retourner une indication si la date n'est pas valide
-      return "Date à confirmer";
-    } catch (e) {
-      console.error("Erreur de format de date:", e);
-      return "Date à confirmer";
-    }
   };
 
   // Check if the dates are different
@@ -108,8 +78,8 @@ const ActivityCard = ({ loisir, onUpdateLoisir }: ActivityCardProps) => {
             <Calendar className="h-4 w-4 text-creole-blue" />
             <span className="text-sm">
               {hasDifferentDates 
-                ? `Du ${formatDate(loisir.start_date)} au ${formatDate(loisir.end_date)}`
-                : `Le ${formatDate(loisir.start_date)}`
+                ? `Du ${formatDisplayDate(loisir.start_date)} au ${formatDisplayDate(loisir.end_date)}`
+                : `Le ${formatDisplayDate(loisir.start_date)}`
               }
               {!areDatesValid && <span className="text-yellow-600 ml-1">(À confirmer)</span>}
             </span>
