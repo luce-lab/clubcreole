@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loisir, Inscription } from "@/components/loisirs/types";
 import { format, parseISO, isValid } from "date-fns";
 import { fr } from "date-fns/locale";
-import { isDateValid } from "./loisirService";
+import { parseDate, formatDisplayDate } from "@/services/loisirs";
 
 export const createInscription = async (
   loisirId: number,
@@ -88,17 +88,21 @@ export const createInscription = async (
     // 4. Envoyer l'email de confirmation
     try {
       console.log("Tentative d'envoi de l'e-mail de confirmation");
-      // Création de l'URL complète pour la fonction
+      
+      // URL complète de la fonction
       const functionUrl = 'https://psryoyugyimibjhwhvlh.supabase.co/functions/v1/send-confirmation';
       
-      // Formater les dates pour l'email
-      const formattedDate = formatDate(loisir.start_date);
+      // Formater les dates pour l'email - utiliser formatDisplayDate pour une meilleure présentation
+      const formattedDate = formatDisplayDate(loisir.start_date);
       
+      console.log("Date formatée pour l'email:", formattedDate);
+      
+      // Ajouter des en-têtes et un timeout plus long
       const response = await fetch(functionUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // La clé d'API publique n'est pas nécessaire ici car la fonction est configurée sans vérification JWT
+          'Accept': 'application/json',
         },
         body: JSON.stringify({
           name,
@@ -111,7 +115,14 @@ export const createInscription = async (
             formattedDate: formattedDate
           },
         }),
+        // Augmenter le timeout pour attendre plus longtemps
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Erreur du serveur (${response.status}):`, errorText);
+        throw new Error(`Erreur serveur: ${response.status} - ${errorText}`);
+      }
 
       const result = await response.json();
       console.log("Email confirmation result:", result);
@@ -125,7 +136,8 @@ export const createInscription = async (
       }
     } catch (emailError) {
       console.error("Erreur lors de l'envoi de l'email:", emailError);
-      // Ne pas bloquer l'inscription si l'envoi de l'email échoue
+      // Ne pas bloquer l'inscription si l'envoi de l'email échoue, mais notifier
+      console.warn("L'inscription est validée mais l'email n'a pas pu être envoyé");
     }
 
     console.log("Inscription complétée avec succès");

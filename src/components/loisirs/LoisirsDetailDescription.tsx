@@ -1,6 +1,6 @@
 
 import { Calendar, MapPin, Users } from "lucide-react";
-import { isActivityPast, isDateValid, formatDisplayDate } from "@/services/loisirService";
+import { formatDisplayDate, parseDate } from "@/services/loisirs";
 import { format, isAfter, isBefore, parseISO, isValid } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -26,30 +26,12 @@ const LoisirsDetailDescription = ({
   // Déterminer si l'activité est à venir, en cours ou terminée
   const now = new Date();
   
-  // Essayer de parser les dates de différentes manières
-  let start: Date | null = null;
-  let end: Date | null = null;
-  let isStartDateValid = false;
-  let isEndDateValid = false;
+  // Utiliser la fonction parseDate du service au lieu de réimplémenter la logique
+  const start = parseDate(startDate);
+  const end = parseDate(endDate);
   
-  try {
-    // Essayer d'abord comme date ISO
-    start = parseISO(startDate);
-    if (!isValid(start) && startDate.includes('/')) {
-      const [day, month, year] = startDate.split('/');
-      start = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
-    }
-    isStartDateValid = isValid(start);
-    
-    end = parseISO(endDate);
-    if (!isValid(end) && endDate.includes('/')) {
-      const [day, month, year] = endDate.split('/');
-      end = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
-    }
-    isEndDateValid = isValid(end);
-  } catch (e) {
-    console.error("Erreur lors du parsing des dates:", e);
-  }
+  const isStartDateValid = start !== null;
+  const isEndDateValid = end !== null;
   
   // Déterminer le statut de l'activité
   const isUpcoming = isStartDateValid && isAfter(start!, now);

@@ -24,6 +24,8 @@ interface EmailData {
 }
 
 const handler = async (req: Request): Promise<Response> => {
+  console.log("Function send-confirmation invoked");
+  
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });

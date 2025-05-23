@@ -33,28 +33,29 @@ export const updateLoisir = async (
 
     console.log("Données formatées avant envoi à Supabase:", formattedData);
 
-    // Utilisation de la méthode update avec un retour explicite des données
+    // Première tentative : utilisation de update().select() pour récupérer directement les données mises à jour
     const { data, error } = await supabase
       .from('loisirs')
       .update(formattedData)
       .eq('id', loisirId)
-      .select('*');
+      .select('*')
+      .single();
 
     if (error) {
       console.error("Erreur Supabase lors de la mise à jour:", error);
       throw new Error(`Erreur de mise à jour: ${error.message}`);
     }
     
-    if (!data || data.length === 0) {
-      console.error("Aucune donnée n'a été retournée après la mise à jour");
+    if (!data) {
+      console.log("Aucune donnée n'a été retournée par la mise à jour. Récupération séparée...");
       
-      // Récupérer directement les données après la mise à jour si la requête n'en a pas renvoyé
+      // Si la mise à jour a réussi mais n'a pas renvoyé de données, les récupérer explicitement
       const { data: fetchedData, error: fetchError } = await supabase
         .from('loisirs')
         .select('*')
         .eq('id', loisirId)
         .single();
-        
+      
       if (fetchError) {
         console.error("Erreur lors de la récupération après mise à jour:", fetchError);
         throw new Error(`Erreur lors de la récupération: ${fetchError.message}`);
@@ -78,16 +79,13 @@ export const updateLoisir = async (
       return result;
     }
     
-    console.log("Données retournées par Supabase:", data);
-    
-    // Prendre le premier élément du tableau résultat
-    const updatedLoisir = data[0];
+    console.log("Données retournées directement par Supabase:", data);
     
     // Conversion du champ gallery_images
     const result = {
-      ...updatedLoisir,
-      gallery_images: Array.isArray(updatedLoisir.gallery_images) 
-        ? updatedLoisir.gallery_images 
+      ...data,
+      gallery_images: Array.isArray(data.gallery_images) 
+        ? data.gallery_images 
         : []
     } as Loisir;
     
@@ -103,20 +101,38 @@ export const updateLoisir = async (
  * Récupération d'une activité de loisir par son ID
  */
 export const getLoisirById = async (id: number): Promise<Loisir> => {
-  const { data, error } = await supabase
-    .from('loisirs')
-    .select('*')
-    .eq('id', id)
-    .single();
+  try {
+    console.log("Récupération du loisir par ID:", id);
+    
+    const { data, error } = await supabase
+      .from('loisirs')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-  if (error) throw error;
-  if (!data) throw new Error("Activité non trouvée");
-  
-  // Conversion du champ gallery_images de Json à string[]
-  return {
-    ...data,
-    gallery_images: Array.isArray(data.gallery_images) 
-      ? data.gallery_images 
-      : []
-  } as Loisir;
+    if (error) {
+      console.error("Erreur lors de la récupération du loisir:", error);
+      throw error;
+    }
+    
+    if (!data) {
+      console.error("Aucune donnée trouvée pour le loisir ID:", id);
+      throw new Error("Activité non trouvée");
+    }
+    
+    console.log("Loisir récupéré avec succès:", data);
+    
+    // Conversion du champ gallery_images de Json à string[]
+    const result = {
+      ...data,
+      gallery_images: Array.isArray(data.gallery_images) 
+        ? data.gallery_images 
+        : []
+    } as Loisir;
+    
+    return result;
+  } catch (error) {
+    console.error("Erreur lors de la récupération du loisir:", error);
+    throw error;
+  }
 };
