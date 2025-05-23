@@ -37,9 +37,27 @@ export async function fetchAccommodations(): Promise<Accommodation[]> {
 }
 
 export async function createAccommodation(accommodationData: Omit<Accommodation, 'id'>): Promise<Accommodation> {
+  // Convert the accommodation data to match database schema
+  const dbData = {
+    name: accommodationData.name,
+    type: accommodationData.type,
+    location: accommodationData.location,
+    description: accommodationData.description,
+    price: accommodationData.price,
+    rating: accommodationData.rating,
+    image: accommodationData.image,
+    max_guests: accommodationData.max_guests,
+    rooms: accommodationData.rooms,
+    bathrooms: accommodationData.bathrooms,
+    gallery_images: accommodationData.gallery_images as any,
+    features: accommodationData.features as any,
+    amenities: accommodationData.amenities as any,
+    rules: accommodationData.rules as any
+  };
+
   const { data, error } = await supabase
     .from("accommodations")
-    .insert([accommodationData])
+    .insert(dbData)
     .select("*")
     .single();
   
@@ -62,9 +80,27 @@ export async function createAccommodation(accommodationData: Omit<Accommodation,
 }
 
 export async function updateAccommodation(id: number, accommodationData: Partial<Accommodation>): Promise<Accommodation> {
+  // Convert the accommodation data to match database schema
+  const dbData: any = {};
+  
+  if (accommodationData.name !== undefined) dbData.name = accommodationData.name;
+  if (accommodationData.type !== undefined) dbData.type = accommodationData.type;
+  if (accommodationData.location !== undefined) dbData.location = accommodationData.location;
+  if (accommodationData.description !== undefined) dbData.description = accommodationData.description;
+  if (accommodationData.price !== undefined) dbData.price = accommodationData.price;
+  if (accommodationData.rating !== undefined) dbData.rating = accommodationData.rating;
+  if (accommodationData.image !== undefined) dbData.image = accommodationData.image;
+  if (accommodationData.max_guests !== undefined) dbData.max_guests = accommodationData.max_guests;
+  if (accommodationData.rooms !== undefined) dbData.rooms = accommodationData.rooms;
+  if (accommodationData.bathrooms !== undefined) dbData.bathrooms = accommodationData.bathrooms;
+  if (accommodationData.gallery_images !== undefined) dbData.gallery_images = accommodationData.gallery_images as any;
+  if (accommodationData.features !== undefined) dbData.features = accommodationData.features as any;
+  if (accommodationData.amenities !== undefined) dbData.amenities = accommodationData.amenities as any;
+  if (accommodationData.rules !== undefined) dbData.rules = accommodationData.rules as any;
+
   const { data, error } = await supabase
     .from("accommodations")
-    .update(accommodationData)
+    .update(dbData)
     .eq("id", id)
     .select("*")
     .single();
