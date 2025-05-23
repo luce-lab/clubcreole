@@ -1,5 +1,4 @@
 
-<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -11,23 +10,12 @@ import { LoginForm } from "@/components/auth/LoginForm";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { AuthLoadingState } from "@/components/auth/AuthLoadingState";
 import { AdminDevTools } from "@/components/auth/AdminDevTools";
-=======
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
-import { useToast } from "@/components/ui/use-toast";
->>>>>>> f563802 (feat: Implement dashboard structure)
 
 const Login = () => {
   const location = useLocation();
   const initialTab = location.state?.activeTab || "login";
   const [activeTab, setActiveTab] = useState(initialTab);
   const [email, setEmail] = useState("");
-<<<<<<< HEAD
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, isLoading: authLoading } = useAuth();
@@ -54,46 +42,6 @@ const Login = () => {
       description: "Vous êtes maintenant connecté",
     });
     // Redirection will be handled by the useEffect
-=======
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-  const { toast } = useToast();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        toast({
-          title: "Erreur de connexion",
-          description: error.message,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      toast({
-        title: "Connexion réussie",
-        description: "Vous êtes maintenant connecté",
-      });
-      navigate("/dashboard");
-    } catch (error) {
-      toast({
-        title: "Erreur de connexion",
-        description: "Une erreur s'est produite",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
->>>>>>> f563802 (feat: Implement dashboard structure)
   };
 
   const handleRegisterSuccess = (registeredEmail: string) => {
@@ -139,46 +87,12 @@ const Login = () => {
             <div className="px-6 pb-4">
               <AdminDevTools />
             </div>
-<<<<<<< HEAD
           </TabsContent>
           
           <TabsContent value="register">
             <RegisterForm onSuccess={handleRegisterSuccess} />
           </TabsContent>
         </Tabs>
-=======
-            <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <Button 
-              type="submit" 
-              className="w-full bg-creole-green hover:bg-creole-green/90"
-              disabled={isLoading}
-            >
-              {isLoading ? "Connexion en cours..." : "Se connecter"}
-            </Button>
-            <p className="text-center text-sm text-gray-600">
-              Pas encore de compte ?{" "}
-              <button
-                type="button"
-                onClick={() => navigate("/register")}
-                className="text-creole-green hover:underline"
-              >
-                S'inscrire
-              </button>
-            </p>
-          </CardFooter>
-        </form>
->>>>>>> f563802 (feat: Implement dashboard structure)
       </Card>
     </div>
   );
