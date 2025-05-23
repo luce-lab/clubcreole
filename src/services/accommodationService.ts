@@ -39,7 +39,7 @@ export async function fetchAccommodations(): Promise<Accommodation[]> {
 export async function createAccommodation(accommodationData: Omit<Accommodation, 'id'>): Promise<Accommodation> {
   console.log("Tentative de création d'hébergement:", accommodationData);
   
-  // Convert the accommodation data to match database schema
+  // Convert the accommodation data to match database schema with proper Json types
   const dbData = {
     name: accommodationData.name,
     type: accommodationData.type,
@@ -51,10 +51,10 @@ export async function createAccommodation(accommodationData: Omit<Accommodation,
     max_guests: accommodationData.max_guests,
     rooms: accommodationData.rooms,
     bathrooms: accommodationData.bathrooms,
-    gallery_images: accommodationData.gallery_images || [],
-    features: accommodationData.features || [],
-    amenities: accommodationData.amenities || [],
-    rules: accommodationData.rules || []
+    gallery_images: accommodationData.gallery_images || [] as any,
+    features: accommodationData.features || [] as any,
+    amenities: accommodationData.amenities || [] as any,
+    rules: accommodationData.rules || [] as any
   };
 
   console.log("Données envoyées à la base:", dbData);
@@ -96,7 +96,7 @@ export async function createAccommodation(accommodationData: Omit<Accommodation,
 export async function updateAccommodation(id: number, accommodationData: Partial<Accommodation>): Promise<Accommodation> {
   console.log("Tentative de mise à jour d'hébergement:", { id, data: accommodationData });
   
-  // Convert the accommodation data to match database schema
+  // Convert the accommodation data to match database schema with proper Json types
   const dbData: any = {};
   
   if (accommodationData.name !== undefined) dbData.name = accommodationData.name;
@@ -109,10 +109,10 @@ export async function updateAccommodation(id: number, accommodationData: Partial
   if (accommodationData.max_guests !== undefined) dbData.max_guests = accommodationData.max_guests;
   if (accommodationData.rooms !== undefined) dbData.rooms = accommodationData.rooms;
   if (accommodationData.bathrooms !== undefined) dbData.bathrooms = accommodationData.bathrooms;
-  if (accommodationData.gallery_images !== undefined) dbData.gallery_images = accommodationData.gallery_images;
-  if (accommodationData.features !== undefined) dbData.features = accommodationData.features;
-  if (accommodationData.amenities !== undefined) dbData.amenities = accommodationData.amenities;
-  if (accommodationData.rules !== undefined) dbData.rules = accommodationData.rules;
+  if (accommodationData.gallery_images !== undefined) dbData.gallery_images = accommodationData.gallery_images as any;
+  if (accommodationData.features !== undefined) dbData.features = accommodationData.features as any;
+  if (accommodationData.amenities !== undefined) dbData.amenities = accommodationData.amenities as any;
+  if (accommodationData.rules !== undefined) dbData.rules = accommodationData.rules as any;
 
   console.log("Données de mise à jour envoyées:", dbData);
 
