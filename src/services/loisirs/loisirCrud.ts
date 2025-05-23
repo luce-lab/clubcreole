@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Loisir } from "@/components/loisirs/types";
 import { validateAndFormatDate } from "./dateUtils";
@@ -33,30 +32,57 @@ export const updateLoisir = async (
 
     console.log("Données formatées avant envoi à Supabase:", formattedData);
 
-    // Exécution de la requête de mise à jour avec utilisation de eq au lieu de .match
+    // Exécuter la requête de mise à jour et récupérer explicitement le résultat
     const { data, error } = await supabase
       .from('loisirs')
       .update(formattedData)
       .eq('id', loisirId)
-      .select('*');
+      .select();
 
     if (error) {
       console.error("Erreur Supabase lors de la mise à jour:", error);
       throw new Error(`Erreur de mise à jour: ${error.message}`);
     }
     
-    // Vérifier si des données ont été retournées (array vide ou null signifie qu'aucun enregistrement n'a été trouvé)
     if (!data || data.length === 0) {
       console.error("Aucune donnée n'a été retournée après la mise à jour");
-      throw new Error("Aucune donnée mise à jour n'a été retournée");
+      
+      // Récupérer directement les données après la mise à jour si la requête n'en a pas renvoyé
+      const { data: fetchedData, error: fetchError } = await supabase
+        .from('loisirs')
+        .select('*')
+        .eq('id', loisirId)
+        .single();
+        
+      if (fetchError) {
+        console.error("Erreur lors de la récupération après mise à jour:", fetchError);
+        throw new Error(`Erreur lors de la récupération: ${fetchError.message}`);
+      }
+      
+      if (!fetchedData) {
+        throw new Error("L'activité n'a pas pu être trouvée après la mise à jour");
+      }
+      
+      console.log("Données récupérées séparément après mise à jour:", fetchedData);
+      
+      // Conversion du champ gallery_images
+      const result = {
+        ...fetchedData,
+        gallery_images: Array.isArray(fetchedData.gallery_images) 
+          ? fetchedData.gallery_images 
+          : []
+      } as Loisir;
+      
+      console.log("Loisir mis à jour (récupéré séparément):", result);
+      return result;
     }
     
     console.log("Données retournées par Supabase:", data);
     
-    // Prendre le premier élément puisque select() retourne un tableau
+    // Prendre le premier élément du tableau résultat
     const updatedLoisir = data[0];
     
-    // Conversion du champ gallery_images de Json à string[]
+    // Conversion du champ gallery_images
     const result = {
       ...updatedLoisir,
       gallery_images: Array.isArray(updatedLoisir.gallery_images) 

@@ -60,25 +60,39 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
 
       try {
         const result = await updateLoisir(loisir.id, updatedData);
-        console.log("Résultat de la mise à jour (EditLoisirDialog):", result);
-
-        if (!result) {
-          throw new Error("Aucune donnée retournée par l'API");
+        
+        // Vérifier explicitement que nous avons un résultat valide
+        if (!result || typeof result !== 'object' || !('id' in result)) {
+          console.error("Résultat invalide de la mise à jour:", result);
+          throw new Error("Données de mise à jour invalides");
         }
+        
+        console.log("Résultat de la mise à jour (EditLoisirDialog):", result);
 
         toast({
           title: "Activité modifiée",
           description: "L'activité de loisir a été mise à jour avec succès",
         });
 
-        if (onSuccess) {
-          onSuccess(result);
+        if (onSuccess && typeof onSuccess === 'function') {
+          try {
+            onSuccess(result);
+          } catch (callbackError) {
+            console.error("Erreur lors de la callback onSuccess:", callbackError);
+            // Continue execution even if onSuccess callback fails
+          }
         }
 
         onOpenChange(false);
-      } catch (e) {
-        console.error("Erreur renvoyée par updateLoisir:", e);
-        throw e; // Rethrow pour être attrapé par le bloc catch parent
+      } catch (apiError) {
+        console.error("Erreur renvoyée par updateLoisir:", apiError);
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: apiError instanceof Error 
+            ? `Erreur API: ${apiError.message}` 
+            : "Une erreur est survenue lors de l'appel à l'API",
+        });
       }
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'activité:", error);
