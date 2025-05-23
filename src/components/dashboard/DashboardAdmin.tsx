@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 import { useState, useEffect, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -71,6 +72,15 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
         </div>
       </div>
 
+=======
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Users, ShoppingBag, Activity, CreditCard } from "lucide-react";
+
+export const DashboardAdmin = () => {
+  return (
+    <div className="space-y-6">
+>>>>>>> f563802 (feat: Implement dashboard structure)
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -114,6 +124,7 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
         </Card>
       </div>
 
+<<<<<<< HEAD
       {/* Section des liens de gestion rapides */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 hover:shadow-md transition-all">
@@ -261,6 +272,67 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
           </Suspense>
         </TabsContent>
       </Tabs>
+=======
+      <Card>
+        <CardHeader>
+          <CardTitle>Derniers partenaires inscrits</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nom</TableHead>
+                <TableHead>Service</TableHead>
+                <TableHead>Statut</TableHead>
+                <TableHead>Date d'inscription</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-medium">Aqua Plongée</TableCell>
+                <TableCell>Plongée</TableCell>
+                <TableCell>
+                  <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                    Actif
+                  </span>
+                </TableCell>
+                <TableCell>12/04/2025</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">Jet Aventure</TableCell>
+                <TableCell>Jet-Ski</TableCell>
+                <TableCell>
+                  <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                    Actif
+                  </span>
+                </TableCell>
+                <TableCell>10/04/2025</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">Resto Creole</TableCell>
+                <TableCell>Restauration</TableCell>
+                <TableCell>
+                  <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+                    En attente
+                  </span>
+                </TableCell>
+                <TableCell>08/04/2025</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">Hotel Karibea</TableCell>
+                <TableCell>Hébergement</TableCell>
+                <TableCell>
+                  <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                    Actif
+                  </span>
+                </TableCell>
+                <TableCell>05/04/2025</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+>>>>>>> f563802 (feat: Implement dashboard structure)
     </div>
   );
 };
