@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -24,16 +25,14 @@ import NightlifeDetail from "./pages/NightlifeDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-<<<<<<< HEAD
 import PartnersManagement from "./pages/PartnersManagement";
 import UsersManagement from "./pages/UsersManagement";
 import Reservations from "./pages/Reservations";
 import Clients from "./pages/Clients";
 import Offers from "./pages/Offers";
 import LoisirsManagement from "./pages/LoisirsManagement";
+import AccommodationsManagement from "./pages/AccommodationsManagement";
 import { AuthProvider } from "./contexts/auth";
-=======
->>>>>>> f563802 (feat: Implement dashboard structure)
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,7 +49,6 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-<<<<<<< HEAD
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Index />} />
@@ -69,6 +67,7 @@ const App = () => (
             <Route path="/loisirs" element={<LoisirsActivity />} />
             <Route path="/loisirs/:id" element={<LoisirsDetail />} />
             <Route path="/loisirs-management" element={<LoisirsManagement />} />
+            <Route path="/accommodations-management" element={<AccommodationsManagement />} />
             <Route path="/restauration" element={<RestaurantActivity />} />
             <Route path="/restaurant/:id" element={<RestaurantDetail />} />
             <Route path="/location" element={<CarRentalActivity />} />
@@ -82,25 +81,6 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
-=======
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/plongee" element={<DivingActivity />} />
-          <Route path="/canoe" element={<CanoeActivity />} />
-          <Route path="/randonnee" element={<HikingActivity />} />
-          <Route path="/jet-ski" element={<JetSkiActivity />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/loisirs" element={<LoisirsActivity />} />
-          <Route path="/restauration" element={<RestaurantActivity />} />
-          <Route path="/location" element={<CarRentalActivity />} />
-          <Route path="/hebergements" element={<AccommodationActivity />} />
-          <Route path="/concerts" element={<ConcertActivity />} />
-          <Route path="/soiree" element={<NightlifeActivity />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
->>>>>>> f563802 (feat: Implement dashboard structure)
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

@@ -17,7 +17,8 @@ import {
   Home, 
   User,
   CalendarClock,
-  Palmtree
+  Palmtree,
+  Building
 } from "lucide-react";
 
 interface DashboardSidebarProps {
@@ -70,6 +71,17 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ userRole }) => {
             >
               <Palmtree className="h-5 w-5 text-creole-green" />
               <span className="font-semibold">Gérer les loisirs</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton 
+              tooltip="Hébergements" 
+              onClick={() => navigate("/accommodations-management")} 
+              isActive={isActive("/accommodations-management")}
+              className="bg-blue-50 hover:bg-blue-100 font-medium"
+            >
+              <Building className="h-5 w-5 text-blue-600" />
+              <span className="font-semibold">Gérer les hébergements</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>

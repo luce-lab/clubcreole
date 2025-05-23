@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Accommodation, Amenity } from "@/components/accommodation/AccommodationTypes";
 
@@ -33,4 +34,64 @@ export async function fetchAccommodations(): Promise<Accommodation[]> {
   });
   
   return formattedData;
+}
+
+export async function createAccommodation(accommodationData: Omit<Accommodation, 'id'>): Promise<Accommodation> {
+  const { data, error } = await supabase
+    .from("accommodations")
+    .insert([accommodationData])
+    .select("*")
+    .single();
+  
+  if (error) throw error;
+
+  // Transform the data with proper typing
+  const amenitiesArray = data.amenities as RawAmenity[];
+  const typedAmenities: Amenity[] = amenitiesArray.map((amenity: RawAmenity) => ({
+    name: amenity.name || "",
+    available: amenity.available || false
+  }));
+  
+  return {
+    ...data,
+    gallery_images: data.gallery_images as string[],
+    features: data.features as string[],
+    amenities: typedAmenities,
+    rules: data.rules as string[]
+  };
+}
+
+export async function updateAccommodation(id: number, accommodationData: Partial<Accommodation>): Promise<Accommodation> {
+  const { data, error } = await supabase
+    .from("accommodations")
+    .update(accommodationData)
+    .eq("id", id)
+    .select("*")
+    .single();
+  
+  if (error) throw error;
+
+  // Transform the data with proper typing
+  const amenitiesArray = data.amenities as RawAmenity[];
+  const typedAmenities: Amenity[] = amenitiesArray.map((amenity: RawAmenity) => ({
+    name: amenity.name || "",
+    available: amenity.available || false
+  }));
+  
+  return {
+    ...data,
+    gallery_images: data.gallery_images as string[],
+    features: data.features as string[],
+    amenities: typedAmenities,
+    rules: data.rules as string[]
+  };
+}
+
+export async function deleteAccommodation(id: number): Promise<void> {
+  const { error } = await supabase
+    .from("accommodations")
+    .delete()
+    .eq("id", id);
+  
+  if (error) throw error;
 }

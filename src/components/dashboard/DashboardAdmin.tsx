@@ -1,5 +1,3 @@
-
-<<<<<<< HEAD
 import { useState, useEffect, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -23,7 +21,8 @@ import {
   Activity, 
   CreditCard, 
   Calendar,
-  Palmtree
+  Palmtree,
+  Building
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UsersList } from "./UsersList";
@@ -72,15 +71,29 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
         </div>
       </div>
 
-=======
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Users, ShoppingBag, Activity, CreditCard } from "lucide-react";
+      {/* Ajout d'une bannière pour la gestion des hébergements */}
+      <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200 shadow-sm">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-blue-600 rounded-full p-2">
+              <Building className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-blue-800">Gestion des Hébergements</h2>
+              <p className="text-sm text-gray-600">Créez et gérez tous les hébergements disponibles</p>
+            </div>
+          </div>
+          <Button 
+            onClick={() => navigate("/accommodations-management")} 
+            size="lg"
+            className="bg-blue-600 hover:bg-blue-700 shadow-md"
+          >
+            <Building className="mr-2 h-5 w-5" />
+            Accéder à la gestion des hébergements
+          </Button>
+        </div>
+      </div>
 
-export const DashboardAdmin = () => {
-  return (
-    <div className="space-y-6">
->>>>>>> f563802 (feat: Implement dashboard structure)
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -124,9 +137,8 @@ export const DashboardAdmin = () => {
         </Card>
       </div>
 
-<<<<<<< HEAD
       {/* Section des liens de gestion rapides */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 hover:shadow-md transition-all">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium text-blue-800">Gestion des Loisirs</CardTitle>
@@ -141,6 +153,24 @@ export const DashboardAdmin = () => {
             >
               <Palmtree className="mr-2 h-4 w-4" />
               Accéder à la gestion des loisirs
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 hover:shadow-md transition-all">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg font-medium text-blue-800">Gestion des Hébergements</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-4 text-blue-700">
+              Créez, modifiez ou supprimez des hébergements et gérez leurs disponibilités
+            </p>
+            <Button 
+              onClick={() => navigate("/accommodations-management")} 
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              <Building className="mr-2 h-4 w-4" />
+              Gérer les hébergements
             </Button>
           </CardContent>
         </Card>
@@ -272,67 +302,6 @@ export const DashboardAdmin = () => {
           </Suspense>
         </TabsContent>
       </Tabs>
-=======
-      <Card>
-        <CardHeader>
-          <CardTitle>Derniers partenaires inscrits</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nom</TableHead>
-                <TableHead>Service</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Date d'inscription</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">Aqua Plongée</TableCell>
-                <TableCell>Plongée</TableCell>
-                <TableCell>
-                  <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                    Actif
-                  </span>
-                </TableCell>
-                <TableCell>12/04/2025</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Jet Aventure</TableCell>
-                <TableCell>Jet-Ski</TableCell>
-                <TableCell>
-                  <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                    Actif
-                  </span>
-                </TableCell>
-                <TableCell>10/04/2025</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Resto Creole</TableCell>
-                <TableCell>Restauration</TableCell>
-                <TableCell>
-                  <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
-                    En attente
-                  </span>
-                </TableCell>
-                <TableCell>08/04/2025</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Hotel Karibea</TableCell>
-                <TableCell>Hébergement</TableCell>
-                <TableCell>
-                  <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                    Actif
-                  </span>
-                </TableCell>
-                <TableCell>05/04/2025</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
->>>>>>> f563802 (feat: Implement dashboard structure)
     </div>
   );
 };
