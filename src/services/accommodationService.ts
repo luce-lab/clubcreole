@@ -116,24 +116,34 @@ export async function updateAccommodation(id: number, accommodationData: Partial
 
   console.log("Données de mise à jour envoyées:", dbData);
 
-  const { data, error } = await supabase
+  // Effectuer la mise à jour
+  const { error: updateError } = await supabase
     .from("accommodations")
     .update(dbData)
-    .eq("id", id)
-    .select("*");
+    .eq("id", id);
   
-  console.log("Réponse de mise à jour:", { data, error });
-  
-  if (error) {
-    console.error("Erreur lors de la mise à jour:", error);
-    throw error;
+  if (updateError) {
+    console.error("Erreur lors de la mise à jour:", updateError);
+    throw updateError;
   }
 
-  if (!data || data.length === 0) {
+  // Récupérer l'hébergement mis à jour dans une requête séparée
+  const { data: updatedData, error: fetchError } = await supabase
+    .from("accommodations")
+    .select("*")
+    .eq("id", id)
+    .single();
+  
+  console.log("Données récupérées après mise à jour:", { updatedData, fetchError });
+  
+  if (fetchError) {
+    console.error("Erreur lors de la récupération après mise à jour:", fetchError);
+    throw fetchError;
+  }
+
+  if (!updatedData) {
     throw new Error("Aucune donnée retournée après la mise à jour");
   }
-
-  const updatedData = data[0];
 
   // Transform the data with proper typing
   const amenitiesArray = updatedData.amenities as RawAmenity[];
