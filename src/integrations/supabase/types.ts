@@ -63,6 +63,51 @@ export type Database = {
         }
         Relationships: []
       }
+      car_rental_reservations: {
+        Row: {
+          created_at: string
+          driver_email: string
+          driver_name: string
+          driver_phone: string
+          end_date: string
+          id: string
+          notes: string | null
+          rental_company_name: string
+          selected_model: string
+          start_date: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          driver_email: string
+          driver_name: string
+          driver_phone: string
+          end_date: string
+          id?: string
+          notes?: string | null
+          rental_company_name: string
+          selected_model: string
+          start_date: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          driver_email?: string
+          driver_name?: string
+          driver_phone?: string
+          end_date?: string
+          id?: string
+          notes?: string | null
+          rental_company_name?: string
+          selected_model?: string
+          start_date?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           address: string | null

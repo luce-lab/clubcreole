@@ -32,6 +32,7 @@ import Clients from "./pages/Clients";
 import Offers from "./pages/Offers";
 import LoisirsManagement from "./pages/LoisirsManagement";
 import AccommodationsManagement from "./pages/AccommodationsManagement";
+import CarRentalManagement from "./pages/CarRentalManagement";
 import { AuthProvider } from "./contexts/auth";
 
 const queryClient = new QueryClient({
@@ -68,6 +69,7 @@ const App = () => (
             <Route path="/loisirs/:id" element={<LoisirsDetail />} />
             <Route path="/loisirs-management" element={<LoisirsManagement />} />
             <Route path="/accommodations-management" element={<AccommodationsManagement />} />
+            <Route path="/car-rental-management" element={<CarRentalManagement />} />
             <Route path="/restauration" element={<RestaurantActivity />} />
             <Route path="/restaurant/:id" element={<RestaurantDetail />} />
             <Route path="/location" element={<CarRentalActivity />} />

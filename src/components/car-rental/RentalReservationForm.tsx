@@ -9,6 +9,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { CarModel } from "./CarRentalTypes";
+import { createCarRentalReservation } from "@/services/carRentalService";
+import { useState } from "react";
 
 interface RentalReservationFormProps {
   rentalName: string;
@@ -27,6 +29,7 @@ const formSchema = z.object({
 
 const RentalReservationForm = ({ rentalName, selectedModel, models }: RentalReservationFormProps) => {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -39,7 +42,7 @@ const RentalReservationForm = ({ rentalName, selectedModel, models }: RentalRese
     }
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!selectedModel) {
       toast({
         title: "Erreur",
@@ -49,10 +52,36 @@ const RentalReservationForm = ({ rentalName, selectedModel, models }: RentalRese
       return;
     }
 
-    toast({
-      title: "Réservation confirmée !",
-      description: `Votre réservation pour ${rentalName} (${selectedModel}) a été enregistrée.`,
-    });
+    setIsSubmitting(true);
+
+    try {
+      await createCarRentalReservation({
+        rental_company_name: rentalName,
+        selected_model: selectedModel,
+        start_date: values.startDate,
+        end_date: values.endDate,
+        driver_name: values.driverName,
+        driver_email: values.driverEmail,
+        driver_phone: values.driverPhone
+      });
+
+      toast({
+        title: "Réservation confirmée !",
+        description: `Votre réservation pour ${rentalName} (${selectedModel}) a été enregistrée.`,
+      });
+
+      // Reset form
+      form.reset();
+    } catch (error) {
+      console.error("Erreur lors de la réservation:", error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la réservation. Veuillez réessayer.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -155,8 +184,12 @@ const RentalReservationForm = ({ rentalName, selectedModel, models }: RentalRese
               )}
             </div>
 
-            <Button type="submit" className="w-full bg-creole-green hover:bg-creole-green/90">
-              Confirmer la réservation
+            <Button 
+              type="submit" 
+              className="w-full bg-creole-green hover:bg-creole-green/90"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Réservation en cours..." : "Confirmer la réservation"}
             </Button>
 
             <p className="text-xs text-gray-500 text-center mt-2">

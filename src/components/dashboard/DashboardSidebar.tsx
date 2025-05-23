@@ -1,171 +1,152 @@
 
-import { FC } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/contexts/AuthContext";
-import {
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-} from "@/components/ui/sidebar";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
+  LayoutDashboard, 
   Users, 
-  ShoppingBag, 
-  LineChart, 
+  Calendar, 
   Settings, 
-  LogOut, 
-  Home, 
-  User,
-  CalendarClock,
-  Palmtree,
-  Building
+  ChevronDown, 
+  ChevronRight,
+  Car,
+  Bed,
+  MapPin,
+  UserCheck,
+  Gift
 } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/auth";
 
-interface DashboardSidebarProps {
-  userRole: "admin" | "partner" | "client" | null;
-}
-
-export const DashboardSidebar: FC<DashboardSidebarProps> = ({ userRole }) => {
+export function DashboardSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { toast } = useToast();
-  const { signOut } = useAuth();
+  const { user } = useAuth();
+  const [managementOpen, setManagementOpen] = useState(false);
 
-  const handleLogout = async () => {
-    signOut();
-    navigate("/");
-    toast({
-      title: "Déconnecté",
-      description: "Vous avez été déconnecté avec succès",
-    });
-  };
+  const isActive = (path: string) => location.pathname === path;
 
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
+  const menuItems = [
+    {
+      title: "Tableau de bord",
+      icon: LayoutDashboard,
+      path: "/dashboard",
+      roles: ["admin", "partner", "client"]
+    },
+    {
+      title: "Gestion",
+      icon: Settings,
+      roles: ["admin"],
+      submenu: [
+        {
+          title: "Utilisateurs",
+          icon: Users,
+          path: "/users",
+        },
+        {
+          title: "Partenaires",
+          icon: UserCheck,
+          path: "/partners",
+        },
+        {
+          title: "Loisirs",
+          icon: MapPin,
+          path: "/loisirs-management",
+        },
+        {
+          title: "Hébergements",
+          icon: Bed,
+          path: "/accommodations-management",
+        },
+        {
+          title: "Locations de voitures",
+          icon: Car,
+          path: "/car-rental-management",
+        }
+      ]
+    },
+    {
+      title: "Réservations",
+      icon: Calendar,
+      path: "/reservations",
+      roles: ["admin", "partner"]
+    },
+    {
+      title: "Clients",
+      icon: Users,
+      path: "/clients",
+      roles: ["admin", "partner"]
+    },
+    {
+      title: "Offres",
+      icon: Gift,
+      path: "/offers",
+      roles: ["admin", "partner"]
+    }
+  ];
+
+  const filteredItems = menuItems.filter(item => 
+    !item.roles || item.roles.includes(user?.role || "")
+  );
 
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <SidebarMenuButton tooltip="Accueil" onClick={() => navigate("/")} isActive={isActive("/")}>
-          <Home className="h-5 w-5" />
-          <span>Accueil</span>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-
-      {/* Menu pour les administrateurs */}
-      {userRole === "admin" && (
-        <>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Dashboard" onClick={() => navigate("/dashboard")} isActive={isActive("/dashboard")}>
-              <LineChart className="h-5 w-5" />
-              <span>Dashboard</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton 
-              tooltip="Loisirs" 
-              onClick={() => navigate("/loisirs-management")} 
-              isActive={isActive("/loisirs-management")}
-              className="bg-creole-green/10 hover:bg-creole-green/20 font-medium"
-            >
-              <Palmtree className="h-5 w-5 text-creole-green" />
-              <span className="font-semibold">Gérer les loisirs</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton 
-              tooltip="Hébergements" 
-              onClick={() => navigate("/accommodations-management")} 
-              isActive={isActive("/accommodations-management")}
-              className="bg-blue-50 hover:bg-blue-100 font-medium"
-            >
-              <Building className="h-5 w-5 text-blue-600" />
-              <span className="font-semibold">Gérer les hébergements</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Utilisateurs" onClick={() => navigate("/users")} isActive={isActive("/users")}>
-              <Users className="h-5 w-5" />
-              <span>Utilisateurs</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Partenaires" onClick={() => navigate("/partners")} isActive={isActive("/partners")}>
-              <ShoppingBag className="h-5 w-5" />
-              <span>Partenaires</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Statistiques">
-              <LineChart className="h-5 w-5" />
-              <span>Statistiques</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Paramètres">
-              <Settings className="h-5 w-5" />
-              <span>Paramètres</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </>
-      )}
-
-      {/* Menu pour les partenaires */}
-      {userRole === "partner" && (
-        <>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Dashboard" onClick={() => navigate("/dashboard")} isActive={isActive("/dashboard")}>
-              <LineChart className="h-5 w-5" />
-              <span>Tableau de bord</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Réservations" onClick={() => navigate("/reservations")} isActive={isActive("/reservations")}>
-              <CalendarClock className="h-5 w-5" />
-              <span>Réservations</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Clients" onClick={() => navigate("/clients")} isActive={isActive("/clients")}>
-              <Users className="h-5 w-5" />
-              <span>Clients</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Offres" onClick={() => navigate("/offers")} isActive={isActive("/offers")}>
-              <ShoppingBag className="h-5 w-5" />
-              <span>Offres</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </>
-      )}
-
-      {/* Menu pour les clients */}
-      {userRole === "client" && (
-        <>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Profil">
-              <User className="h-5 w-5" />
-              <span>Mon profil</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Réservations">
-              <CalendarClock className="h-5 w-5" />
-              <span>Mes réservations</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </>
-      )}
-
-      {/* Bouton de déconnexion pour tous */}
-      <SidebarMenuItem>
-        <SidebarMenuButton tooltip="Déconnexion" onClick={handleLogout}>
-          <LogOut className="h-5 w-5" />
-          <span>Déconnexion</span>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    </SidebarMenu>
+    <div className="w-64 bg-white border-r border-gray-200 h-full">
+      <div className="p-4 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-creole-green">Menu</h2>
+      </div>
+      <ScrollArea className="h-[calc(100vh-80px)]">
+        <div className="p-4 space-y-2">
+          {filteredItems.map((item) => (
+            <div key={item.title}>
+              {item.submenu ? (
+                <div>
+                  <Button
+                    variant={managementOpen ? "secondary" : "ghost"}
+                    className={cn(
+                      "w-full justify-start",
+                      managementOpen && "bg-gray-100"
+                    )}
+                    onClick={() => setManagementOpen(!managementOpen)}
+                  >
+                    <item.icon className="mr-2 h-4 w-4" />
+                    {item.title}
+                    {managementOpen ? (
+                      <ChevronDown className="ml-auto h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="ml-auto h-4 w-4" />
+                    )}
+                  </Button>
+                  {managementOpen && (
+                    <div className="ml-6 mt-2 space-y-1">
+                      {item.submenu.map((subItem) => (
+                        <Button
+                          key={subItem.path}
+                          variant={isActive(subItem.path) ? "secondary" : "ghost"}
+                          className="w-full justify-start"
+                          onClick={() => navigate(subItem.path)}
+                        >
+                          <subItem.icon className="mr-2 h-4 w-4" />
+                          {subItem.title}
+                        </Button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Button
+                  variant={isActive(item.path || "") ? "secondary" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => item.path && navigate(item.path)}
+                >
+                  <item.icon className="mr-2 h-4 w-4" />
+                  {item.title}
+                </Button>
+              )}
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
+    </div>
   );
-};
+}
