@@ -21,7 +21,8 @@ export const updateLoisir = async (
   }
 ): Promise<Loisir> => {
   try {
-    console.log("Mise à jour de l'activité:", loisirId, updatedData);
+    console.log("Mise à jour de l'activité:", loisirId);
+    console.log("Données reçues:", updatedData);
     
     // Valider et formater les dates avant de les envoyer à la base de données
     const formattedData = {
@@ -30,8 +31,9 @@ export const updateLoisir = async (
       end_date: validateAndFormatDate(updatedData.end_date)
     };
 
-    console.log("Données formatées:", formattedData);
+    console.log("Données formatées avant envoi à Supabase:", formattedData);
 
+    // Exécution de la requête de mise à jour
     const { data, error } = await supabase
       .from('loisirs')
       .update(formattedData)
@@ -40,23 +42,27 @@ export const updateLoisir = async (
       .single();
 
     if (error) {
-      console.error("Erreur Supabase:", error);
-      throw error;
+      console.error("Erreur Supabase lors de la mise à jour:", error);
+      throw new Error(`Erreur de mise à jour: ${error.message}`);
     }
     
     if (!data) {
+      console.error("Aucune donnée n'a été retournée après la mise à jour");
       throw new Error("Aucune donnée mise à jour n'a été retournée");
     }
     
-    console.log("Loisir mis à jour:", data);
+    console.log("Données retournées par Supabase:", data);
     
     // Conversion du champ gallery_images de Json à string[]
-    return {
+    const result = {
       ...data,
       gallery_images: Array.isArray(data.gallery_images) 
         ? data.gallery_images 
         : []
     } as Loisir;
+    
+    console.log("Loisir mis à jour (formatté pour le frontend):", result);
+    return result;
   } catch (error) {
     console.error("Erreur lors de la mise à jour de l'activité:", error);
     throw error;

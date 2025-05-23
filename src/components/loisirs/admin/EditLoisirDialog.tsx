@@ -56,10 +56,14 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
         gallery_images: galleryImages
       };
 
-      console.log("Données à envoyer:", updatedData);
+      console.log("Données à envoyer à l'API:", updatedData);
 
       const result = await updateLoisir(loisir.id, updatedData);
-      console.log("Résultat de la mise à jour:", result);
+      console.log("Résultat de la mise à jour (EditLoisirDialog):", result);
+
+      if (!result) {
+        throw new Error("Aucune donnée retournée par l'API");
+      }
 
       toast({
         title: "Activité modifiée",
