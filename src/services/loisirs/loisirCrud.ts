@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Loisir } from "@/components/loisirs/types";
 import { validateAndFormatDate } from "./dateUtils";
@@ -32,12 +33,12 @@ export const updateLoisir = async (
 
     console.log("Données formatées avant envoi à Supabase:", formattedData);
 
-    // Exécuter la requête de mise à jour et récupérer explicitement le résultat
+    // Utilisation de la méthode update avec un retour explicite des données
     const { data, error } = await supabase
       .from('loisirs')
       .update(formattedData)
       .eq('id', loisirId)
-      .select();
+      .select('*');
 
     if (error) {
       console.error("Erreur Supabase lors de la mise à jour:", error);

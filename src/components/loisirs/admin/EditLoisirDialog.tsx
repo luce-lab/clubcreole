@@ -59,7 +59,10 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
       console.log("Données à envoyer à l'API:", updatedData);
 
       try {
+        console.log("Appel à updateLoisir avec:", loisir.id, updatedData);
         const result = await updateLoisir(loisir.id, updatedData);
+        
+        console.log("Résultat brut de updateLoisir:", result);
         
         // Vérifier explicitement que nous avons un résultat valide
         if (!result || typeof result !== 'object' || !('id' in result)) {
@@ -76,11 +79,13 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
 
         if (onSuccess && typeof onSuccess === 'function') {
           try {
+            console.log("Appel de onSuccess avec:", result);
             onSuccess(result);
           } catch (callbackError) {
             console.error("Erreur lors de la callback onSuccess:", callbackError);
-            // Continue execution even if onSuccess callback fails
           }
+        } else {
+          console.log("Pas de callback onSuccess ou pas une fonction");
         }
 
         onOpenChange(false);
@@ -88,9 +93,9 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
         console.error("Erreur renvoyée par updateLoisir:", apiError);
         toast({
           variant: "destructive",
-          title: "Erreur",
+          title: "Erreur API",
           description: apiError instanceof Error 
-            ? `Erreur API: ${apiError.message}` 
+            ? `Erreur: ${apiError.message}` 
             : "Une erreur est survenue lors de l'appel à l'API",
         });
       }
