@@ -33,31 +33,34 @@ export const updateLoisir = async (
 
     console.log("Données formatées avant envoi à Supabase:", formattedData);
 
-    // Exécution de la requête de mise à jour
+    // Exécution de la requête de mise à jour avec utilisation de eq au lieu de .match
     const { data, error } = await supabase
       .from('loisirs')
       .update(formattedData)
       .eq('id', loisirId)
-      .select('*')
-      .single();
+      .select('*');
 
     if (error) {
       console.error("Erreur Supabase lors de la mise à jour:", error);
       throw new Error(`Erreur de mise à jour: ${error.message}`);
     }
     
-    if (!data) {
+    // Vérifier si des données ont été retournées (array vide ou null signifie qu'aucun enregistrement n'a été trouvé)
+    if (!data || data.length === 0) {
       console.error("Aucune donnée n'a été retournée après la mise à jour");
       throw new Error("Aucune donnée mise à jour n'a été retournée");
     }
     
     console.log("Données retournées par Supabase:", data);
     
+    // Prendre le premier élément puisque select() retourne un tableau
+    const updatedLoisir = data[0];
+    
     // Conversion du champ gallery_images de Json à string[]
     const result = {
-      ...data,
-      gallery_images: Array.isArray(data.gallery_images) 
-        ? data.gallery_images 
+      ...updatedLoisir,
+      gallery_images: Array.isArray(updatedLoisir.gallery_images) 
+        ? updatedLoisir.gallery_images 
         : []
     } as Loisir;
     

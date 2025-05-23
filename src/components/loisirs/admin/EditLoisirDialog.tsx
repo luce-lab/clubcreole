@@ -58,23 +58,28 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
 
       console.log("Données à envoyer à l'API:", updatedData);
 
-      const result = await updateLoisir(loisir.id, updatedData);
-      console.log("Résultat de la mise à jour (EditLoisirDialog):", result);
+      try {
+        const result = await updateLoisir(loisir.id, updatedData);
+        console.log("Résultat de la mise à jour (EditLoisirDialog):", result);
 
-      if (!result) {
-        throw new Error("Aucune donnée retournée par l'API");
+        if (!result) {
+          throw new Error("Aucune donnée retournée par l'API");
+        }
+
+        toast({
+          title: "Activité modifiée",
+          description: "L'activité de loisir a été mise à jour avec succès",
+        });
+
+        if (onSuccess) {
+          onSuccess(result);
+        }
+
+        onOpenChange(false);
+      } catch (e) {
+        console.error("Erreur renvoyée par updateLoisir:", e);
+        throw e; // Rethrow pour être attrapé par le bloc catch parent
       }
-
-      toast({
-        title: "Activité modifiée",
-        description: "L'activité de loisir a été mise à jour avec succès",
-      });
-
-      if (onSuccess) {
-        onSuccess(result);
-      }
-
-      onOpenChange(false);
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'activité:", error);
       toast({
