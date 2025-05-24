@@ -110,6 +110,7 @@ export type Database = {
           created_at: string | null
           id: number
           image: string
+          is_active: boolean
           name: string
           price_per_day: number
           seats: number
@@ -123,6 +124,7 @@ export type Database = {
           created_at?: string | null
           id?: number
           image: string
+          is_active?: boolean
           name: string
           price_per_day: number
           seats: number
@@ -136,6 +138,7 @@ export type Database = {
           created_at?: string | null
           id?: number
           image?: string
+          is_active?: boolean
           name?: string
           price_per_day?: number
           seats?: number
@@ -162,6 +165,7 @@ export type Database = {
           location: string
           name: string
           offer: string
+          partner_id: string | null
           rating: number
           type: string
           updated_at: string | null
@@ -175,6 +179,7 @@ export type Database = {
           location: string
           name: string
           offer: string
+          partner_id?: string | null
           rating: number
           type: string
           updated_at?: string | null
@@ -188,11 +193,20 @@ export type Database = {
           location?: string
           name?: string
           offer?: string
+          partner_id?: string | null
           rating?: number
           type?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "car_rental_companies_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       car_rental_features: {
         Row: {
@@ -232,6 +246,7 @@ export type Database = {
           end_date: string
           id: string
           notes: string | null
+          partner_id: string | null
           rental_company_name: string
           selected_model: string
           start_date: string
@@ -246,6 +261,7 @@ export type Database = {
           end_date: string
           id?: string
           notes?: string | null
+          partner_id?: string | null
           rental_company_name: string
           selected_model: string
           start_date: string
@@ -260,13 +276,22 @@ export type Database = {
           end_date?: string
           id?: string
           notes?: string | null
+          partner_id?: string | null
           rental_company_name?: string
           selected_model?: string
           start_date?: string
           status?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "car_rental_reservations_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       clients: {
         Row: {

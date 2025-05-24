@@ -24,6 +24,7 @@ export interface CarRentalReservation {
   driver_phone: string;
   status: string;
   notes?: string;
+  partner_id?: string;
   created_at: string;
   updated_at: string;
 }
@@ -44,9 +45,25 @@ export async function createCarRentalReservation(
 ): Promise<CarRentalReservation> {
   console.log("Création d'une réservation de location de voiture:", reservationData);
 
+  // Récupérer l'ID du partenaire propriétaire de l'entreprise
+  const { data: companyData, error: companyError } = await supabase
+    .from("car_rental_companies")
+    .select("partner_id")
+    .eq("name", reservationData.rental_company_name)
+    .single();
+
+  if (companyError) {
+    console.error("Erreur lors de la récupération de l'entreprise:", companyError);
+  }
+
+  const dataToInsert = {
+    ...reservationData,
+    partner_id: companyData?.partner_id || null
+  };
+
   const { data, error } = await supabase
     .from("car_rental_reservations")
-    .insert(reservationData)
+    .insert(dataToInsert)
     .select("*")
     .single();
 
@@ -127,10 +144,11 @@ export const getCarRentals = async (): Promise<CarRental[]> => {
       return [];
     }
 
-    // Récupération des modèles pour toutes les entreprises
+    // Récupération des modèles pour toutes les entreprises (seulement les actifs pour le public)
     const { data: models, error: modelsError } = await supabase
       .from('car_models')
       .select('*')
+      .eq('is_active', true)
       .order('company_id, id');
 
     if (modelsError) {
