@@ -35,7 +35,6 @@ export async function fetchFleetManagers(): Promise<FleetManager[]> {
     .from("fleet_managers")
     .select(`
       *,
-      profiles!inner(email, first_name, last_name),
       car_rental_companies!inner(name)
     `)
     .order("created_at", { ascending: false });
@@ -45,24 +44,32 @@ export async function fetchFleetManagers(): Promise<FleetManager[]> {
     throw error;
   }
 
-  return (data || []).map(manager => ({
-    ...manager,
-    user_email: manager.profiles?.email,
-    user_name: manager.profiles?.first_name 
-      ? `${manager.profiles.first_name} ${manager.profiles.last_name || ''}`
-      : manager.profiles?.email,
-    company_name: manager.car_rental_companies?.name
-  }));
+  // Récupérer les profils séparément
+  const userIds = data?.map(manager => manager.user_id) || [];
+  const { data: profiles } = await supabase
+    .from("profiles")
+    .select("id, email, first_name, last_name")
+    .in("id", userIds);
+
+  return (data || []).map(manager => {
+    const profile = profiles?.find(p => p.id === manager.user_id);
+    return {
+      ...manager,
+      permissions: manager.permissions as FleetManager['permissions'],
+      user_email: profile?.email,
+      user_name: profile?.first_name 
+        ? `${profile.first_name} ${profile.last_name || ''}`
+        : profile?.email,
+      company_name: manager.car_rental_companies?.name
+    };
+  });
 }
 
 // Récupérer les gestionnaires d'une entreprise spécifique
 export async function fetchFleetManagersByCompany(companyId: number): Promise<FleetManager[]> {
   const { data, error } = await supabase
     .from("fleet_managers")
-    .select(`
-      *,
-      profiles!inner(email, first_name, last_name)
-    `)
+    .select("*")
     .eq("company_id", companyId)
     .order("created_at", { ascending: false });
 
@@ -71,13 +78,24 @@ export async function fetchFleetManagersByCompany(companyId: number): Promise<Fl
     throw error;
   }
 
-  return (data || []).map(manager => ({
-    ...manager,
-    user_email: manager.profiles?.email,
-    user_name: manager.profiles?.first_name 
-      ? `${manager.profiles.first_name} ${manager.profiles.last_name || ''}`
-      : manager.profiles?.email
-  }));
+  // Récupérer les profils séparément
+  const userIds = data?.map(manager => manager.user_id) || [];
+  const { data: profiles } = await supabase
+    .from("profiles")
+    .select("id, email, first_name, last_name")
+    .in("id", userIds);
+
+  return (data || []).map(manager => {
+    const profile = profiles?.find(p => p.id === manager.user_id);
+    return {
+      ...manager,
+      permissions: manager.permissions as FleetManager['permissions'],
+      user_email: profile?.email,
+      user_name: profile?.first_name 
+        ? `${profile.first_name} ${profile.last_name || ''}`
+        : profile?.email
+    };
+  });
 }
 
 // Créer un gestionnaire de flotte

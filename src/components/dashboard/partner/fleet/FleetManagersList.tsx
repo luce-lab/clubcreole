@@ -3,10 +3,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
-import { Users, Edit, Trash2, Shield, Eye, Settings } from "lucide-react";
+import { Users, Trash2 } from "lucide-react";
 import { 
   fetchFleetManagersByCompany, 
   updateFleetManagerPermissions,
@@ -135,7 +134,6 @@ export const FleetManagersList = ({ companyId, companyName }: FleetManagersListP
                           onCheckedChange={(checked) => 
                             handlePermissionChange(manager.id, 'manage_vehicles', checked)
                           }
-                          size="sm"
                         />
                         <span className="text-sm">Gérer véhicules</span>
                       </div>
@@ -145,7 +143,6 @@ export const FleetManagersList = ({ companyId, companyName }: FleetManagersListP
                           onCheckedChange={(checked) => 
                             handlePermissionChange(manager.id, 'view_reservations', checked)
                           }
-                          size="sm"
                         />
                         <span className="text-sm">Voir réservations</span>
                       </div>
@@ -155,7 +152,6 @@ export const FleetManagersList = ({ companyId, companyName }: FleetManagersListP
                           onCheckedChange={(checked) => 
                             handlePermissionChange(manager.id, 'manage_reservations', checked)
                           }
-                          size="sm"
                         />
                         <span className="text-sm">Gérer réservations</span>
                       </div>
