@@ -15,7 +15,8 @@ import {
   MapPin,
   UserCheck,
   Gift,
-  Waves
+  Waves,
+  Truck
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
@@ -77,6 +78,12 @@ export function DashboardSidebar() {
       icon: Calendar,
       path: "/reservations",
       roles: ["admin", "partner"]
+    },
+    {
+      title: "Gestion de Flotte",
+      icon: Truck,
+      path: "/fleet-management",
+      roles: ["partner"]
     },
     {
       title: "Clients",
