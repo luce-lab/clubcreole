@@ -1,4 +1,3 @@
-
 import { Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,14 +7,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useToast } from "@/components/ui/use-toast";
-import { CarModel } from "./CarRentalTypes";
+import { CarModelForDisplay } from "./CarRentalTypes";
 import { createCarRentalReservation } from "@/services/carRentalService";
 import { useState } from "react";
 
 interface RentalReservationFormProps {
   rentalName: string;
   selectedModel: string | null;
-  models?: CarModel[];
+  models?: CarModelForDisplay[];
 }
 
 // Form schema for reservation

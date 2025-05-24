@@ -1,11 +1,10 @@
-
 import { Users, Wind } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CarModel } from "./CarRentalTypes";
+import { CarModelForDisplay } from "./CarRentalTypes";
 
 interface RentalModelsProps {
-  models?: CarModel[];
+  models?: CarModelForDisplay[];
   selectedModel: string | null;
   setSelectedModel: (model: string) => void;
 }
@@ -23,9 +22,9 @@ const RentalModels = ({ models, selectedModel, setSelectedModel }: RentalModelsP
     <div>
       <h2 className="text-xl font-bold mb-4">Modèles disponibles</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {models.map((model, index) => (
+        {models.map((model) => (
           <Card 
-            key={index}
+            key={model.id}
             className={`cursor-pointer transition-all hover:shadow-md ${selectedModel === model.name ? 'ring-2 ring-creole-green' : ''}`}
             onClick={() => setSelectedModel(model.name)}
           >

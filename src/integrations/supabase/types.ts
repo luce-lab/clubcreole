@@ -63,6 +63,166 @@ export type Database = {
         }
         Relationships: []
       }
+      car_client_reviews: {
+        Row: {
+          avatar: string
+          comment: string
+          created_at: string
+          id: number
+          location: string
+          name: string
+          rating: number
+          rental_company_name: string
+          review_date: string
+          updated_at: string
+        }
+        Insert: {
+          avatar: string
+          comment: string
+          created_at?: string
+          id?: number
+          location: string
+          name: string
+          rating: number
+          rental_company_name: string
+          review_date: string
+          updated_at?: string
+        }
+        Update: {
+          avatar?: string
+          comment?: string
+          created_at?: string
+          id?: number
+          location?: string
+          name?: string
+          rating?: number
+          rental_company_name?: string
+          review_date?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      car_models: {
+        Row: {
+          air_con: boolean
+          category: string
+          company_id: number
+          created_at: string
+          id: number
+          image: string
+          name: string
+          price_per_day: number
+          seats: number
+          transmission: string
+          updated_at: string
+        }
+        Insert: {
+          air_con?: boolean
+          category: string
+          company_id: number
+          created_at?: string
+          id?: number
+          image: string
+          name: string
+          price_per_day: number
+          seats: number
+          transmission: string
+          updated_at?: string
+        }
+        Update: {
+          air_con?: boolean
+          category?: string
+          company_id?: number
+          created_at?: string
+          id?: number
+          image?: string
+          name?: string
+          price_per_day?: number
+          seats?: number
+          transmission?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_models_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "car_rental_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      car_rental_companies: {
+        Row: {
+          created_at: string
+          description: string
+          icon_name: string
+          id: number
+          image: string
+          location: string
+          name: string
+          offer: string
+          rating: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          icon_name: string
+          id?: number
+          image: string
+          location: string
+          name: string
+          offer: string
+          rating: number
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          icon_name?: string
+          id?: number
+          image?: string
+          location?: string
+          name?: string
+          offer?: string
+          rating?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      car_rental_features: {
+        Row: {
+          company_id: number
+          created_at: string
+          feature: string
+          id: number
+        }
+        Insert: {
+          company_id: number
+          created_at?: string
+          feature: string
+          id?: number
+        }
+        Update: {
+          company_id?: number
+          created_at?: string
+          feature?: string
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_rental_features_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "car_rental_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       car_rental_reservations: {
         Row: {
           created_at: string
