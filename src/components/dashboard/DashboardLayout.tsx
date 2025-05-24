@@ -71,7 +71,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </div>
           </SidebarHeader>
           <SidebarContent>
-            <DashboardSidebar userRole={userRole} />
+            <DashboardSidebar />
           </SidebarContent>
         </Sidebar>
 
