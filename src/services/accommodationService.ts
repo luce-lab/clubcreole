@@ -33,7 +33,53 @@ export async function fetchAccommodations(): Promise<Accommodation[]> {
     };
   });
   
-  return formattedData;
+  // Ajout manuel de Tropicana Suites
+  const tropicanaSuites: Accommodation = {
+    id: 999, // ID Placeholder, à ajuster si nécessaire pour unicité
+    name: "Tropicana Suites",
+    type: "Suites",
+    location: "Bas Vent, Guadeloupe",
+    price: 175, // Prix indicatif
+    rating: 3, // Basé sur les avis Tripadvisor
+    image: "https://tropicana-suites.com/wp-content/uploads/2021/11/img-9576-scaled.jpg",
+    gallery_images: [
+      "https://tropicana-suites.com/wp-content/uploads/2021/11/622447fe-b336-45b5-b4f2-c979eff67613-610x610.jpg",
+      "https://tropicana-suites.com/wp-content/uploads/2024/12/12-610x610.jpg",
+      "https://tropicana-suites.com/wp-content/uploads/2024/12/5-scaled-e1733495706369-610x610.jpg"
+    ], // Placeholders
+    features: [
+      "Suites avec séjour et chambre séparés",
+      "Cuisine équipée",
+      "Terrasse privative avec hamac",
+      "Piscine de 27 mètres",
+      "Bain à remous",
+      "Pool bar (Jungle Bar)",
+      "Espace BBQ en libre-service",
+      "Proximité plages (200m)",
+      "Base nautique et Beach bar à proximité"
+    ],
+    description: "La Résidence Tropicana Suites **** bénéficie d’un emplacement exceptionnel. Située à seulement 200 mètres de 2 plages d’exception, d’une base nautique et d’un Beach bar. Découvrez, au sein de notre établissement, des suites avec séjour et chambre séparés, cuisine équipée et terrasse privative avec hamac. Niché au cœur de notre jardin tropical, vous apprécierez une immense piscine de 27 mètres avec bain à remous. Notre pool bar, le Jungle Bar, vous proposera une sélection de cocktails, tapas et un service de restauration à déguster au bord de la piscine dans nos cabanas, à l'espace lounge, ou livré directement dans la chambre. Profitez aussi de notre espace BBQ en libre-service. Aux alentours en moins de 5 min en voiture vous trouverez une grande diversité de restaurants, de magnifiques plages avec les plus beaux couchers de soleil de l’île. Dépaysement tropical garanti !",
+    rooms: 1, // Supposition
+    bathrooms: 1, // Supposition
+    max_guests: 4, // Supposition
+    amenities: [
+      { name: "Piscine", available: true },
+      { name: "Bain à remous", available: true },
+      { name: "Bar", available: true },
+      { name: "BBQ", available: true },
+      { name: "Cuisine équipée", available: true },
+      { name: "Terrasse privative", available: true },
+      { name: "Hamac", available: true },
+      { name: "Wi-Fi", available: true }, // Supposition
+      { name: "Climatisation", available: true } // Supposition
+    ],
+    rules: ["Arrivée à partir de 15h00", "Départ avant 11h00"] // Supposition
+  };
+
+  // Ajoute Tropicana Suites à la liste existante
+  const allAccommodations = [...formattedData, tropicanaSuites];
+
+  return allAccommodations;
 }
 
 export async function createAccommodation(accommodationData: Omit<Accommodation, 'id'>): Promise<Accommodation> {
