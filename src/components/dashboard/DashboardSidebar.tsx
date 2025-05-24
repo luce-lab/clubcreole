@@ -110,17 +110,17 @@ export function DashboardSidebar() {
                   <Button
                     variant={managementOpen ? "secondary" : "ghost"}
                     className={cn(
-                      "w-full justify-start",
+                      "w-full justify-start text-left",
                       managementOpen && "bg-gray-100"
                     )}
                     onClick={() => setManagementOpen(!managementOpen)}
                   >
-                    <item.icon className="mr-2 h-4 w-4" />
-                    {item.title}
+                    <item.icon className="mr-2 h-4 w-4 flex-shrink-0" />
+                    <span className="flex-1">{item.title}</span>
                     {managementOpen ? (
-                      <ChevronDown className="ml-auto h-4 w-4" />
+                      <ChevronDown className="ml-auto h-4 w-4 flex-shrink-0" />
                     ) : (
-                      <ChevronRight className="ml-auto h-4 w-4" />
+                      <ChevronRight className="ml-auto h-4 w-4 flex-shrink-0" />
                     )}
                   </Button>
                   {managementOpen && (
@@ -129,11 +129,11 @@ export function DashboardSidebar() {
                         <Button
                           key={subItem.path}
                           variant={isActive(subItem.path) ? "secondary" : "ghost"}
-                          className="w-full justify-start"
+                          className="w-full justify-start text-left"
                           onClick={() => navigate(subItem.path)}
                         >
-                          <subItem.icon className="mr-2 h-4 w-4" />
-                          {subItem.title}
+                          <subItem.icon className="mr-2 h-4 w-4 flex-shrink-0" />
+                          <span>{subItem.title}</span>
                         </Button>
                       ))}
                     </div>
@@ -142,11 +142,11 @@ export function DashboardSidebar() {
               ) : (
                 <Button
                   variant={isActive(item.path || "") ? "secondary" : "ghost"}
-                  className="w-full justify-start"
+                  className="w-full justify-start text-left"
                   onClick={() => item.path && navigate(item.path)}
                 >
-                  <item.icon className="mr-2 h-4 w-4" />
-                  {item.title}
+                  <item.icon className="mr-2 h-4 w-4 flex-shrink-0" />
+                  <span>{item.title}</span>
                 </Button>
               )}
             </div>
