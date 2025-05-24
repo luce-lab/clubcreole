@@ -14,7 +14,8 @@ import {
   Bed,
   MapPin,
   UserCheck,
-  Gift
+  Gift,
+  Waves
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
@@ -63,6 +64,11 @@ export function DashboardSidebar() {
           title: "Locations de voitures",
           icon: Car,
           path: "/car-rental-management",
+        },
+        {
+          title: "Plongées",
+          icon: Waves,
+          path: "/diving-management",
         }
       ]
     },

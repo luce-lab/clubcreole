@@ -140,6 +140,48 @@ export type Database = {
           },
         ]
       }
+      diving_reservations: {
+        Row: {
+          created_at: string
+          experience_level: string
+          id: string
+          participant_email: string
+          participant_name: string
+          participant_phone: string
+          reservation_date: string
+          reservation_time: string
+          special_requests: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          experience_level?: string
+          id?: string
+          participant_email: string
+          participant_name: string
+          participant_phone: string
+          reservation_date: string
+          reservation_time: string
+          special_requests?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          experience_level?: string
+          id?: string
+          participant_email?: string
+          participant_name?: string
+          participant_phone?: string
+          reservation_date?: string
+          reservation_time?: string
+          special_requests?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       loisirs: {
         Row: {
           current_participants: number

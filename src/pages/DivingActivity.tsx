@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,14 +6,10 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Waves } from "lucide-react";
 import BackButton from "@/components/common/BackButton";
+import DivingReservationForm from "@/components/diving/DivingReservationForm";
 
 const DivingActivity = () => {
-  const [date, setDate] = useState<Date | undefined>(undefined);
-  const [selectedTime, setSelectedTime] = useState<string>("");
-  const { toast } = useToast();
-
-  const availableTimes = ["09:00", "11:00", "14:00", "16:00"];
-  const price = 75;
+  const [showReservationForm, setShowReservationForm] = useState(false);
 
   const images = [
     {
@@ -27,21 +24,7 @@ const DivingActivity = () => {
     }
   ];
 
-  const handleReservation = () => {
-    if (!date || !selectedTime) {
-      toast({
-        title: "Erreur",
-        description: "Veuillez sélectionner une date et une heure",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    toast({
-      title: "Réservation confirmée !",
-      description: `Votre plongée est réservée pour le ${date.toLocaleDateString()} à ${selectedTime}`,
-    });
-  };
+  const price = 75;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -68,7 +51,7 @@ const DivingActivity = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card>
           <CardHeader>
             <CardTitle>À propos de l'activité</CardTitle>
@@ -88,50 +71,65 @@ const DivingActivity = () => {
               <li>Durée : 2 heures</li>
               <li>Niveau débutant accepté</li>
             </ul>
+
+            <div className="pt-4">
+              <Button
+                onClick={() => setShowReservationForm(!showReservationForm)}
+                className="w-full bg-creole-green hover:bg-creole-green/90"
+                size="lg"
+              >
+                {showReservationForm ? "Masquer le formulaire" : "Réserver maintenant"}
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Réserver une session</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Choisissez une date</h3>
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                className="rounded-md border"
-                disabled={(date) => date < new Date()}
-              />
-            </div>
+        {showReservationForm && (
+          <div className="lg:col-span-1">
+            <DivingReservationForm 
+              onReservationSuccess={() => setShowReservationForm(false)}
+            />
+          </div>
+        )}
 
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Choisissez un horaire</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {availableTimes.map((time) => (
-                  <Button
-                    key={time}
-                    variant={selectedTime === time ? "default" : "outline"}
-                    onClick={() => setSelectedTime(time)}
-                    className="w-full"
-                  >
-                    {time}
-                  </Button>
-                ))}
+        {!showReservationForm && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Informations pratiques</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <h3 className="font-semibold mb-2">Horaires disponibles</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="p-2 border rounded text-center">09:00</div>
+                  <div className="p-2 border rounded text-center">11:00</div>
+                  <div className="p-2 border rounded text-center">14:00</div>
+                  <div className="p-2 border rounded text-center">16:00</div>
+                </div>
               </div>
-            </div>
 
-            <Button
-              onClick={handleReservation}
-              className="w-full"
-              size="lg"
-            >
-              Réserver maintenant
-            </Button>
-          </CardContent>
-        </Card>
+              <div>
+                <h3 className="font-semibold mb-2">Niveaux acceptés</h3>
+                <ul className="space-y-1 text-sm">
+                  <li>• Débutant (première plongée)</li>
+                  <li>• Intermédiaire (avec certification)</li>
+                  <li>• Avancé (plongée profonde)</li>
+                  <li>• Professionnel (exploration libre)</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2">Ce qui est inclus</h3>
+                <ul className="space-y-1 text-sm">
+                  <li>• Tout l'équipement de plongée</li>
+                  <li>• Briefing de sécurité complet</li>
+                  <li>• Accompagnement par un moniteur certifié</li>
+                  <li>• Assurance responsabilité civile</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
