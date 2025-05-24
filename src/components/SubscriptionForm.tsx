@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
+import { useSubscription } from "@/hooks/useSubscription";
+import { useAuth } from "@/contexts/auth";
 import { 
   Form, 
   FormControl, 
@@ -35,6 +37,8 @@ interface SubscriptionFormProps {
 
 export function SubscriptionForm({ onSuccess }: SubscriptionFormProps) {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const { createCheckout } = useSubscription();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const form = useForm<SubscriptionFormValues>({
@@ -42,7 +46,7 @@ export function SubscriptionForm({ onSuccess }: SubscriptionFormProps) {
     defaultValues: {
       nom: "",
       prenom: "",
-      email: "",
+      email: user?.email || "",
       telephone: "",
       abonnement: "Gratuit"
     }
@@ -52,21 +56,32 @@ export function SubscriptionForm({ onSuccess }: SubscriptionFormProps) {
     setIsSubmitting(true);
     
     try {
-      // Ici, vous pourriez envoyer les données à votre backend
-      console.log("Données du formulaire soumises:", values);
+      if (!user) {
+        toast({
+          title: "Connexion requise",
+          description: "Vous devez être connecté pour vous abonner",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Pour l'abonnement gratuit, pas besoin de Stripe
+      if (values.abonnement === "Gratuit") {
+        toast({
+          title: "Inscription réussie !",
+          description: "Vous êtes maintenant inscrit au plan gratuit.",
+        });
+        form.reset();
+        if (onSuccess) onSuccess();
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Pour les autres abonnements, rediriger vers Stripe
+      const priceType = values.abonnement === "Passionné" ? "passionnе" : "expert";
+      await createCheckout(priceType);
       
-      // Simulons un délai pour l'API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "Inscription réussie !",
-        description: `Merci de vous être inscrit à l'abonnement ${values.abonnement}.`,
-      });
-      
-      // Réinitialiser le formulaire
-      form.reset();
-      
-      // Appeler la fonction de rappel en cas de succès
       if (onSuccess) {
         onSuccess();
       }

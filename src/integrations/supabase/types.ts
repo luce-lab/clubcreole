@@ -67,38 +67,38 @@ export type Database = {
         Row: {
           avatar: string
           comment: string
-          created_at: string
+          created_at: string | null
           id: number
           location: string
           name: string
           rating: number
           rental_company_name: string
           review_date: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
           avatar: string
           comment: string
-          created_at?: string
+          created_at?: string | null
           id?: number
           location: string
           name: string
           rating: number
           rental_company_name: string
           review_date: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           avatar?: string
           comment?: string
-          created_at?: string
+          created_at?: string | null
           id?: number
           location?: string
           name?: string
           rating?: number
           rental_company_name?: string
           review_date?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -107,40 +107,40 @@ export type Database = {
           air_con: boolean
           category: string
           company_id: number
-          created_at: string
+          created_at: string | null
           id: number
           image: string
           name: string
           price_per_day: number
           seats: number
           transmission: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
           air_con?: boolean
           category: string
           company_id: number
-          created_at?: string
+          created_at?: string | null
           id?: number
           image: string
           name: string
           price_per_day: number
           seats: number
           transmission: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           air_con?: boolean
           category?: string
           company_id?: number
-          created_at?: string
+          created_at?: string | null
           id?: number
           image?: string
           name?: string
           price_per_day?: number
           seats?: number
           transmission?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -154,7 +154,7 @@ export type Database = {
       }
       car_rental_companies: {
         Row: {
-          created_at: string
+          created_at: string | null
           description: string
           icon_name: string
           id: number
@@ -164,10 +164,10 @@ export type Database = {
           offer: string
           rating: number
           type: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           description: string
           icon_name: string
           id?: number
@@ -177,10 +177,10 @@ export type Database = {
           offer: string
           rating: number
           type: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           description?: string
           icon_name?: string
           id?: number
@@ -190,26 +190,26 @@ export type Database = {
           offer?: string
           rating?: number
           type?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
       car_rental_features: {
         Row: {
           company_id: number
-          created_at: string
+          created_at: string | null
           feature: string
           id: number
         }
         Insert: {
           company_id: number
-          created_at?: string
+          created_at?: string | null
           feature: string
           id?: number
         }
         Update: {
           company_id?: number
-          created_at?: string
+          created_at?: string | null
           feature?: string
           id?: number
         }
@@ -708,6 +708,42 @@ export type Database = {
           offer?: string
           rating?: number
           type?: string
+        }
+        Relationships: []
+      }
+      subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          stripe_customer_id: string | null
+          subscribed: boolean
+          subscription_end: string | null
+          subscription_tier: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }

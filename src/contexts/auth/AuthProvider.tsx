@@ -36,6 +36,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               const userWithRole = await fetchUserProfile(currentSession.user);
               console.log('User profile retrieved:', userWithRole);
               setUser(userWithRole);
+              
+              // Check subscription status after authentication
+              if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+                try {
+                  await supabase.functions.invoke('check-subscription', {
+                    headers: {
+                      Authorization: `Bearer ${currentSession.access_token}`,
+                    },
+                  });
+                } catch (error) {
+                  console.error('Error checking subscription on auth:', error);
+                }
+              }
             } catch (err) {
               console.error('Error in profile fetch:', err);
             }
