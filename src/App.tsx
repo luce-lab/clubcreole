@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,7 +9,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import UsersManagement from "./pages/UsersManagement";
-import UserDetails from "./pages/users/UserDetails";
+import UserDetailsPage from "./pages/users/UserDetailsPage";
 import PartnersManagement from "./pages/PartnersManagement";
 import LoisirsActivity from "./pages/LoisirsActivity";
 import LoisirsDetail from "./pages/LoisirsDetail";
@@ -54,7 +53,7 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/users" element={<UsersManagement />} />
-              <Route path="/users/:id" element={<UserDetails />} />
+              <Route path="/users/:id" element={<UserDetailsPage />} />
               <Route path="/partners" element={<PartnersManagement />} />
               <Route path="/loisirs" element={<LoisirsActivity />} />
               <Route path="/loisirs/:id" element={<LoisirsDetail />} />
