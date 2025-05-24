@@ -110,8 +110,8 @@ export function DashboardSidebar() {
                   <Button
                     variant={managementOpen ? "secondary" : "ghost"}
                     className={cn(
-                      "w-full justify-start text-left",
-                      managementOpen && "bg-gray-100"
+                      "w-full justify-start text-left bg-white hover:bg-gray-50",
+                      managementOpen && "bg-gray-100 hover:bg-gray-150"
                     )}
                     onClick={() => setManagementOpen(!managementOpen)}
                   >
