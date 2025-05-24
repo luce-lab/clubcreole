@@ -367,6 +367,41 @@ export type Database = {
         }
         Relationships: []
       }
+      fleet_managers: {
+        Row: {
+          company_id: number
+          created_at: string
+          id: string
+          permissions: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company_id: number
+          created_at?: string
+          id?: string
+          permissions?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company_id?: number
+          created_at?: string
+          id?: string
+          permissions?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fleet_managers_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "car_rental_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       loisirs: {
         Row: {
           current_participants: number
@@ -561,6 +596,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          company_id: number | null
           created_at: string
           email: string
           first_name: string | null
@@ -570,6 +606,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          company_id?: number | null
           created_at?: string
           email: string
           first_name?: string | null
@@ -579,6 +616,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          company_id?: number | null
           created_at?: string
           email?: string
           first_name?: string | null
@@ -587,7 +625,15 @@ export type Database = {
           role?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "car_rental_companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       reservations: {
         Row: {

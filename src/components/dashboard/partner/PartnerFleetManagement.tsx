@@ -4,12 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { FleetOverview } from "./fleet/FleetOverview";
 import { CompanyCard } from "./fleet/CompanyCard";
-import { VehicleManagement } from "./fleet/VehicleManagement";
+import { CompanyFleetManagement } from "./fleet/CompanyFleetManagement";
 import { 
   fetchPartnerCarRentalCompanies, 
   fetchCarModelsByCompany,
   fetchPartnerCarRentalReservations 
 } from "@/services/partnerCarRentalService";
+import { fetchFleetManagersByCompany } from "@/services/fleetManagerService";
 
 export const PartnerFleetManagement = () => {
   const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(null);
@@ -25,7 +26,7 @@ export const PartnerFleetManagement = () => {
     queryFn: fetchPartnerCarRentalReservations,
   });
 
-  // Calculer les statistiques pour chaque entreprise
+  // Récupérer les statistiques pour chaque entreprise
   const companiesWithStats = companies.map(company => {
     const companyReservations = reservations.filter(r => r.rental_company_name === company.name);
     return {
@@ -34,7 +35,7 @@ export const PartnerFleetManagement = () => {
     };
   });
 
-  const handleManageModels = (companyId: number) => {
+  const handleManageFleet = (companyId: number) => {
     const company = companies.find(c => c.id === companyId);
     setSelectedCompanyId(companyId);
     setSelectedCompanyName(company?.name || "");
@@ -47,7 +48,7 @@ export const PartnerFleetManagement = () => {
 
   if (selectedCompanyId) {
     return (
-      <VehicleManagement 
+      <CompanyFleetManagement 
         companyId={selectedCompanyId}
         companyName={selectedCompanyName}
         onBack={handleBack}
@@ -82,12 +83,10 @@ export const PartnerFleetManagement = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {companiesWithStats.map((company) => (
-          <CompanyCard
+          <CompanyCardWithStats
             key={company.id}
             company={company}
-            vehicleCount={0} // À implémenter
-            activeVehicleCount={0} // À implémenter
-            onManageModels={handleManageModels}
+            onManageFleet={handleManageFleet}
             onViewDetails={(id) => console.log("View details", id)}
           />
         ))}
@@ -103,5 +102,33 @@ export const PartnerFleetManagement = () => {
         </Card>
       )}
     </div>
+  );
+};
+
+// Composant wrapper pour récupérer les statistiques de chaque entreprise
+const CompanyCardWithStats = ({ company, onManageFleet, onViewDetails }: any) => {
+  const { data: models = [] } = useQuery({
+    queryKey: ['car-models', company.id],
+    queryFn: () => fetchCarModelsByCompany(company.id),
+  });
+
+  const { data: managers = [] } = useQuery({
+    queryKey: ['fleet-managers', company.id],
+    queryFn: () => fetchFleetManagersByCompany(company.id),
+  });
+
+  const vehicleCount = models.length;
+  const activeVehicleCount = models.filter(m => m.is_active).length;
+  const managerCount = managers.length;
+
+  return (
+    <CompanyCard
+      company={company}
+      vehicleCount={vehicleCount}
+      activeVehicleCount={activeVehicleCount}
+      managerCount={managerCount}
+      onManageFleet={onManageFleet}
+      onViewDetails={onViewDetails}
+    />
   );
 };

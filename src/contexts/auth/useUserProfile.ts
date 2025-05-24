@@ -13,10 +13,10 @@ export const fetchUserProfile = async (user: User): Promise<UserWithRole> => {
       // If the function works, use its result
       const role = roleData as UserRole;
       
-      // Get other profile data
+      // Get other profile data including company_id
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('first_name, last_name')
+        .select('first_name, last_name, company_id')
         .eq('id', user.id)
         .single();
       
@@ -25,13 +25,14 @@ export const fetchUserProfile = async (user: User): Promise<UserWithRole> => {
         role: role || null,
         name: profileData?.first_name 
           ? `${profileData.first_name} ${profileData.last_name || ''}`
-          : user.email
+          : user.email,
+        company_id: profileData?.company_id
       };
     } else {
       // Fallback to direct query if function doesn't work
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('role, first_name, last_name')
+        .select('role, first_name, last_name, company_id')
         .eq('id', user.id)
         .single();
 
@@ -48,7 +49,8 @@ export const fetchUserProfile = async (user: User): Promise<UserWithRole> => {
         role: role || null,
         name: profileData?.first_name 
           ? `${profileData.first_name} ${profileData.last_name || ''}`
-          : user.email
+          : user.email,
+        company_id: profileData?.company_id
       };
     }
   } catch (err) {
