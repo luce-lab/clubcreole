@@ -28,7 +28,7 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
   };
 
   const handleViewDetails = () => {
-    navigate(`/restaurant/${restaurant.id}`);
+    navigate(`/restauration/${restaurant.id}`);
   };
 
   return (

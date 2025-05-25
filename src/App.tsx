@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -58,21 +59,21 @@ function App() {
               <Route path="/loisirs" element={<LoisirsActivity />} />
               <Route path="/loisirs/:id" element={<LoisirsDetail />} />
               <Route path="/loisirs-management" element={<LoisirsManagement />} />
-              <Route path="/restaurant" element={<RestaurantActivity />} />
-              <Route path="/restaurant/:id" element={<RestaurantDetail />} />
-              <Route path="/hebergement" element={<AccommodationActivity />} />
-              <Route path="/hebergement/:id" element={<AccommodationDetail />} />
+              <Route path="/restauration" element={<RestaurantActivity />} />
+              <Route path="/restauration/:id" element={<RestaurantDetail />} />
+              <Route path="/hebergements" element={<AccommodationActivity />} />
+              <Route path="/hebergements/:id" element={<AccommodationDetail />} />
               <Route path="/accommodations-management" element={<AccommodationsManagement />} />
-              <Route path="/location-voiture" element={<CarRentalActivity />} />
-              <Route path="/location-voiture/:id" element={<CarRentalDetail />} />
+              <Route path="/location" element={<CarRentalActivity />} />
+              <Route path="/location/:id" element={<CarRentalDetail />} />
               <Route path="/car-rental-management" element={<CarRentalManagement />} />
               <Route path="/fleet-management" element={<FleetManagement />} />
               <Route path="/plongee" element={<DivingActivity />} />
               <Route path="/diving-management" element={<DivingManagement />} />
-              <Route path="/concert" element={<ConcertActivity />} />
-              <Route path="/concert/:id" element={<ConcertDetail />} />
-              <Route path="/nightlife" element={<NightlifeActivity />} />
-              <Route path="/nightlife/:id" element={<NightlifeDetail />} />
+              <Route path="/concerts" element={<ConcertActivity />} />
+              <Route path="/concerts/:id" element={<ConcertDetail />} />
+              <Route path="/soiree" element={<NightlifeActivity />} />
+              <Route path="/soiree/:id" element={<NightlifeDetail />} />
               <Route path="/canoe" element={<CanoeActivity />} />
               <Route path="/jet-ski" element={<JetSkiActivity />} />
               <Route path="/randonnee" element={<HikingActivity />} />
