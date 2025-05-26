@@ -52,9 +52,17 @@ export const Pricing = () => {
   const { subscriptionData, loading, createCheckout, openCustomerPortal } = useSubscription();
 
   const handleSubscription = (priceType: string | null) => {
-    if (!priceType) return; // Plan gratuit
+    if (!priceType) {
+      // Plan gratuit - pas besoin d'action particulière si pas connecté
+      if (!user) {
+        console.log("Plan gratuit sélectionné pour utilisateur non connecté");
+        return;
+      }
+      return; 
+    }
+    
     if (!user) {
-      // Rediriger vers la connexion si pas connecté
+      // Plans payants - rediriger vers la connexion si pas connecté
       window.location.href = '/login';
       return;
     }
@@ -83,9 +91,9 @@ export const Pricing = () => {
 
   const getButtonStyling = (planName: string, priceType: string | null) => {
     if (!user) {
-      // Si pas connecté, tous les boutons sont actifs sauf gratuit qui est grisé
+      // Si pas connecté, seul le plan gratuit est activé
       if (planName === "Gratuit") {
-        return "w-full bg-gray-300 text-gray-500";
+        return "w-full bg-creole-green hover:bg-creole-green/90";
       }
       return "w-full bg-creole-green hover:bg-creole-green/90";
     }
@@ -107,7 +115,7 @@ export const Pricing = () => {
     if (loading) return "Chargement...";
     
     if (!user) {
-      if (planName === "Gratuit") return "Plan gratuit";
+      if (planName === "Gratuit") return "Choisir gratuit";
       return `Choisir ${planName}`;
     }
     
@@ -121,7 +129,8 @@ export const Pricing = () => {
     if (loading) return true;
     
     if (!user) {
-      return planName === "Gratuit";
+      // Si pas connecté, aucun bouton n'est désactivé
+      return false;
     }
     
     return isCurrentPlan(planName) || planName === "Gratuit";
