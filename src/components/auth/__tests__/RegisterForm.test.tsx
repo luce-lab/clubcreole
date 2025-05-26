@@ -23,11 +23,19 @@ describe('RegisterForm', () => {
   
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAuth as any).mockReturnValue({
+    vi.mocked(useAuth).mockReturnValue({
+      user: null,
+      session: null,
+      isLoading: false,
       signUp: mockSignUp,
+      signIn: vi.fn(),
+      signOut: vi.fn(),
+      createAdminUser: vi.fn(),
     });
-    (useToast as any).mockReturnValue({
+    vi.mocked(useToast).mockReturnValue({
       toast: mockToast,
+      dismiss: vi.fn(),
+      toasts: [],
     });
   });
 
