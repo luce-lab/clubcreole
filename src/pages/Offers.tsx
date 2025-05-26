@@ -1,7 +1,7 @@
 
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { PartnerOffers } from "@/components/dashboard/partner/PartnerOffers";
-import { OffersList } from "@/components/offers/OffersList";
+import OffersList from "@/components/offers/OffersList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/auth";
 
