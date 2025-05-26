@@ -57,13 +57,11 @@ export const createUser = async (userData: UserFormData) => {
   return authData.user;
 };
 
-// Modification de la fonction pour éviter la récursivité RLS
 export const fetchUsers = async () => {
   try {
-    console.log("Tentative de récupération des utilisateurs...");
+    console.log("Récupération des utilisateurs avec les nouvelles politiques RLS...");
     
-    // Approche directe pour récupérer les profils en utilisant 
-    // l'admin de l'application pour contourner les problèmes de RLS
+    // Récupérer tous les profils - les nouvelles politiques RLS permettront cela pour l'admin
     const { data: profiles, error } = await supabase
       .from('profiles')
       .select('id, email, first_name, last_name, created_at, updated_at, role')
@@ -71,7 +69,7 @@ export const fetchUsers = async () => {
     
     if (error) {
       console.error("Erreur lors de la récupération des profils:", error);
-      throw error;
+      throw new Error(`Erreur lors de la récupération des utilisateurs: ${error.message}`);
     }
     
     if (!profiles || profiles.length === 0) {

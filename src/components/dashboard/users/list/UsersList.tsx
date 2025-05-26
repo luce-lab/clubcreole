@@ -27,28 +27,39 @@ export const UsersList = ({
       try {
         console.log("Chargement des utilisateurs...");
         setIsLoading(true);
+        setError(null);
+        
         const usersData = await fetchUsers();
         console.log("Données récupérées:", usersData);
         setUsers(usersData);
-        setError(null);
+        
+        toast({
+          title: "Succès",
+          description: `${usersData.length} utilisateur(s) chargé(s)`,
+        });
       } catch (err: any) {
         console.error("Erreur lors du chargement des utilisateurs:", err);
-        const errorMessage = err.message || "Erreur inconnue";
-        setError("Impossible de charger les utilisateurs: " + errorMessage);
+        const errorMessage = err.message || "Erreur inconnue lors du chargement des utilisateurs";
+        setError(errorMessage);
         toast({
           variant: "destructive",
           title: "Erreur",
           description: errorMessage,
         });
-        // Réinitialiser la liste d'utilisateurs en cas d'erreur
         setUsers([]);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadUsers();
-  }, [toast, refreshTrigger]);
+    // Charger les utilisateurs seulement si l'utilisateur est super admin
+    if (isSuperAdmin) {
+      loadUsers();
+    } else {
+      setIsLoading(false);
+      setError("Accès non autorisé");
+    }
+  }, [toast, refreshTrigger, isSuperAdmin]);
 
   // Filtrer les utilisateurs en fonction de la recherche
   const filteredUsers = searchQuery 
@@ -62,12 +73,12 @@ export const UsersList = ({
     return <LoadingState />;
   }
 
-  if (error) {
-    return <ErrorState error={error} />;
+  if (!isSuperAdmin) {
+    return <UnauthorizedState />;
   }
 
-  if (!isSuperAdmin && user?.role !== 'admin') {
-    return <UnauthorizedState />;
+  if (error) {
+    return <ErrorState error={error} />;
   }
 
   return (
