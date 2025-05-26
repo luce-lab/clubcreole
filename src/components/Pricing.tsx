@@ -9,7 +9,7 @@ const subscriptions = [
   {
     name: "Gratuit",
     price: "0",
-    period: "mois",
+    period: "an",
     description: "Pour découvrir nos activités",
     features: [
       "Accès à toutes les activités (tarif de base)",
@@ -21,7 +21,7 @@ const subscriptions = [
   {
     name: "Passionné",
     price: "15",
-    period: "2 mois",
+    period: "an",
     description: "Pour les amateurs d'activités nautiques",
     features: [
       "15% de réduction sur toutes les activités",
@@ -33,8 +33,8 @@ const subscriptions = [
   },
   {
     name: "Expert",
-    price: "89.99",
-    period: "mois",
+    price: "90",
+    period: "an",
     description: "L'expérience ultime",
     features: [
       "25% de réduction sur toutes les activités",

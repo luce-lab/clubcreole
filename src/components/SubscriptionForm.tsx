@@ -175,9 +175,9 @@ export function SubscriptionForm({ onSuccess }: SubscriptionFormProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Gratuit">Gratuit</SelectItem>
-                  <SelectItem value="Passionné">Passionné - 15€/2 mois</SelectItem>
-                  <SelectItem value="Expert">Expert - 89.99€/mois</SelectItem>
+                  <SelectItem value="Gratuit">Gratuit - 0€/an</SelectItem>
+                  <SelectItem value="Passionné">Passionné - 15€/an</SelectItem>
+                  <SelectItem value="Expert">Expert - 90€/an</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
