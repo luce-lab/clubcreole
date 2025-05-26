@@ -75,7 +75,8 @@ export const Pricing = () => {
   const getCardStyling = (planName: string) => {
     const baseStyle = "bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow relative";
     
-    if (user && isCurrentPlan(planName)) {
+    // Si l'utilisateur est connecté ET a un abonnement actif ET c'est son plan actuel
+    if (user && subscriptionData.subscribed && isCurrentPlan(planName)) {
       return baseStyle + " ring-2 ring-creole-green";
     }
     
@@ -84,15 +85,16 @@ export const Pricing = () => {
 
   const getButtonStyling = (planName: string, priceType: string | null) => {
     if (!user) {
-      // Si pas connecté, tous les plans sont disponibles
+      // Si pas connecté, tous les plans sont disponibles en vert
       return "w-full bg-creole-green hover:bg-creole-green/90";
     }
     
-    // Si connecté et c'est le plan actuel
-    if (isCurrentPlan(planName)) {
+    // Si connecté ET a un abonnement actif ET c'est le plan actuel
+    if (subscriptionData.subscribed && isCurrentPlan(planName)) {
       return "w-full bg-gray-300 text-gray-500 cursor-not-allowed";
     }
     
+    // Pour tous les autres cas (pas d'abonnement ou abonnement différent), bouton vert
     return "w-full bg-creole-green hover:bg-creole-green/90";
   };
 
@@ -103,7 +105,11 @@ export const Pricing = () => {
       return `Choisir ${planName}`;
     }
     
-    if (isCurrentPlan(planName)) return "Plan actuel";
+    // Si connecté ET a un abonnement actif ET c'est le plan actuel
+    if (subscriptionData.subscribed && isCurrentPlan(planName)) {
+      return "Plan actuel";
+    }
+    
     return `Choisir ${planName}`;
   };
 
@@ -115,8 +121,8 @@ export const Pricing = () => {
       return false;
     }
     
-    // Si connecté, seul le plan actuel est désactivé
-    return isCurrentPlan(planName);
+    // Seul le plan actuel est désactivé (si l'utilisateur a un abonnement actif)
+    return subscriptionData.subscribed && isCurrentPlan(planName);
   };
 
   return (
@@ -150,7 +156,7 @@ export const Pricing = () => {
               key={index}
               className={getCardStyling(sub.name)}
             >
-              {user && isCurrentPlan(sub.name) && (
+              {user && subscriptionData.subscribed && isCurrentPlan(sub.name) && (
                 <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-creole-green">
                   Plan actuel
                 </Badge>
