@@ -1,6 +1,4 @@
-
-import { render } from '@testing-library/react';
-import { screen, fireEvent, waitFor } from '@testing-library/dom';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { LoginForm } from '../LoginForm';
 import { BrowserRouter } from 'react-router-dom';
