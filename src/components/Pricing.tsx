@@ -53,12 +53,9 @@ export const Pricing = () => {
 
   const handleSubscription = (priceType: string | null) => {
     if (!priceType) {
-      // Plan gratuit - pas besoin d'action particulière si pas connecté
-      if (!user) {
-        console.log("Plan gratuit sélectionné pour utilisateur non connecté");
-        return;
-      }
-      return; 
+      // Plan gratuit - pas besoin d'action particulière
+      console.log("Plan gratuit sélectionné");
+      return;
     }
     
     if (!user) {
@@ -70,42 +67,30 @@ export const Pricing = () => {
   };
 
   const isCurrentPlan = (planName: string) => {
-    if (!user) return false; // Si pas connecté, aucun plan n'est actuel
+    if (!user) return false;
     if (planName === "Gratuit" && !subscriptionData.subscribed) return true;
     return subscriptionData.subscription_tier === planName;
   };
 
   const getCardStyling = (planName: string) => {
-    if (!user) {
-      // Si pas connecté, tous les plans ont le même style
-      return "bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow relative";
+    const baseStyle = "bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow relative";
+    
+    if (user && isCurrentPlan(planName)) {
+      return baseStyle + " ring-2 ring-creole-green";
     }
     
-    // Si connecté, mettre en évidence le plan actuel
-    if (isCurrentPlan(planName)) {
-      return "bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow relative ring-2 ring-creole-green";
-    }
-    
-    return "bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow relative";
+    return baseStyle;
   };
 
   const getButtonStyling = (planName: string, priceType: string | null) => {
     if (!user) {
-      // Si pas connecté, seul le plan gratuit est activé
-      if (planName === "Gratuit") {
-        return "w-full bg-creole-green hover:bg-creole-green/90";
-      }
+      // Si pas connecté, tous les plans sont disponibles
       return "w-full bg-creole-green hover:bg-creole-green/90";
     }
     
     // Si connecté et c'est le plan actuel
     if (isCurrentPlan(planName)) {
-      return "w-full bg-gray-300 text-gray-500";
-    }
-    
-    // Si connecté mais pas le plan actuel
-    if (planName === "Gratuit") {
-      return "w-full bg-gray-300 text-gray-500";
+      return "w-full bg-gray-300 text-gray-500 cursor-not-allowed";
     }
     
     return "w-full bg-creole-green hover:bg-creole-green/90";
@@ -115,13 +100,10 @@ export const Pricing = () => {
     if (loading) return "Chargement...";
     
     if (!user) {
-      if (planName === "Gratuit") return "Choisir gratuit";
       return `Choisir ${planName}`;
     }
     
     if (isCurrentPlan(planName)) return "Plan actuel";
-    
-    if (planName === "Gratuit") return "Plan gratuit";
     return `Choisir ${planName}`;
   };
 
@@ -133,7 +115,8 @@ export const Pricing = () => {
       return false;
     }
     
-    return isCurrentPlan(planName) || planName === "Gratuit";
+    // Si connecté, seul le plan actuel est désactivé
+    return isCurrentPlan(planName);
   };
 
   return (
