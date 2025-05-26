@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button"; 
 import { ArrowRight } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { SubscriptionForm } from "@/components/SubscriptionForm";
+import { SubscriptionForm } from "@/components/subscription/form/SubscriptionForm";
 
 export const Hero = () => {
   const isMobile = useIsMobile();
