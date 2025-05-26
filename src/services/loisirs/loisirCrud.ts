@@ -1,7 +1,6 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Loisir } from "@/components/loisirs/types";
-import { validateAndFormatDate } from "./dateUtils";
+import { validateAndFormatDate } from "./dateUtils.ts";
 
 /**
  * Mise à jour d'une activité de loisir

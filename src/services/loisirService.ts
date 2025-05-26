@@ -1,3 +1,2 @@
-
 // Re-export all functions from the new files
-export * from "./loisirs";
+export * from "./loisirs/index.ts";

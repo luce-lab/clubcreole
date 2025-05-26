@@ -1,6 +1,5 @@
-
 import { supabase } from '@/integrations/supabase/client';
-import { UserWithRole, UserRole } from './types';
+import { UserWithRole, UserRole } from './types.ts';
 import { User } from '@supabase/supabase-js';
 
 export const fetchUserProfile = async (user: User): Promise<UserWithRole> => {
