@@ -62,8 +62,69 @@ export const Pricing = () => {
   };
 
   const isCurrentPlan = (planName: string) => {
+    if (!user) return false; // Si pas connecté, aucun plan n'est actuel
     if (planName === "Gratuit" && !subscriptionData.subscribed) return true;
     return subscriptionData.subscription_tier === planName;
+  };
+
+  const getCardStyling = (planName: string) => {
+    if (!user) {
+      // Si pas connecté, tous les plans ont le même style
+      return "bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow relative";
+    }
+    
+    // Si connecté, mettre en évidence le plan actuel
+    if (isCurrentPlan(planName)) {
+      return "bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow relative ring-2 ring-creole-green";
+    }
+    
+    return "bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow relative";
+  };
+
+  const getButtonStyling = (planName: string, priceType: string | null) => {
+    if (!user) {
+      // Si pas connecté, tous les boutons sont actifs sauf gratuit qui est grisé
+      if (planName === "Gratuit") {
+        return "w-full bg-gray-300 text-gray-500";
+      }
+      return "w-full bg-creole-green hover:bg-creole-green/90";
+    }
+    
+    // Si connecté et c'est le plan actuel
+    if (isCurrentPlan(planName)) {
+      return "w-full bg-gray-300 text-gray-500";
+    }
+    
+    // Si connecté mais pas le plan actuel
+    if (planName === "Gratuit") {
+      return "w-full bg-gray-300 text-gray-500";
+    }
+    
+    return "w-full bg-creole-green hover:bg-creole-green/90";
+  };
+
+  const getButtonText = (planName: string, priceType: string | null) => {
+    if (loading) return "Chargement...";
+    
+    if (!user) {
+      if (planName === "Gratuit") return "Plan gratuit";
+      return `Choisir ${planName}`;
+    }
+    
+    if (isCurrentPlan(planName)) return "Plan actuel";
+    
+    if (planName === "Gratuit") return "Plan gratuit";
+    return `Choisir ${planName}`;
+  };
+
+  const isButtonDisabled = (planName: string, priceType: string | null) => {
+    if (loading) return true;
+    
+    if (!user) {
+      return planName === "Gratuit";
+    }
+    
+    return isCurrentPlan(planName) || planName === "Gratuit";
   };
 
   return (
@@ -95,11 +156,9 @@ export const Pricing = () => {
           {subscriptions.map((sub, index) => (
             <div 
               key={index}
-              className={`bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow relative ${
-                isCurrentPlan(sub.name) ? 'ring-2 ring-creole-green' : ''
-              }`}
+              className={getCardStyling(sub.name)}
             >
-              {isCurrentPlan(sub.name) && (
+              {user && isCurrentPlan(sub.name) && (
                 <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-creole-green">
                   Plan actuel
                 </Badge>
@@ -122,16 +181,10 @@ export const Pricing = () => {
               
               <Button
                 onClick={() => handleSubscription(sub.priceType)}
-                disabled={loading || isCurrentPlan(sub.name)}
-                className={`w-full ${
-                  isCurrentPlan(sub.name) 
-                    ? 'bg-gray-300 text-gray-500' 
-                    : 'bg-creole-green hover:bg-creole-green/90'
-                }`}
+                disabled={isButtonDisabled(sub.name, sub.priceType)}
+                className={getButtonStyling(sub.name, sub.priceType)}
               >
-                {loading ? "Chargement..." : 
-                 isCurrentPlan(sub.name) ? "Plan actuel" : 
-                 sub.priceType ? `Choisir ${sub.name}` : "Plan gratuit"}
+                {getButtonText(sub.name, sub.priceType)}
               </Button>
             </div>
           ))}
