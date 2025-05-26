@@ -3,7 +3,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Crown, Calendar, CreditCard } from "lucide-react";
+import { Crown, Calendar, CreditCard, TrendingUp } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -18,6 +18,17 @@ export const SubscriptionStatus = () => {
   const getStatusText = () => {
     if (!subscriptionData.subscribed) return "Aucun abonnement";
     return subscriptionData.subscription_tier || "Abonné";
+  };
+
+  const getBenefitsText = () => {
+    switch (subscriptionData.subscription_tier) {
+      case "Passionné":
+        return "15% de réduction sur toutes les activités";
+      case "Expert":
+        return "25% de réduction sur toutes les activités";
+      default:
+        return "Accès aux tarifs de base";
+    }
   };
 
   return (
@@ -38,6 +49,13 @@ export const SubscriptionStatus = () => {
             {getStatusText()}
           </Badge>
         </div>
+
+        {subscriptionData.subscription_tier && (
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <TrendingUp className="h-4 w-4" />
+            <span>{getBenefitsText()}</span>
+          </div>
+        )}
 
         {subscriptionData.subscription_end && (
           <div className="flex items-center gap-2 text-sm text-gray-600">

@@ -635,6 +635,45 @@ export type Database = {
           },
         ]
       }
+      purchases: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string | null
+          email: string
+          id: string
+          item_name: string
+          item_type: string
+          purchase_date: string
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string | null
+          email: string
+          id?: string
+          item_name: string
+          item_type: string
+          purchase_date?: string
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string | null
+          email?: string
+          id?: string
+          item_name?: string
+          item_type?: string
+          purchase_date?: string
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       reservations: {
         Row: {
           client_id: string
@@ -790,6 +829,8 @@ export type Database = {
           stripe_customer_id: string | null
           subscribed: boolean
           subscription_end: string | null
+          subscription_price: number | null
+          subscription_start: string | null
           subscription_tier: string | null
           updated_at: string
           user_id: string | null
@@ -801,6 +842,8 @@ export type Database = {
           stripe_customer_id?: string | null
           subscribed?: boolean
           subscription_end?: string | null
+          subscription_price?: number | null
+          subscription_start?: string | null
           subscription_tier?: string | null
           updated_at?: string
           user_id?: string | null
@@ -812,6 +855,8 @@ export type Database = {
           stripe_customer_id?: string | null
           subscribed?: boolean
           subscription_end?: string | null
+          subscription_price?: number | null
+          subscription_start?: string | null
           subscription_tier?: string | null
           updated_at?: string
           user_id?: string | null
