@@ -14,6 +14,20 @@ export const DashboardHeader: FC<DashboardHeaderProps> = ({ userRole }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   
+  // Obtenir le nom d'affichage approprié selon le rôle
+  const getDisplayName = () => {
+    if (user?.user_metadata?.name) {
+      return user.user_metadata.name;
+    }
+    
+    // Fallback : extraire le nom de l'email avant le @
+    if (user?.email) {
+      return user.email.split('@')[0];
+    }
+    
+    return "Utilisateur";
+  };
+  
   return (
     <div className="flex justify-between items-center w-full">
       <div>
@@ -25,7 +39,7 @@ export const DashboardHeader: FC<DashboardHeaderProps> = ({ userRole }) => {
             : "Espace Client"}
         </h1>
         <p className="text-sm text-gray-600">
-          Bienvenue {user?.name || ""} sur votre tableau de bord
+          Bienvenue {getDisplayName()} sur votre tableau de bord
         </p>
       </div>
       
