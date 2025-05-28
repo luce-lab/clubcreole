@@ -10,7 +10,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { DashboardHeader } from "@/components/DashboardHeader";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -22,7 +22,9 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const userRole = user?.role || null;
+  
+  // Utiliser la même logique que dans Dashboard.tsx pour la cohérence
+  const userRole = user?.user_metadata?.role || user?.role || 'client';
 
   // Rediriger vers la page de login si non authentifié
   useEffect(() => {

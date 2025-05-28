@@ -27,6 +27,10 @@ export function DashboardSidebar() {
   const { user } = useAuth();
   const [managementOpen, setManagementOpen] = useState(false);
 
+  // Utiliser la même logique que dans Dashboard.tsx
+  const userRole = user?.user_metadata?.role || user?.role || 'client';
+  const finalUserRole = user?.email === 'admin@clubcreole.com' ? 'admin' : userRole;
+
   const isActive = (path: string) => location.pathname === path;
 
   const menuItems = [
@@ -100,7 +104,7 @@ export function DashboardSidebar() {
   ];
 
   const filteredItems = menuItems.filter(item => 
-    !item.roles || item.roles.includes(user?.role || "")
+    !item.roles || item.roles.includes(finalUserRole)
   );
 
   return (

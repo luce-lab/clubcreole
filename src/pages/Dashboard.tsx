@@ -21,8 +21,16 @@ const Dashboard = () => {
     );
   }
 
-  // Get user role from user metadata
-  const userRole = user.user_metadata?.role || 'client';
+  // Vérifier d'abord dans user_metadata, puis dans user.role, avec fallback vers 'client'
+  const userRole = user.user_metadata?.role || user.role || 'client';
+  
+  // Pour l'utilisateur admin@clubcreole.com, forcer le rôle admin
+  const finalUserRole = user.email === 'admin@clubcreole.com' ? 'admin' : userRole;
+
+  console.log('User email:', user.email);
+  console.log('User role from metadata:', user.user_metadata?.role);
+  console.log('User role from user:', user.role);
+  console.log('Final user role:', finalUserRole);
 
   return (
     <DashboardLayout>
@@ -30,11 +38,11 @@ const Dashboard = () => {
         <div>
           <h1 className="text-2xl font-bold text-creole-green">Tableau de bord</h1>
           <p className="text-sm text-gray-600">
-            Bienvenue dans votre espace personnel
+            Bienvenue dans votre espace personnel ({finalUserRole})
           </p>
         </div>
 
-        {userRole === 'client' && (
+        {finalUserRole === 'client' && (
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
@@ -57,8 +65,8 @@ const Dashboard = () => {
           </Tabs>
         )}
 
-        {userRole === 'partner' && <DashboardPartner />}
-        {userRole === 'admin' && <DashboardAdmin />}
+        {finalUserRole === 'partner' && <DashboardPartner />}
+        {finalUserRole === 'admin' && <DashboardAdmin />}
       </div>
     </DashboardLayout>
   );
