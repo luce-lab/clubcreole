@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/auth";
 import { useToast } from "@/components/ui/use-toast";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useNavigate } from "react-router-dom";
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -22,6 +23,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { signIn } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +40,14 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
       const { success, message } = await signIn(email, password);
       
       if (success) {
+        // Redirection différente selon le type d'utilisateur
+        if (email === 'admin@clubcreole.com' || email.includes('partner')) {
+          navigate("/dashboard");
+        } else {
+          // Rediriger les clients vers la page d'accueil
+          navigate("/");
+        }
+        
         if (onSuccess) {
           onSuccess();
         }

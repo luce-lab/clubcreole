@@ -2,7 +2,7 @@
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Bell } from "lucide-react";
+import { Bell, Home } from "lucide-react";
 import { useAuth } from "@/contexts/auth";
 
 interface DashboardHeaderProps {
@@ -43,6 +43,18 @@ export const DashboardHeader: FC<DashboardHeaderProps> = ({ userRole }) => {
       </div>
       
       <div className="flex items-center gap-4">
+        {/* Bouton retour vers le site pour les clients */}
+        {userRole === "client" && (
+          <Button 
+            variant="outline" 
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2"
+          >
+            <Home className="h-4 w-4" />
+            Retour vers le site
+          </Button>
+        )}
+        
         <Button 
           variant="outline" 
           size="icon" 

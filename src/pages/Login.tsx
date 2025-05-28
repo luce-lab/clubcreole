@@ -30,7 +30,17 @@ const Login = () => {
   useEffect(() => {
     if (user && !authLoading) {
       setClientSideLoading(true);
-      navigate("/dashboard", { replace: true });
+      
+      // Redirection selon le rôle de l'utilisateur
+      const userRole = user?.user_metadata?.role || user?.role || 'client';
+      const finalUserRole = user?.email === 'admin@clubcreole.com' ? 'admin' : userRole;
+      
+      if (finalUserRole === 'admin' || finalUserRole === 'partner') {
+        navigate("/dashboard", { replace: true });
+      } else {
+        // Rediriger les clients vers la page d'accueil
+        navigate("/", { replace: true });
+      }
     } else {
       setClientSideLoading(false);
     }
@@ -56,10 +66,10 @@ const Login = () => {
 
   // Show loading state during redirection
   if (clientSideLoading) {
-    return <AuthLoadingState message="Redirection vers le tableau de bord..." />;
+    return <AuthLoadingState message="Redirection..." />;
   }
 
-  // User is already authenticated, redirect to dashboard
+  // User is already authenticated, redirect to appropriate page
   if (user) {
     return null; // Will be redirected by useEffect
   }
