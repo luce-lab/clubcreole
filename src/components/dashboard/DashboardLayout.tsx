@@ -23,8 +23,12 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  // Utiliser la même logique que dans Dashboard.tsx pour la cohérence
+  // Utiliser la même logique que dans Dashboard.tsx et DashboardSidebar.tsx
   const userRole = user?.user_metadata?.role || user?.role || 'client';
+  const finalUserRole = user?.email === 'admin@clubcreole.com' ? 'admin' : userRole;
+
+  console.log('DashboardLayout - User email:', user?.email);
+  console.log('DashboardLayout - Final user role:', finalUserRole);
 
   // Rediriger vers la page de login si non authentifié
   useEffect(() => {
@@ -58,13 +62,13 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           <SidebarHeader className="border-b border-sidebar-border">
             <div className="flex items-center gap-2 px-2">
               <div className="flex items-center justify-center h-10 w-10 rounded-full bg-creole-green text-white">
-                {userRole === "admin" ? "A" : userRole === "partner" ? "P" : "C"}
+                {finalUserRole === "admin" ? "A" : finalUserRole === "partner" ? "P" : "C"}
               </div>
               <div>
                 <h3 className="font-medium text-sm">
-                  {userRole === "admin" 
+                  {finalUserRole === "admin" 
                     ? "Administrateur" 
-                    : userRole === "partner" 
+                    : finalUserRole === "partner" 
                     ? "Partenaire" 
                     : "Client"}
                 </h3>
@@ -80,7 +84,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <SidebarInset className="bg-gray-50">
           <div className="container mx-auto px-4 py-6">
             <div className="flex justify-between items-center mb-8">
-              <DashboardHeader userRole={userRole} />
+              <DashboardHeader userRole={finalUserRole} />
               <SidebarTrigger />
             </div>
             

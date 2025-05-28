@@ -4,10 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 import { useAuth } from "@/contexts/auth";
-import { UserRole } from "@/contexts/auth";
 
 interface DashboardHeaderProps {
-  userRole: UserRole;
+  userRole: string;
 }
 
 export const DashboardHeader: FC<DashboardHeaderProps> = ({ userRole }) => {
