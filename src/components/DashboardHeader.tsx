@@ -1,6 +1,6 @@
 
 import { FC } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Bell, Home } from "lucide-react";
 import { useAuth } from "@/contexts/auth";
@@ -11,6 +11,7 @@ interface DashboardHeaderProps {
 
 export const DashboardHeader: FC<DashboardHeaderProps> = ({ userRole }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   
   // Obtenir le nom d'affichage approprié selon le rôle
@@ -26,6 +27,8 @@ export const DashboardHeader: FC<DashboardHeaderProps> = ({ userRole }) => {
     
     return "Utilisateur";
   };
+  
+  const isOnHomePage = location.pathname === "/";
   
   return (
     <div className="flex justify-between items-center w-full">
@@ -43,15 +46,15 @@ export const DashboardHeader: FC<DashboardHeaderProps> = ({ userRole }) => {
       </div>
       
       <div className="flex items-center gap-4">
-        {/* Bouton retour vers le site pour les clients */}
+        {/* Bouton retour vers le site pour les clients - toujours visible */}
         {userRole === "client" && (
           <Button 
-            variant="outline" 
+            variant={isOnHomePage ? "default" : "outline"}
             onClick={() => navigate("/")}
             className="flex items-center gap-2"
           >
             <Home className="h-4 w-4" />
-            Retour vers le site
+            {isOnHomePage ? "Sur le site" : "Retour vers le site"}
           </Button>
         )}
         
