@@ -63,6 +63,199 @@ export type Database = {
         }
         Relationships: []
       }
+      activity_images: {
+        Row: {
+          activity_id: number
+          alt_text: string
+          created_at: string | null
+          id: number
+          sort_order: number | null
+          title: string
+          url: string
+        }
+        Insert: {
+          activity_id: number
+          alt_text: string
+          created_at?: string | null
+          id?: number
+          sort_order?: number | null
+          title: string
+          url: string
+        }
+        Update: {
+          activity_id?: number
+          alt_text?: string
+          created_at?: string | null
+          id?: number
+          sort_order?: number | null
+          title?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_images_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "leisure_activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activity_inclusions: {
+        Row: {
+          activity_id: number
+          created_at: string | null
+          id: number
+          inclusion_text: string
+        }
+        Insert: {
+          activity_id: number
+          created_at?: string | null
+          id?: number
+          inclusion_text: string
+        }
+        Update: {
+          activity_id?: number
+          created_at?: string | null
+          id?: number
+          inclusion_text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_inclusions_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "leisure_activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activity_levels: {
+        Row: {
+          activity_id: number
+          created_at: string | null
+          id: number
+          level_description: string
+          level_name: string
+        }
+        Insert: {
+          activity_id: number
+          created_at?: string | null
+          id?: number
+          level_description: string
+          level_name: string
+        }
+        Update: {
+          activity_id?: number
+          created_at?: string | null
+          id?: number
+          level_description?: string
+          level_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_levels_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "leisure_activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activity_reservations: {
+        Row: {
+          activity_id: number
+          contact_email: string
+          contact_phone: string
+          created_at: string | null
+          id: number
+          number_of_participants: number
+          participant_levels: string[]
+          participant_names: string[]
+          reservation_date: string
+          special_requests: string | null
+          status: string
+          time_slot: string
+          total_price: number
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          activity_id: number
+          contact_email: string
+          contact_phone: string
+          created_at?: string | null
+          id?: number
+          number_of_participants?: number
+          participant_levels: string[]
+          participant_names: string[]
+          reservation_date: string
+          special_requests?: string | null
+          status?: string
+          time_slot: string
+          total_price: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          activity_id?: number
+          contact_email?: string
+          contact_phone?: string
+          created_at?: string | null
+          id?: number
+          number_of_participants?: number
+          participant_levels?: string[]
+          participant_names?: string[]
+          reservation_date?: string
+          special_requests?: string | null
+          status?: string
+          time_slot?: string
+          total_price?: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_reservations_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "leisure_activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activity_time_slots: {
+        Row: {
+          activity_id: number
+          created_at: string | null
+          id: number
+          is_active: boolean | null
+          time_slot: string
+        }
+        Insert: {
+          activity_id: number
+          created_at?: string | null
+          id?: number
+          is_active?: boolean | null
+          time_slot: string
+        }
+        Update: {
+          activity_id?: number
+          created_at?: string | null
+          id?: number
+          is_active?: boolean | null
+          time_slot?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_time_slots_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "leisure_activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       car_client_reviews: {
         Row: {
           avatar: string
@@ -369,6 +562,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      leisure_activities: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string
+          duration_hours: number
+          equipment_provided: boolean | null
+          icon_name: string
+          id: number
+          max_participants: number | null
+          min_level: string
+          name: string
+          price_per_person: number
+          professional_guide: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description: string
+          duration_hours: number
+          equipment_provided?: boolean | null
+          icon_name?: string
+          id?: number
+          max_participants?: number | null
+          min_level: string
+          name: string
+          price_per_person: number
+          professional_guide?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string
+          duration_hours?: number
+          equipment_provided?: boolean | null
+          icon_name?: string
+          id?: number
+          max_participants?: number | null
+          min_level?: string
+          name?: string
+          price_per_person?: number
+          professional_guide?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       loisirs: {
         Row: {
