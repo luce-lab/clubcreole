@@ -37,24 +37,15 @@ export const fetchUsers = async () => {
   try {
     console.log("Récupération des utilisateurs...");
     
-    // Utiliser la fonction RPC pour récupérer tous les profils (bypass RLS pour admin)
-    const { data: profiles, error } = await supabase.rpc('get_all_profiles');
+    // Récupérer directement depuis la table profiles
+    const { data: profiles, error } = await supabase
+      .from('profiles')
+      .select('id, email, first_name, last_name, created_at, updated_at, role')
+      .order('created_at', { ascending: false });
     
     if (error) {
       console.error("Erreur lors de la récupération des profils:", error);
-      
-      // Fallback: essayer de récupérer directement depuis profiles si l'utilisateur est admin
-      const { data: fallbackProfiles, error: fallbackError } = await supabase
-        .from('profiles')
-        .select('id, email, first_name, last_name, created_at, updated_at, role')
-        .order('created_at', { ascending: false });
-        
-      if (fallbackError) {
-        console.error("Erreur fallback:", fallbackError);
-        throw new Error(`Erreur lors de la récupération des utilisateurs: ${fallbackError.message}`);
-      }
-      
-      profiles = fallbackProfiles;
+      throw new Error(`Erreur lors de la récupération des utilisateurs: ${error.message}`);
     }
     
     if (!profiles || profiles.length === 0) {
