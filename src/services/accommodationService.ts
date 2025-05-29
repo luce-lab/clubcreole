@@ -60,7 +60,8 @@ export async function fetchAccommodations(): Promise<Accommodation[]> {
           gallery_images: item.gallery_images as string[],
           features: item.features as string[],
           amenities: typedAmenities,
-          rules: item.rules as string[]
+          rules: item.rules as string[],
+          discount: item.discount || undefined // Inclure la réduction si elle existe
         };
       });
       
@@ -94,7 +95,8 @@ export async function createAccommodation(accommodationData: Omit<Accommodation,
     gallery_images: accommodationData.gallery_images || [] as any,
     features: accommodationData.features || [] as any,
     amenities: accommodationData.amenities || [] as any,
-    rules: accommodationData.rules || [] as any
+    rules: accommodationData.rules || [] as any,
+    discount: accommodationData.discount || null // Inclure la réduction
   };
 
   console.log("Données envoyées à la base:", dbData);
@@ -129,7 +131,8 @@ export async function createAccommodation(accommodationData: Omit<Accommodation,
     gallery_images: insertedData.gallery_images as string[],
     features: insertedData.features as string[],
     amenities: typedAmenities,
-    rules: insertedData.rules as string[]
+    rules: insertedData.rules as string[],
+    discount: insertedData.discount || undefined
   };
 }
 
@@ -153,6 +156,7 @@ export async function updateAccommodation(id: number, accommodationData: Partial
   if (accommodationData.features !== undefined) dbData.features = accommodationData.features as any;
   if (accommodationData.amenities !== undefined) dbData.amenities = accommodationData.amenities as any;
   if (accommodationData.rules !== undefined) dbData.rules = accommodationData.rules as any;
+  if (accommodationData.discount !== undefined) dbData.discount = accommodationData.discount; // Inclure la réduction
 
   console.log("Données de mise à jour envoyées:", dbData);
 
@@ -197,7 +201,8 @@ export async function updateAccommodation(id: number, accommodationData: Partial
     gallery_images: updatedData.gallery_images as string[],
     features: updatedData.features as string[],
     amenities: typedAmenities,
-    rules: updatedData.rules as string[]
+    rules: updatedData.rules as string[],
+    discount: updatedData.discount || undefined
   };
 }
 

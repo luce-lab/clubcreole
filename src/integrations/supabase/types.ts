@@ -14,6 +14,7 @@ export type Database = {
           amenities: Json
           bathrooms: number
           description: string
+          discount: number | null
           features: Json
           gallery_images: Json
           id: number
@@ -31,6 +32,7 @@ export type Database = {
           amenities: Json
           bathrooms: number
           description: string
+          discount?: number | null
           features: Json
           gallery_images: Json
           id?: number
@@ -48,6 +50,7 @@ export type Database = {
           amenities?: Json
           bathrooms?: number
           description?: string
+          discount?: number | null
           features?: Json
           gallery_images?: Json
           id?: number

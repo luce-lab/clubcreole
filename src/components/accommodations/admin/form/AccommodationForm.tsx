@@ -31,6 +31,7 @@ export const AccommodationForm = ({ accommodation, onSuccess, onCancel }: Accomm
     features: accommodation?.features || [],
     amenities: accommodation?.amenities || [],
     rules: accommodation?.rules || [],
+    discount: accommodation?.discount || undefined, // Inclure la réduction
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -120,6 +121,19 @@ export const AccommodationForm = ({ accommodation, onSuccess, onCancel }: Accomm
             value={formData.price}
             onChange={(e) => handleInputChange("price", parseFloat(e.target.value) || 0)}
             required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="discount">Réduction (%)</Label>
+          <Input
+            id="discount"
+            type="number"
+            min="0"
+            max="100"
+            value={formData.discount || ""}
+            onChange={(e) => handleInputChange("discount", e.target.value ? parseInt(e.target.value) : undefined)}
+            placeholder="Ex: 20 pour 20% de réduction"
           />
         </div>
 
