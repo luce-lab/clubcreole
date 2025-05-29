@@ -1,8 +1,9 @@
 
-import { Star, MapPin } from "lucide-react";
+import { Star, MapPin, Badge } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge as UIBadge } from "@/components/ui/badge";
 import { Accommodation } from "@/components/accommodation/AccommodationTypes";
 import { FeatureIcon } from "@/components/accommodation/FeatureIcon";
 
@@ -25,6 +26,13 @@ export const AccommodationCard = ({ accommodation }: AccommodationCardProps) => 
           <Star className="h-4 w-4 text-yellow-400 mr-1" fill="currentColor" />
           {accommodation.rating}
         </div>
+        {accommodation.discount && (
+          <div className="absolute top-2 left-2">
+            <UIBadge variant="destructive" className="bg-red-500 text-white font-bold text-sm px-3 py-1">
+              -{accommodation.discount}%
+            </UIBadge>
+          </div>
+        )}
       </div>
       <CardHeader>
         <div className="flex justify-between items-start">

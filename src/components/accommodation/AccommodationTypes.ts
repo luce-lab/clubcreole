@@ -20,4 +20,5 @@ export interface Accommodation {
   max_guests: number;
   amenities: Amenity[];
   rules: string[];
+  discount?: number; // Propriété optionnelle pour la réduction en pourcentage
 }

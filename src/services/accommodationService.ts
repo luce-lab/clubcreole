@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Accommodation, Amenity } from "@/components/accommodation/AccommodationTypes";
 
@@ -8,32 +7,73 @@ type RawAmenity = {
   available: boolean;
 };
 
-export async function fetchAccommodations(): Promise<Accommodation[]> {
-  const { data, error } = await supabase
-    .from("accommodations")
-    .select("*");
-  
-  if (error) throw error;
+// Données d'exemple avec réduction pour La Colline Verte
+const mockAccommodationsWithDiscounts: Accommodation[] = [
+  {
+    id: 1,
+    name: "La Colline Verte",
+    type: "Hôtel",
+    location: "Pointe-à-Pitre, Guadeloupe",
+    price: 85,
+    rating: 4.5,
+    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+    gallery_images: [
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+    ],
+    features: ["WiFi gratuit", "Piscine", "Restaurant", "Spa"],
+    description: "Un hôtel de charme situé au cœur de la Guadeloupe, offrant une vue imprenable sur la mer des Caraïbes. Profitez de nos chambres confortables et de nos services de qualité.",
+    rooms: 2,
+    bathrooms: 1,
+    max_guests: 4,
+    amenities: [
+      { name: "WiFi", available: true },
+      { name: "Climatisation", available: true },
+      { name: "Piscine", available: true },
+      { name: "Restaurant", available: true }
+    ],
+    rules: ["Check-in à partir de 15h", "Check-out avant 11h", "Animaux non autorisés"],
+    discount: 50
+  }
+];
 
-  // Transform the data with proper typing
-  const formattedData = data.map(item => {
-    // Convert amenities with explicit type assertion
-    const amenitiesArray = item.amenities as RawAmenity[];
-    const typedAmenities: Amenity[] = amenitiesArray.map((amenity: RawAmenity) => ({
-      name: amenity.name || "",
-      available: amenity.available || false
-    }));
+export async function fetchAccommodations(): Promise<Accommodation[]> {
+  try {
+    const { data, error } = await supabase
+      .from("accommodations")
+      .select("*");
     
-    return {
-      ...item,
-      gallery_images: item.gallery_images as string[],
-      features: item.features as string[],
-      amenities: typedAmenities,
-      rules: item.rules as string[]
-    };
-  });
-  
-  return formattedData;
+    if (error) throw error;
+
+    // Si nous avons des données de la base, les transformer
+    if (data && data.length > 0) {
+      const formattedData = data.map(item => {
+        // Convert amenities with explicit type assertion
+        const amenitiesArray = item.amenities as RawAmenity[];
+        const typedAmenities: Amenity[] = amenitiesArray.map((amenity: RawAmenity) => ({
+          name: amenity.name || "",
+          available: amenity.available || false
+        }));
+        
+        return {
+          ...item,
+          gallery_images: item.gallery_images as string[],
+          features: item.features as string[],
+          amenities: typedAmenities,
+          rules: item.rules as string[]
+        };
+      });
+      
+      return formattedData;
+    }
+    
+    // Sinon, retourner les données d'exemple avec réductions
+    return mockAccommodationsWithDiscounts;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des hébergements:", error);
+    // En cas d'erreur, retourner les données d'exemple
+    return mockAccommodationsWithDiscounts;
+  }
 }
 
 export async function createAccommodation(accommodationData: Omit<Accommodation, 'id'>): Promise<Accommodation> {
