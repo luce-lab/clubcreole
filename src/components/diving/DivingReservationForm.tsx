@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -10,54 +9,91 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import { createDivingReservation } from "@/services/divingService";
+import { LeisureActivitiesService } from "@/services/loisirs/leisureActivitiesService";
 import { Calendar, Clock } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { ActivityTimeSlot } from "@/components/loisirs/types";
 
 const formSchema = z.object({
   reservationDate: z.string().min(1, { message: "La date est requise" }),
   reservationTime: z.string().min(1, { message: "L'heure est requise" }),
-  participantName: z.string().min(2, { message: "Le nom est requis" }),
-  participantEmail: z.string().email({ message: "Email invalide" }),
-  participantPhone: z.string().min(10, { message: "Numéro de téléphone invalide" }),
-  experienceLevel: z.string().min(1, { message: "Le niveau d'expérience est requis" }),
+  numberOfParticipants: z.number().min(1, { message: "Au moins un participant requis" }),
+  participantNames: z.array(z.string().min(2, { message: "Le nom est requis" })),
+  participantLevels: z.array(z.string().min(1, { message: "Le niveau est requis" })),
+  contactEmail: z.string().email({ message: "Email invalide" }),
+  contactPhone: z.string().min(10, { message: "Numéro de téléphone invalide" }),
   specialRequests: z.string().optional()
 });
 
 interface DivingReservationFormProps {
+  activityId: number;
   onReservationSuccess?: () => void;
 }
 
-const DivingReservationForm = ({ onReservationSuccess }: DivingReservationFormProps) => {
+const DivingReservationForm = ({ activityId, onReservationSuccess }: DivingReservationFormProps) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [timeSlots, setTimeSlots] = useState<ActivityTimeSlot[]>([]);
+  const [numberOfParticipants, setNumberOfParticipants] = useState(1);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       reservationDate: "",
       reservationTime: "",
-      participantName: "",
-      participantEmail: "",
-      participantPhone: "",
-      experienceLevel: "",
+      numberOfParticipants: 1,
+      participantNames: [""],
+      participantLevels: [""],
+      contactEmail: "",
+      contactPhone: "",
       specialRequests: ""
     }
   });
 
-  const availableTimes = ["09:00", "11:00", "14:00", "16:00"];
+  useEffect(() => {
+    const loadTimeSlots = async () => {
+      try {
+        const slots = await LeisureActivitiesService.getActivityTimeSlots(activityId);
+        setTimeSlots(slots);
+      } catch (error) {
+        console.error('Erreur lors du chargement des créneaux:', error);
+      }
+    };
+
+    loadTimeSlots();
+  }, [activityId]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!user) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté pour faire une réservation",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      await createDivingReservation({
+      // Récupérer les détails de l'activité pour le prix
+      const activity = await LeisureActivitiesService.getActivityById(activityId);
+      if (!activity) throw new Error('Activité non trouvée');
+
+      await LeisureActivitiesService.createReservation({
+        activity_id: activityId,
+        user_id: user.id,
         reservation_date: values.reservationDate,
-        reservation_time: values.reservationTime,
-        participant_name: values.participantName,
-        participant_email: values.participantEmail,
-        participant_phone: values.participantPhone,
-        experience_level: values.experienceLevel,
-        special_requests: values.specialRequests
+        time_slot: values.reservationTime,
+        number_of_participants: values.numberOfParticipants,
+        total_price: activity.price_per_person * values.numberOfParticipants,
+        participant_names: values.participantNames.slice(0, values.numberOfParticipants),
+        participant_levels: values.participantLevels.slice(0, values.numberOfParticipants),
+        contact_email: values.contactEmail,
+        contact_phone: values.contactPhone,
+        special_requests: values.specialRequests,
+        status: 'pending'
       });
 
       toast({
@@ -79,6 +115,22 @@ const DivingReservationForm = ({ onReservationSuccess }: DivingReservationFormPr
     }
   };
 
+  // Mettre à jour le nombre de participants
+  const updateParticipantsCount = (count: number) => {
+    setNumberOfParticipants(count);
+    form.setValue('numberOfParticipants', count);
+    
+    // Ajuster les tableaux de noms et niveaux
+    const currentNames = form.getValues('participantNames');
+    const currentLevels = form.getValues('participantLevels');
+    
+    const newNames = Array(count).fill('').map((_, i) => currentNames[i] || '');
+    const newLevels = Array(count).fill('').map((_, i) => currentLevels[i] || '');
+    
+    form.setValue('participantNames', newNames);
+    form.setValue('participantLevels', newLevels);
+  };
+
   return (
     <Card className="w-full max-w-2xl">
       <CardContent className="pt-6">
@@ -95,7 +147,12 @@ const DivingReservationForm = ({ onReservationSuccess }: DivingReservationFormPr
                     <FormControl>
                       <div className="relative">
                         <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input type="date" className="pl-10" {...field} />
+                        <Input 
+                          type="date" 
+                          className="pl-10" 
+                          min={new Date().toISOString().split('T')[0]}
+                          {...field} 
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -119,9 +176,9 @@ const DivingReservationForm = ({ onReservationSuccess }: DivingReservationFormPr
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {availableTimes.map((time) => (
-                          <SelectItem key={time} value={time}>
-                            {time}
+                        {timeSlots.map((slot) => (
+                          <SelectItem key={slot.id} value={slot.time_slot}>
+                            {slot.time_slot.substring(0, 5)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -132,27 +189,75 @@ const DivingReservationForm = ({ onReservationSuccess }: DivingReservationFormPr
               />
             </div>
 
+            <div>
+              <FormLabel>Nombre de participants</FormLabel>
+              <Select onValueChange={(value) => updateParticipantsCount(parseInt(value))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner le nombre de participants" />
+                </SelectTrigger>
+                <SelectContent>
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
+                    <SelectItem key={num} value={num.toString()}>
+                      {num} participant{num > 1 ? 's' : ''}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Informations des participants */}
+            {Array.from({ length: numberOfParticipants }, (_, index) => (
+              <div key={index} className="p-4 border rounded-lg">
+                <h3 className="font-semibold mb-3">Participant {index + 1}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name={`participantNames.${index}` as `participantNames.${number}`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nom complet</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Jean Dupont" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name={`participantLevels.${index}` as `participantLevels.${number}`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Niveau d'expérience</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Sélectionner le niveau" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="beginner">Débutant</SelectItem>
+                            <SelectItem value="intermediate">Intermédiaire</SelectItem>
+                            <SelectItem value="advanced">Avancé</SelectItem>
+                            <SelectItem value="professional">Professionnel</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            ))}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="participantName"
+                name="contactEmail"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nom complet</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Jean Dupont" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="participantEmail"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Email de contact</FormLabel>
                     <FormControl>
                       <Input type="email" placeholder="jean.dupont@example.com" {...field} />
                     </FormControl>
@@ -160,42 +265,16 @@ const DivingReservationForm = ({ onReservationSuccess }: DivingReservationFormPr
                   </FormItem>
                 )}
               />
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="participantPhone"
+                name="contactPhone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Téléphone</FormLabel>
+                    <FormLabel>Téléphone de contact</FormLabel>
                     <FormControl>
                       <Input type="tel" placeholder="+33 6 12 34 56 78" {...field} />
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="experienceLevel"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Niveau d'expérience</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionner votre niveau" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="beginner">Débutant</SelectItem>
-                        <SelectItem value="intermediate">Intermédiaire</SelectItem>
-                        <SelectItem value="advanced">Avancé</SelectItem>
-                        <SelectItem value="professional">Professionnel</SelectItem>
-                      </SelectContent>
-                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
