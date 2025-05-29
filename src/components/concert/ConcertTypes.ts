@@ -78,5 +78,20 @@ export const concerts: Concert[] = [
     offer: "Accès à l'espace VIP avec une consommation offerte pour les membres du Club Créole",
     rating: 4.6,
     icon: Music
+  },
+  {
+    id: 5,
+    name: "Concert Gospel - Dena Mwana",
+    artist: "Dena Mwana avec Samantha Jean & Joella",
+    genre: "Gospel",
+    image: "/lovable-uploads/dbe431ca-1435-4f4d-9e21-fe2aa7ccfc86.png",
+    location: "Palais des Sports du Gosier",
+    description: "Venez vivre une soirée inoubliable au Palais des Sports du Gosier avec la voix céleste de Dena Mwana ! Un concert gospel puissant, rempli d'amour, de foi et d'émotions. Préparez-vous à chanter, danser, prier et vibrer dans une ambiance spirituelle exceptionnelle.",
+    date: "14 juillet 2025",
+    time: "17:00",
+    price: 40,
+    offer: "Tarif préférentiel à 30€ au lieu de 40€ pour les membres du Club Créole",
+    rating: 4.9,
+    icon: Music
   }
 ];
