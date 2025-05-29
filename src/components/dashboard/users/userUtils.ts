@@ -6,17 +6,17 @@ export const createUser = async (userData: UserFormData) => {
   console.log("Création d'utilisateur avec:", userData.email);
   
   // Créer l'utilisateur dans Supabase Auth
-  const { data: authData, error: authError } = await supabase.auth.signUp({
+  const { data: authData, error: authError } = await supabase.auth.admin.createUser({
     email: userData.email,
     password: userData.password,
-    options: {
-      data: {
-        name: userData.name,
-      }
-    }
+    user_metadata: {
+      name: userData.name,
+    },
+    email_confirm: true
   });
   
   if (authError) {
+    console.error("Erreur lors de la création de l'utilisateur:", authError);
     throw authError;
   }
   
@@ -26,36 +26,35 @@ export const createUser = async (userData: UserFormData) => {
   
   console.log("Utilisateur créé avec succès:", authData.user);
   
-  // Mettre à jour le profil avec les informations supplémentaires
-  const { error: profileError } = await supabase
-    .from('profiles')
-    .update({
-      first_name: userData.name,
-      // Note: La table profiles n'a pas de champ phone ou address dans le schéma actuel
-      // Si ces champs sont nécessaires, ils devront être ajoutés à la table profiles
-    })
-    .eq('id', authData.user.id);
-  
-  if (profileError) {
-    console.warn("Erreur lors de la mise à jour du profil:", profileError);
-  }
+  // Le profil sera automatiquement créé par le trigger handle_new_user
+  // Attendre un peu pour que le trigger s'exécute
+  await new Promise(resolve => setTimeout(resolve, 1000));
   
   return authData.user;
 };
 
 export const fetchUsers = async () => {
   try {
-    console.log("Récupération des utilisateurs avec les nouvelles politiques RLS...");
+    console.log("Récupération des utilisateurs...");
     
-    // Récupérer tous les profils - les nouvelles politiques RLS permettront cela pour l'admin
-    const { data: profiles, error } = await supabase
-      .from('profiles')
-      .select('id, email, first_name, last_name, created_at, updated_at, role')
-      .order('created_at', { ascending: false });
+    // Utiliser la fonction RPC pour récupérer tous les profils (bypass RLS pour admin)
+    const { data: profiles, error } = await supabase.rpc('get_all_profiles');
     
     if (error) {
       console.error("Erreur lors de la récupération des profils:", error);
-      throw new Error(`Erreur lors de la récupération des utilisateurs: ${error.message}`);
+      
+      // Fallback: essayer de récupérer directement depuis profiles si l'utilisateur est admin
+      const { data: fallbackProfiles, error: fallbackError } = await supabase
+        .from('profiles')
+        .select('id, email, first_name, last_name, created_at, updated_at, role')
+        .order('created_at', { ascending: false });
+        
+      if (fallbackError) {
+        console.error("Erreur fallback:", fallbackError);
+        throw new Error(`Erreur lors de la récupération des utilisateurs: ${fallbackError.message}`);
+      }
+      
+      profiles = fallbackProfiles;
     }
     
     if (!profiles || profiles.length === 0) {
