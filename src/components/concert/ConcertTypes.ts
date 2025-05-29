@@ -93,5 +93,20 @@ export const concerts: Concert[] = [
     offer: "Tarif préférentiel à 30€ au lieu de 40€ pour les membres du Club Créole",
     rating: 4.9,
     icon: Music
+  },
+  {
+    id: 6,
+    name: "Festival Terre de Blues",
+    artist: "Artistes Blues & Soul",
+    genre: "Blues",
+    image: "/lovable-uploads/b74f7363-a541-46fc-991d-f00043c98c3f.png",
+    location: "Plage du 3ème Pont à Grand-Bourg, Marie-Galante",
+    description: "La 23ème édition du Festival Terre de Blues vous invite à découvrir les plus grands noms du blues dans un cadre exceptionnel à Marie-Galante. Un festival de 4 jours avec possibilité de camping sur place pour une expérience musicale complète.",
+    date: "6 au 9 juin 2025",
+    time: "18:00",
+    price: 60,
+    offer: "Tarif préférentiel à 45€ au lieu de 60€ pour les membres du Club Créole - Forfait camping 4 nuits inclus",
+    rating: 4.8,
+    icon: Music
   }
 ];
