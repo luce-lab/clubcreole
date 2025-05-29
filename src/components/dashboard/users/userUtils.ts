@@ -31,27 +31,13 @@ export const createUser = async (userData: UserFormData) => {
     .from('profiles')
     .update({
       first_name: userData.name,
-      phone: userData.phone,
+      // Note: La table profiles n'a pas de champ phone ou address dans le schéma actuel
+      // Si ces champs sont nécessaires, ils devront être ajoutés à la table profiles
     })
     .eq('id', authData.user.id);
   
   if (profileError) {
     console.warn("Erreur lors de la mise à jour du profil:", profileError);
-  }
-  
-  // Si l'utilisateur a une adresse, créer une entrée dans la table clients
-  if (userData.address) {
-    const { error: clientError } = await supabase
-      .from('clients')
-      .insert({
-        id: authData.user.id,
-        address: userData.address,
-        phone: userData.phone,
-      });
-    
-    if (clientError) {
-      console.warn("Erreur lors de la création du client:", clientError);
-    }
   }
   
   return authData.user;
