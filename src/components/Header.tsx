@@ -23,7 +23,7 @@ export const Header = () => {
           <img 
             src="/lovable-uploads/ee9cef8d-d74a-4118-94e3-80f17f1e3fc2.png" 
             alt="Club Créole Logo" 
-            className="h-16 w-auto"
+            className="h-20 w-auto"
           />
         </div>
         <div className="flex items-center gap-6">
