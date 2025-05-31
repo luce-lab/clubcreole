@@ -138,31 +138,33 @@ export async function createAccommodation(accommodationData: Omit<Accommodation,
 }
 
 export async function updateAccommodation(id: number, accommodationData: Partial<Accommodation>): Promise<Accommodation> {
-  console.log("Tentative de mise à jour d'hébergement:", { id, data: accommodationData });
+  console.log("=== DÉBUT MISE À JOUR ===");
+  console.log("ID à mettre à jour:", id);
+  console.log("Données reçues:", accommodationData);
   
   // Convert the accommodation data to match database schema with proper Json types
   const dbData: any = {};
   
-  if (accommodationData.name !== undefined) dbData.name = accommodationData.name;
-  if (accommodationData.type !== undefined) dbData.type = accommodationData.type;
-  if (accommodationData.location !== undefined) dbData.location = accommodationData.location;
-  if (accommodationData.description !== undefined) dbData.description = accommodationData.description;
-  if (accommodationData.price !== undefined) dbData.price = accommodationData.price;
-  if (accommodationData.rating !== undefined) dbData.rating = accommodationData.rating;
-  if (accommodationData.image !== undefined) dbData.image = accommodationData.image;
-  if (accommodationData.max_guests !== undefined) dbData.max_guests = accommodationData.max_guests;
-  if (accommodationData.rooms !== undefined) dbData.rooms = accommodationData.rooms;
-  if (accommodationData.bathrooms !== undefined) dbData.bathrooms = accommodationData.bathrooms;
-  if (accommodationData.gallery_images !== undefined) dbData.gallery_images = accommodationData.gallery_images as any;
-  if (accommodationData.features !== undefined) dbData.features = accommodationData.features as any;
-  if (accommodationData.amenities !== undefined) dbData.amenities = accommodationData.amenities as any;
-  if (accommodationData.rules !== undefined) dbData.rules = accommodationData.rules as any;
-  // Correction pour le champ discount
-  if (accommodationData.discount !== undefined) {
-    dbData.discount = accommodationData.discount === undefined || accommodationData.discount === null ? null : accommodationData.discount;
-  }
+  // Traitement simple et direct de tous les champs
+  Object.keys(accommodationData).forEach(key => {
+    const value = accommodationData[key as keyof Accommodation];
+    
+    if (key === 'discount') {
+      // Gestion spéciale pour discount : null si undefined ou vide, sinon la valeur
+      dbData.discount = (value === undefined || value === null || value === '') ? null : Number(value);
+      console.log(`Champ discount: ${value} -> ${dbData.discount}`);
+    } else if (key === 'gallery_images' || key === 'features' || key === 'amenities' || key === 'rules') {
+      // Champs JSON
+      dbData[key] = value as any;
+      console.log(`Champ JSON ${key}:`, value);
+    } else if (value !== undefined) {
+      // Autres champs standards
+      dbData[key] = value;
+      console.log(`Champ ${key}:`, value);
+    }
+  });
 
-  console.log("Données de mise à jour envoyées:", dbData);
+  console.log("Données finales à envoyer:", dbData);
 
   // Effectuer la mise à jour
   const { error: updateError } = await supabase
@@ -171,9 +173,11 @@ export async function updateAccommodation(id: number, accommodationData: Partial
     .eq("id", id);
   
   if (updateError) {
-    console.error("Erreur lors de la mise à jour:", updateError);
+    console.error("❌ Erreur lors de la mise à jour:", updateError);
     throw updateError;
   }
+
+  console.log("✅ Mise à jour réussie, récupération des données...");
 
   // Récupérer l'hébergement mis à jour dans une requête séparée
   const { data: updatedData, error: fetchError } = await supabase
@@ -182,10 +186,10 @@ export async function updateAccommodation(id: number, accommodationData: Partial
     .eq("id", id)
     .single();
   
-  console.log("Données récupérées après mise à jour:", { updatedData, fetchError });
+  console.log("Données récupérées après mise à jour:", updatedData);
   
   if (fetchError) {
-    console.error("Erreur lors de la récupération après mise à jour:", fetchError);
+    console.error("❌ Erreur lors de la récupération après mise à jour:", fetchError);
     throw fetchError;
   }
 
@@ -200,7 +204,7 @@ export async function updateAccommodation(id: number, accommodationData: Partial
     available: amenity.available || false
   }));
   
-  return {
+  const result = {
     ...updatedData,
     gallery_images: updatedData.gallery_images as string[],
     features: updatedData.features as string[],
@@ -208,6 +212,9 @@ export async function updateAccommodation(id: number, accommodationData: Partial
     rules: updatedData.rules as string[],
     discount: updatedData.discount || undefined
   };
+
+  console.log("=== RÉSULTAT FINAL ===", result);
+  return result;
 }
 
 export async function deleteAccommodation(id: number): Promise<void> {

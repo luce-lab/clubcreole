@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,20 +40,29 @@ export const AccommodationForm = ({ accommodation, onSuccess, onCancel }: Accomm
     e.preventDefault();
     setIsSubmitting(true);
 
+    console.log("=== SOUMISSION FORMULAIRE ===");
+    console.log("Mode:", accommodation ? "modification" : "création");
+    console.log("Données du formulaire:", formData);
+
     try {
       // Nettoyer les données avant l'envoi
       const cleanedData = {
         ...formData,
-        discount: formData.discount || undefined // S'assurer que les valeurs vides deviennent undefined
+        // Gestion spéciale pour discount
+        discount: formData.discount === "" || formData.discount === null ? undefined : Number(formData.discount)
       };
 
+      console.log("Données nettoyées:", cleanedData);
+
       if (accommodation) {
+        console.log("Mise à jour de l'hébergement ID:", accommodation.id);
         await updateAccommodation(accommodation.id, cleanedData);
         toast({
           title: "Hébergement modifié",
           description: "L'hébergement a été modifié avec succès",
         });
       } else {
+        console.log("Création d'un nouvel hébergement");
         await createAccommodation(cleanedData);
         toast({
           title: "Hébergement créé",
@@ -63,7 +71,7 @@ export const AccommodationForm = ({ accommodation, onSuccess, onCancel }: Accomm
       }
       onSuccess();
     } catch (error) {
-      console.error("Erreur lors de la sauvegarde:", error);
+      console.error("❌ Erreur lors de la sauvegarde:", error);
       toast({
         title: "Erreur",
         description: "Impossible de sauvegarder l'hébergement",
@@ -75,10 +83,12 @@ export const AccommodationForm = ({ accommodation, onSuccess, onCancel }: Accomm
   };
 
   const handleInputChange = (field: string, value: any) => {
+    console.log(`Changement champ ${field}:`, value);
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleDiscountChange = (value: string) => {
+    console.log("Changement discount:", value);
     // Convertir en nombre ou undefined si vide
     const numValue = value === "" ? undefined : parseInt(value);
     setFormData(prev => ({ ...prev, discount: numValue }));
@@ -137,7 +147,7 @@ export const AccommodationForm = ({ accommodation, onSuccess, onCancel }: Accomm
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="discount">Réduction (%)</Label>
+          <Label htmlFor="discount">Réduction (%) - Actuel: {formData.discount || "Aucune"}</Label>
           <Input
             id="discount"
             type="number"
