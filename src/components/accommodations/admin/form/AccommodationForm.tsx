@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,7 +50,7 @@ export const AccommodationForm = ({ accommodation, onSuccess, onCancel }: Accomm
       const cleanedData = {
         ...formData,
         // Gestion spéciale pour discount
-        discount: formData.discount === "" || formData.discount === null ? undefined : Number(formData.discount)
+        discount: formData.discount === undefined || formData.discount === null ? undefined : Number(formData.discount)
       };
 
       console.log("Données nettoyées:", cleanedData);
