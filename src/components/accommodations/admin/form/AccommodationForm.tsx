@@ -31,7 +31,7 @@ export const AccommodationForm = ({ accommodation, onSuccess, onCancel }: Accomm
     features: accommodation?.features || [],
     amenities: accommodation?.amenities || [],
     rules: accommodation?.rules || [],
-    discount: accommodation?.discount || undefined, // Inclure la réduction
+    discount: accommodation?.discount || undefined,
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,14 +42,20 @@ export const AccommodationForm = ({ accommodation, onSuccess, onCancel }: Accomm
     setIsSubmitting(true);
 
     try {
+      // Nettoyer les données avant l'envoi
+      const cleanedData = {
+        ...formData,
+        discount: formData.discount || undefined // S'assurer que les valeurs vides deviennent undefined
+      };
+
       if (accommodation) {
-        await updateAccommodation(accommodation.id, formData);
+        await updateAccommodation(accommodation.id, cleanedData);
         toast({
           title: "Hébergement modifié",
           description: "L'hébergement a été modifié avec succès",
         });
       } else {
-        await createAccommodation(formData);
+        await createAccommodation(cleanedData);
         toast({
           title: "Hébergement créé",
           description: "L'hébergement a été créé avec succès",
@@ -70,6 +76,12 @@ export const AccommodationForm = ({ accommodation, onSuccess, onCancel }: Accomm
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleDiscountChange = (value: string) => {
+    // Convertir en nombre ou undefined si vide
+    const numValue = value === "" ? undefined : parseInt(value);
+    setFormData(prev => ({ ...prev, discount: numValue }));
   };
 
   return (
@@ -132,7 +144,7 @@ export const AccommodationForm = ({ accommodation, onSuccess, onCancel }: Accomm
             min="0"
             max="100"
             value={formData.discount || ""}
-            onChange={(e) => handleInputChange("discount", e.target.value ? parseInt(e.target.value) : undefined)}
+            onChange={(e) => handleDiscountChange(e.target.value)}
             placeholder="Ex: 20 pour 20% de réduction"
           />
         </div>

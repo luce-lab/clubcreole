@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Accommodation, Amenity } from "@/components/accommodation/AccommodationTypes";
 
@@ -61,7 +62,7 @@ export async function fetchAccommodations(): Promise<Accommodation[]> {
           features: item.features as string[],
           amenities: typedAmenities,
           rules: item.rules as string[],
-          discount: item.discount || undefined // Inclure la réduction si elle existe
+          discount: item.discount || undefined
         };
       });
       
@@ -96,7 +97,7 @@ export async function createAccommodation(accommodationData: Omit<Accommodation,
     features: accommodationData.features || [] as any,
     amenities: accommodationData.amenities || [] as any,
     rules: accommodationData.rules || [] as any,
-    discount: accommodationData.discount || null // Inclure la réduction
+    discount: accommodationData.discount || null
   };
 
   console.log("Données envoyées à la base:", dbData);
@@ -156,7 +157,10 @@ export async function updateAccommodation(id: number, accommodationData: Partial
   if (accommodationData.features !== undefined) dbData.features = accommodationData.features as any;
   if (accommodationData.amenities !== undefined) dbData.amenities = accommodationData.amenities as any;
   if (accommodationData.rules !== undefined) dbData.rules = accommodationData.rules as any;
-  if (accommodationData.discount !== undefined) dbData.discount = accommodationData.discount; // Inclure la réduction
+  // Correction pour le champ discount
+  if (accommodationData.discount !== undefined) {
+    dbData.discount = accommodationData.discount === undefined || accommodationData.discount === null ? null : accommodationData.discount;
+  }
 
   console.log("Données de mise à jour envoyées:", dbData);
 
