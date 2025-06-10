@@ -1,0 +1,4 @@
+supabase/functions
+*.md
+.git
+.gitignore

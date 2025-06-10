@@ -1,5 +1,16 @@
 [variables]
-NIXPACKS_PROVIDER = "node"
+NODE_VERSION = "18"
+
+[providers]
+# Force l'utilisation de Node.js
+node = { enabled = true }
+deno = { enabled = false }
+
+[phases.setup]
+nixPkgs = ["nodejs_18", "npm"]
+
+[phases.install]
+cmds = ["npm ci"]
 
 [phases.build]
 cmds = ["npm run build"]
