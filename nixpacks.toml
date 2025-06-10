@@ -1,0 +1,8 @@
+[variables]
+NIXPACKS_PROVIDER = "node"
+
+[phases.build]
+cmds = ["npm run build"]
+
+[phases.start]
+cmd = "npm start"
