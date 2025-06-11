@@ -1,11 +1,12 @@
 [variables]
 # NODE_VERSION = "18" # Supprimé car nous utilisons Deno
-DENO_CONFIG = "deno.json" # Indique à Deno d'utiliser ce fichier de configuration
+DENO_CONFIG = "/app/deno.json" # Indique à Deno d'utiliser ce fichier de configuration avec un chemin absolu
 
 [providers.deno]
 enabled = true
-config_file = "deno.json"
-entrypoint = "src/main.tsx" # Spécifie le point d'entrée principal pour Deno
+config_file = "/app/deno.json"   # Chemin absolu pour le fichier de configuration Deno
+# entrypoint a été supprimé pour minimiser l'intervention du provider
+no_install = true                # Demande à Nixpacks de ne pas exécuter sa routine d'installation Deno par défaut
 
 [providers.node]
 enabled = false
@@ -16,9 +17,9 @@ enabled = false
 # nixPkgs = ["deno"] # Exemple, peut ne pas être nécessaire
 
 [phases.install]
-# Met en cache les dépendances du module principal. DENO_CONFIG ou la config du provider assure l'utilisation de deno.json.
-# Cette commande pourrait devenir redondante si Nixpacks gère bien le cache avec l'entrypoint.
-cmds = ["deno cache src/main.tsx"]
+# Commande explicite pour mettre en cache les dépendances en partant du point d'entrée principal.
+# Nixpacks ne devrait plus exécuter sa propre logique de cache Deno grâce à no_install = true.
+cmds = ["deno cache --config /app/deno.json src/main.tsx"]
 
 [phases.build]
 # Pour Deno, la mise en cache est souvent la principale étape de "build".
@@ -26,6 +27,5 @@ cmds = ["deno cache src/main.tsx"]
 cmds = [] # Laissez vide si seul le cache est nécessaire
 
 [phases.start]
-# Exécute l'application Deno avec les permissions et la configuration nécessaires. DENO_CONFIG ou la config du provider assure l'utilisation de deno.json.
-# Cette commande pourrait aussi être générée automatiquement par Nixpacks grâce à l'entrypoint.
-cmd = "deno run --allow-net --allow-read --allow-env src/main.tsx"
+# Commande de démarrage explicite car entrypoint a été retiré de la configuration du provider Deno.
+cmd = "deno run --allow-net --allow-read --allow-env --config /app/deno.json src/main.tsx"
