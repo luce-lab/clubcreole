@@ -1,19 +1,26 @@
 [variables]
-NODE_VERSION = "18"
+# NODE_VERSION = "18" # Supprimé car nous utilisons Deno
+DENO_CONFIG = "deno.json" # Indique à Deno d'utiliser ce fichier de configuration
 
 [providers]
-# Force l'utilisation de Node.js
-node = { enabled = true }
-deno = { enabled = false }
+# Force l'utilisation de Deno
+node = { enabled = false }
+deno = { enabled = true }
 
 [phases.setup]
-nixPkgs = ["nodejs_18", "npm"]
+# Nixpacks devrait installer Deno automatiquement si le fournisseur est activé.
+# Si des paquets Nix spécifiques à Deno sont nécessaires, ils peuvent être ajoutés ici.
+# nixPkgs = ["deno"] # Exemple, peut ne pas être nécessaire
 
 [phases.install]
-cmds = ["npm ci"]
+# Met en cache les dépendances du module principal. DENO_CONFIG assure l'utilisation de deno.json.
+cmds = ["deno cache src/main.tsx"]
 
 [phases.build]
-cmds = ["npm run build"]
+# Pour Deno, la mise en cache est souvent la principale étape de "build".
+# Si d'autres étapes de build sont nécessaires, ajoutez-les ici.
+cmds = [] # Laissez vide si seul le cache est nécessaire
 
 [phases.start]
-cmd = "npm start"
+# Exécute l'application Deno avec les permissions et la configuration nécessaires. DENO_CONFIG assure l'utilisation de deno.json.
+cmd = "deno run --allow-net --allow-read --allow-env src/main.tsx"
