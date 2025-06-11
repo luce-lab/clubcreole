@@ -2,7 +2,13 @@
     "imports": {
       "@/": "./src/"
     },
-    "tasks": {
-      "dev": "deno run --allow-net --allow-read --allow-env --watch main.ts"
+    "compilerOptions": {
+      "allowJs": true,
+      "lib": ["dom", "dom.iterable", "es6"],
+      "allowSyntheticDefaultImports": true,
+      "module": "esnext",
+      "target": "esnext",
+      "moduleResolution": "bundler",
+      "jsx": "react-jsx"
     }
   }
