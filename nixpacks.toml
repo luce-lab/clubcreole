@@ -2,10 +2,13 @@
 # NODE_VERSION = "18" # Supprimé car nous utilisons Deno
 DENO_CONFIG = "deno.json" # Indique à Deno d'utiliser ce fichier de configuration
 
-[providers]
-# Force l'utilisation de Deno
-node = { enabled = false }
-deno = { enabled = true }
+[providers.deno]
+enabled = true
+config_file = "deno.json"
+entrypoint = "src/main.tsx" # Spécifie le point d'entrée principal pour Deno
+
+[providers.node]
+enabled = false
 
 [phases.setup]
 # Nixpacks devrait installer Deno automatiquement si le fournisseur est activé.
@@ -13,7 +16,8 @@ deno = { enabled = true }
 # nixPkgs = ["deno"] # Exemple, peut ne pas être nécessaire
 
 [phases.install]
-# Met en cache les dépendances du module principal. DENO_CONFIG assure l'utilisation de deno.json.
+# Met en cache les dépendances du module principal. DENO_CONFIG ou la config du provider assure l'utilisation de deno.json.
+# Cette commande pourrait devenir redondante si Nixpacks gère bien le cache avec l'entrypoint.
 cmds = ["deno cache src/main.tsx"]
 
 [phases.build]
@@ -22,5 +26,6 @@ cmds = ["deno cache src/main.tsx"]
 cmds = [] # Laissez vide si seul le cache est nécessaire
 
 [phases.start]
-# Exécute l'application Deno avec les permissions et la configuration nécessaires. DENO_CONFIG assure l'utilisation de deno.json.
+# Exécute l'application Deno avec les permissions et la configuration nécessaires. DENO_CONFIG ou la config du provider assure l'utilisation de deno.json.
+# Cette commande pourrait aussi être générée automatiquement par Nixpacks grâce à l'entrypoint.
 cmd = "deno run --allow-net --allow-read --allow-env src/main.tsx"
