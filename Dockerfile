@@ -24,8 +24,8 @@ RUN rm -rf /usr/share/nginx/html/*
 # Copier les fichiers buildés depuis l'étape précédente
 COPY --from=builder /app/dist/ /usr/share/nginx/html/
 
-# Copier une configuration Nginx personnalisée (optionnel)
-# COPY nginx.conf /etc/nginx/nginx.conf
+# Copier la configuration Nginx personnalisée
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
