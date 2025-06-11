@@ -6,7 +6,7 @@ WORKDIR /app
 # Copier les fichiers de configuration
 COPY package*.json ./
 
-# Installer TOUTES les dépendances (y compris devDependencies pour le build)
+# Installer TOUTES les dépendances
 RUN npm ci
 
 # Copier le code source
@@ -24,8 +24,16 @@ RUN rm -rf /usr/share/nginx/html/*
 # Copier les fichiers buildés depuis l'étape précédente
 COPY --from=builder /app/dist/ /usr/share/nginx/html/
 
-# Copier la configuration Nginx personnalisée
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Configuration Nginx très simple
+RUN echo 'server { \
+    listen 80; \
+    server_name _; \
+    root /usr/share/nginx/html; \
+    index index.html; \
+    location / { \
+        try_files $uri $uri/ /index.html; \
+    } \
+}' > /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
