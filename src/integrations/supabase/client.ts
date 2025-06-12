@@ -3,8 +3,11 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types.ts';
 
-const SUPABASE_URL = "https://psryoyugyimibjhwhvlh.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzcnlveXVneWltaWJqaHdodmxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM4NTM2NDMsImV4cCI6MjA0OTQyOTY0M30.HqVFT7alWrZtjf1cHxeAeqpsWMjVEnnXfVtwesYga-0";
+// const SUPABASE_URL = "https://psryoyugyimibjhwhvlh.supabase.co";
+// const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzcnlveXVneWltaWJqaHdodmxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM4NTM2NDMsImV4cCI6MjA0OTQyOTY0M30.HqVFT7alWrZtjf1cHxeAeqpsWMjVEnnXfVtwesYga-0";
+
+const SUPABASE_URL = "https://supabase.clubcreole.fr";
+const SUPABASE_PUBLISHABLE_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc0OTcxOTQwMCwiZXhwIjo0OTA1MzkzMDAwLCJyb2xlIjoiYW5vbiJ9.0WYDVcKmJDfC9yGCyW9GA38zfKG-_11TBqESdlB43P0";
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
