@@ -5,11 +5,23 @@ import { supabase } from "@/integrations/supabase/client";
 import LoisirsHeader from "@/components/loisirs/LoisirsHeader";
 import LoisirsLoader from "@/components/loisirs/LoisirsLoader";
 import LoisirsGrid from "@/components/loisirs/LoisirsGrid";
+import LoisirsSearchBar from "@/components/loisirs/LoisirsSearchBar";
+import LoisirsEmptyState from "@/components/loisirs/LoisirsEmptyState";
+import { useLoisirsSearch } from "@/hooks/useLoisirsSearch";
 import { Loisir } from "@/components/loisirs/types";
 
 const LoisirsActivity = () => {
   const [loisirs, setLoisirs] = useState<Loisir[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const { 
+    searchQuery, 
+    setSearchQuery, 
+    filteredLoisirs, 
+    hasResults, 
+    totalResults, 
+    isSearching 
+  } = useLoisirsSearch(loisirs);
 
   // Charger les données depuis Supabase
   useEffect(() => {
@@ -63,10 +75,32 @@ const LoisirsActivity = () => {
   return (
     <div className="container mx-auto px-4 py-12">
       <LoisirsHeader />
-      <LoisirsGrid 
-        loisirs={loisirs} 
-        onUpdateLoisir={handleUpdateLoisir} 
+      
+      <LoisirsSearchBar 
+        onSearch={setSearchQuery}
+        placeholder="Rechercher par titre, description ou lieu..."
       />
+
+      {isSearching && (
+        <div className="mb-6 text-center">
+          <p className="text-gray-600">
+            {totalResults} activité{totalResults !== 1 ? 's' : ''} trouvée{totalResults !== 1 ? 's' : ''}
+            {totalResults > 0 && ` pour "${searchQuery}"`}
+          </p>
+        </div>
+      )}
+
+      {hasResults ? (
+        <LoisirsGrid 
+          loisirs={filteredLoisirs} 
+          onUpdateLoisir={handleUpdateLoisir} 
+        />
+      ) : (
+        <LoisirsEmptyState 
+          isSearching={isSearching} 
+          searchQuery={searchQuery}
+        />
+      )}
     </div>
   );
 };
