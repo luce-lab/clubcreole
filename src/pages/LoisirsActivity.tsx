@@ -78,7 +78,7 @@ const LoisirsActivity = () => {
       
       <LoisirsSearchBar 
         onSearch={setSearchQuery}
-        placeholder="Rechercher par titre, description ou lieu..."
+        placeholder="Rechercher par titre, description ou lieu de l'activité..."
       />
 
       {isSearching && (

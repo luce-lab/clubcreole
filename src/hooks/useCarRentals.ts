@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { 
   getCarRentals, 
@@ -17,7 +17,7 @@ export const useCarRentals = () => {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const fetchCarRentals = async () => {
+  const fetchCarRentals = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -27,7 +27,7 @@ export const useCarRentals = () => {
       const errorMessage = 'Erreur lors du chargement des entreprises de location';
       setError(errorMessage);
       toast({
-        title: "Erreur",
+        title: "Erreur", 
         description: errorMessage,
         variant: "destructive",
       });
@@ -35,11 +35,11 @@ export const useCarRentals = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
     fetchCarRentals();
-  }, []);
+  }, [fetchCarRentals]);
 
   return {
     carRentals,
