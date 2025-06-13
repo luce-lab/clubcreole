@@ -1,175 +1,106 @@
-import { supabase } from "@/integrations/supabase/client";
-import { Car, Route, Shield, Fuel } from "lucide-react";
+
+import { supabase } from '@/integrations/supabase/client';
 import type { 
+  CarRentalCompany, 
+  CarModel, 
+  CarRentalFeature, 
+  CarClientReview,
   CarRental, 
   ClientReview,
   CarModelForDisplay 
 } from '@/components/car-rental/CarRentalTypes';
-import type { Tables } from '@/integrations/supabase/types';
+import { 
+  Car, 
+  Truck, 
+  Zap, 
+  Users,
+  type LucideIcon
+} from 'lucide-react';
 
-// Types depuis la base de données Supabase
-type CarRentalCompanyDB = Tables<'car_rental_companies'>;
-type CarModelDB = Tables<'car_models'>;
-type CarRentalFeatureDB = Tables<'car_rental_features'>;
-type CarClientReviewDB = Tables<'car_client_reviews'>;
-
-export interface CarRentalReservation {
-  id: string;
-  rental_company_name: string;
-  selected_model: string;
-  start_date: string;
-  end_date: string;
-  driver_name: string;
-  driver_email: string;
-  driver_phone: string;
-  status: string;
-  notes?: string;
-  partner_id?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface CreateCarRentalReservationData {
-  rental_company_name: string;
-  selected_model: string;
-  start_date: string;
-  end_date: string;
-  driver_name: string;
-  driver_email: string;
-  driver_phone: string;
-  notes?: string;
-}
-
-export async function createCarRentalReservation(
-  reservationData: CreateCarRentalReservationData
-): Promise<CarRentalReservation> {
-  console.log("Création d'une réservation de location de voiture:", reservationData);
-
-  // Récupérer l'ID du partenaire propriétaire de l'entreprise
-  const { data: companyData, error: companyError } = await supabase
-    .from("car_rental_companies")
-    .select("partner_id")
-    .eq("name", reservationData.rental_company_name)
-    .single();
-
-  if (companyError) {
-    console.error("Erreur lors de la récupération de l'entreprise:", companyError);
-  }
-
-  const dataToInsert = {
-    ...reservationData,
-    partner_id: companyData?.partner_id || null
-  };
-
-  const { data, error } = await supabase
-    .from("car_rental_reservations")
-    .insert(dataToInsert)
-    .select("*")
-    .single();
-
-  if (error) {
-    console.error("Erreur lors de la création de la réservation:", error);
-    throw error;
-  }
-
-  console.log("Réservation créée avec succès:", data);
-  return data;
-}
-
-export async function fetchCarRentalReservations(): Promise<CarRentalReservation[]> {
-  const { data, error } = await supabase
-    .from("car_rental_reservations")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Erreur lors de la récupération des réservations:", error);
-    throw error;
-  }
-
-  return data || [];
-}
-
-export async function updateCarRentalReservationStatus(
-  id: string,
-  status: string
-): Promise<void> {
-  const { error } = await supabase
-    .from("car_rental_reservations")
-    .update({ status, updated_at: new Date().toISOString() })
-    .eq("id", id);
-
-  if (error) {
-    console.error("Erreur lors de la mise à jour du statut:", error);
-    throw error;
-  }
-}
-
-export async function deleteCarRentalReservation(id: string): Promise<void> {
-  const { error } = await supabase
-    .from("car_rental_reservations")
-    .delete()
-    .eq("id", id);
-
-  if (error) {
-    console.error("Erreur lors de la suppression de la réservation:", error);
-    throw error;
-  }
-}
-
-// Mapping des icônes
-const iconMap = {
+// Mapping des noms d'icônes vers les composants Lucide
+const iconMap: Record<string, LucideIcon> = {
+  'car': Car,
+  'truck': Truck,
+  'zap': Zap,
+  'users': Users,
   'Car': Car,
-  'Shield': Shield,
-  'Fuel': Fuel,
-  'Route': Route,
+  'Truck': Truck,
+  'Zap': Zap,
+  'Users': Users
 };
 
 /**
- * Récupère toutes les entreprises de location avec leurs modèles et fonctionnalités
+ * Récupère toutes les entreprises de location de voitures avec leurs modèles et caractéristiques
  */
 export const getCarRentals = async (): Promise<CarRental[]> => {
   try {
-    // Récupération des entreprises
+    console.log('Début de la récupération des locations de voitures...');
+    
+    // Récupérer les entreprises
     const { data: companies, error: companiesError } = await supabase
       .from('car_rental_companies')
       .select('*')
-      .order('id');
+      .order('rating', { ascending: false });
 
     if (companiesError) {
+      console.error('Erreur lors de la récupération des entreprises:', companiesError);
       throw companiesError;
     }
 
-    if (!companies) {
-      console.log('No companies found, returning empty array.');
+    if (!companies || companies.length === 0) {
+      console.log('Aucune entreprise trouvée');
       return [];
     }
 
-    // Récupération des modèles pour toutes les entreprises (seulement les actifs pour le public)
+    console.log(`${companies.length} entreprises récupérées`);
+
+    // Récupérer tous les modèles
     const { data: models, error: modelsError } = await supabase
       .from('car_models')
       .select('*')
-      .eq('is_active', true)
-      .order('company_id, id');
+      .eq('is_active', true);
 
     if (modelsError) {
+      console.error('Erreur lors de la récupération des modèles:', modelsError);
       throw modelsError;
     }
 
-    // Récupération des fonctionnalités pour toutes les entreprises
-    const { data: features, error: featuresError } = await supabase
-      .from('car_rental_features')
-      .select('*')
-      .order('company_id, id');
+    // Récupérer les caractéristiques (avec gestion d'erreur)
+    let features: CarRentalFeature[] = [];
+    try {
+      const { data: featuresData, error: featuresError } = await supabase
+        .from('car_rental_features')
+        .select('*');
 
-    if (featuresError) {
-      throw featuresError;
+      if (featuresError) {
+        console.warn('Table car_rental_features non disponible:', featuresError.message);
+        // Continuer sans les caractéristiques
+      } else {
+        features = featuresData || [];
+      }
+    } catch (err) {
+      console.warn('Erreur lors de la récupération des caractéristiques, continuation sans elles:', err);
     }
 
-    // Transformation des données pour l'affichage
-    const carRentals: CarRental[] = companies.map((company: CarRentalCompanyDB) => {
-      const companyModels = (models || []).filter((model: CarModelDB) => model.company_id === company.id);
-      const companyFeatures = (features || []).filter((feature: CarRentalFeatureDB) => feature.company_id === company.id);
+    console.log(`${models?.length || 0} modèles et ${features.length} caractéristiques récupérés`);
+
+    // Traitement des données
+    const carRentals: CarRental[] = companies.map((company: CarRentalCompany) => {
+      // Mapper les modèles pour cette entreprise
+      const companyModels = models?.filter(model => model.company_id === company.id) || [];
+      const mappedModels: CarModelForDisplay[] = companyModels.map(model => ({
+        ...model,
+        pricePerDay: model.price_per_day,
+        airCon: model.air_con
+      }));
+
+      // Mapper les caractéristiques pour cette entreprise
+      const companyFeatures = features
+        .filter(feature => feature.company_id === company.id)
+        .map(feature => feature.feature);
+
+      // Obtenir l'icône Lucide
+      const IconComponent = iconMap[company.icon_name] || Car;
 
       return {
         id: company.id,
@@ -178,27 +109,17 @@ export const getCarRentals = async (): Promise<CarRental[]> => {
         image: company.image,
         location: company.location,
         description: company.description,
-        rating: company.rating,
+        rating: Number(company.rating),
         offer: company.offer,
-        icon: iconMap[company.icon_name as keyof typeof iconMap] || Car,
-        features: companyFeatures.map(f => f.feature),
-        models: companyModels.map((model: CarModelDB): CarModelForDisplay => ({
-          id: model.id,
-          company_id: model.company_id,
-          name: model.name,
-          image: model.image,
-          pricePerDay: model.price_per_day, // Mappage correct
-          category: model.category,
-          seats: model.seats,
-          transmission: model.transmission,
-          airCon: model.air_con, // Mappage correct
-          created_at: model.created_at,
-          updated_at: model.updated_at
-        }))
+        icon: IconComponent,
+        features: companyFeatures,
+        models: mappedModels
       };
     });
 
+    console.log('Données transformées avec succès');
     return carRentals;
+
   } catch (error) {
     console.error('Erreur lors de la récupération des locations de voitures:', error);
     throw error;
@@ -210,12 +131,15 @@ export const getCarRentals = async (): Promise<CarRental[]> => {
  */
 export const getClientReviews = async (): Promise<ClientReview[]> => {
   try {
+    console.log('Récupération des avis clients...');
+    
     const { data, error } = await supabase
       .from('car_client_reviews')
       .select('*')
-      .order('id');
+      .order('review_date', { ascending: false });
 
     if (error) {
+      console.error('Erreur lors de la récupération des avis:', error);
       throw error;
     }
 
@@ -223,23 +147,21 @@ export const getClientReviews = async (): Promise<ClientReview[]> => {
       return [];
     }
 
-    // Transformation des données pour l'affichage
-    const reviews: ClientReview[] = data.map((review: CarClientReviewDB) => ({
+    // Transformer les données pour l'affichage
+    const reviews: ClientReview[] = data.map((review: CarClientReview) => ({
       id: review.id,
       name: review.name,
       location: review.location,
       avatar: review.avatar,
       comment: review.comment,
       rating: review.rating,
-      date: new Date(review.review_date).toLocaleDateString('fr-FR', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      }),
+      date: new Date(review.review_date).toLocaleDateString('fr-FR'),
       rentalCompany: review.rental_company_name
     }));
 
+    console.log(`${reviews.length} avis récupérés`);
     return reviews;
+
   } catch (error) {
     console.error('Erreur lors de la récupération des avis clients:', error);
     throw error;
@@ -251,10 +173,83 @@ export const getClientReviews = async (): Promise<ClientReview[]> => {
  */
 export const getCarRentalById = async (id: number): Promise<CarRental | null> => {
   try {
-    const carRentals = await getCarRentals();
-    return carRentals.find(rental => rental.id === id) || null;
+    console.log(`Récupération de l'entreprise de location ${id}...`);
+    
+    // Récupérer l'entreprise
+    const { data: company, error: companyError } = await supabase
+      .from('car_rental_companies')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (companyError) {
+      console.error('Erreur lors de la récupération de l\'entreprise:', companyError);
+      throw companyError;
+    }
+
+    if (!company) {
+      console.log('Entreprise non trouvée');
+      return null;
+    }
+
+    // Récupérer les modèles de cette entreprise
+    const { data: models, error: modelsError } = await supabase
+      .from('car_models')
+      .select('*')
+      .eq('company_id', id)
+      .eq('is_active', true);
+
+    if (modelsError) {
+      console.error('Erreur lors de la récupération des modèles:', modelsError);
+      throw modelsError;
+    }
+
+    // Récupérer les caractéristiques (avec gestion d'erreur)
+    let features: string[] = [];
+    try {
+      const { data: featuresData, error: featuresError } = await supabase
+        .from('car_rental_features')
+        .select('feature')
+        .eq('company_id', id);
+
+      if (featuresError) {
+        console.warn('Table car_rental_features non disponible:', featuresError.message);
+      } else {
+        features = featuresData?.map(f => f.feature) || [];
+      }
+    } catch (err) {
+      console.warn('Erreur lors de la récupération des caractéristiques:', err);
+    }
+
+    // Mapper les modèles
+    const mappedModels: CarModelForDisplay[] = models?.map(model => ({
+      ...model,
+      pricePerDay: model.price_per_day,
+      airCon: model.air_con
+    })) || [];
+
+    // Obtenir l'icône Lucide
+    const IconComponent = iconMap[company.icon_name] || Car;
+
+    const carRental: CarRental = {
+      id: company.id,
+      name: company.name,
+      type: company.type,
+      image: company.image,
+      location: company.location,
+      description: company.description,
+      rating: Number(company.rating),
+      offer: company.offer,
+      icon: IconComponent,
+      features,
+      models: mappedModels
+    };
+
+    console.log('Entreprise récupérée avec succès');
+    return carRental;
+
   } catch (error) {
-    console.error('Erreur lors de la récupération de l\'entreprise de location:', error);
+    console.error('Erreur lors de la récupération de l\'entreprise:', error);
     throw error;
   }
 };
@@ -264,13 +259,16 @@ export const getCarRentalById = async (id: number): Promise<CarRental | null> =>
  */
 export const getReviewsByCompany = async (companyName: string): Promise<ClientReview[]> => {
   try {
+    console.log(`Récupération des avis pour ${companyName}...`);
+    
     const { data, error } = await supabase
       .from('car_client_reviews')
       .select('*')
       .eq('rental_company_name', companyName)
-      .order('id');
+      .order('review_date', { ascending: false });
 
     if (error) {
+      console.error('Erreur lors de la récupération des avis:', error);
       throw error;
     }
 
@@ -278,24 +276,23 @@ export const getReviewsByCompany = async (companyName: string): Promise<ClientRe
       return [];
     }
 
-    const reviews: ClientReview[] = data.map((review: CarClientReviewDB) => ({
+    // Transformer les données pour l'affichage
+    const reviews: ClientReview[] = data.map((review: CarClientReview) => ({
       id: review.id,
       name: review.name,
       location: review.location,
       avatar: review.avatar,
       comment: review.comment,
       rating: review.rating,
-      date: new Date(review.review_date).toLocaleDateString('fr-FR', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      }),
+      date: new Date(review.review_date).toLocaleDateString('fr-FR'),
       rentalCompany: review.rental_company_name
     }));
 
+    console.log(`${reviews.length} avis récupérés pour ${companyName}`);
     return reviews;
+
   } catch (error) {
-    console.error('Erreur lors de la récupération des avis:', error);
+    console.error('Erreur lors de la récupération des avis de l\'entreprise:', error);
     throw error;
   }
 };
