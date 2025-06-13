@@ -141,6 +141,7 @@ export const getCarRentals = async (): Promise<CarRental[]> => {
     }
 
     if (!companies) {
+      console.log('No companies found, returning empty array.');
       return [];
     }
 
