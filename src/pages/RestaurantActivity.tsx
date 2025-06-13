@@ -6,11 +6,23 @@ import RestaurantHeader from "@/components/restaurant/RestaurantHeader";
 import RestaurantGrid from "@/components/restaurant/RestaurantGrid";
 import RestaurantLoader from "@/components/restaurant/RestaurantLoader";
 import RestaurantInfo from "@/components/restaurant/RestaurantInfo";
+import RestaurantsSearchBar from "@/components/restaurant/RestaurantsSearchBar";
+import RestaurantsEmptyState from "@/components/restaurant/RestaurantsEmptyState";
+import { useRestaurantsSearch } from "@/hooks/useRestaurantsSearch";
 
 const RestaurantActivity = () => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const { 
+    searchQuery, 
+    setSearchQuery, 
+    filteredRestaurants, 
+    hasResults, 
+    totalResults, 
+    isSearching 
+  } = useRestaurantsSearch(restaurants);
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -56,8 +68,32 @@ const RestaurantActivity = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <RestaurantHeader />
-      <RestaurantGrid restaurants={restaurants} />
-      <RestaurantInfo />
+      
+      <RestaurantsSearchBar 
+        onSearch={setSearchQuery}
+        placeholder="Rechercher par nom, type, lieu, offre..."
+      />
+
+      {isSearching && (
+        <div className="mb-6 text-center">
+          <p className="text-gray-600">
+            {totalResults} restaurant{totalResults !== 1 ? 's' : ''} trouvé{totalResults !== 1 ? 's' : ''}
+            {totalResults > 0 && ` pour "${searchQuery}"`}
+          </p>
+        </div>
+      )}
+
+      {hasResults ? (
+        <>
+          <RestaurantGrid restaurants={filteredRestaurants} />
+          <RestaurantInfo />
+        </>
+      ) : (
+        <RestaurantsEmptyState 
+          isSearching={isSearching} 
+          searchQuery={searchQuery}
+        />
+      )}
     </div>
   );
 };
