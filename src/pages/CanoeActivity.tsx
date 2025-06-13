@@ -31,7 +31,7 @@ const CanoeActivity = () => {
     if (!date || !selectedTime) {
       toast({
         title: "Erreur",
-        description: "Veuillez sélectionner une date et une heure",
+        description: "Veuillez sélectionner une date et une heure locale",
         variant: "destructive",
       });
       return;
