@@ -156,8 +156,6 @@ export const getCarRentals = async (): Promise<CarRental[]> => {
  */
 export const getClientReviews = async (): Promise<ClientReview[]> => {
   try {
-    console.log('Récupération des avis clients...');
-    
     const { data, error } = await supabase
       .from('car_client_reviews')
       .select('*')
@@ -184,7 +182,6 @@ export const getClientReviews = async (): Promise<ClientReview[]> => {
       rentalCompany: review.rental_company_name
     }));
 
-    console.log(`${reviews.length} avis récupérés`);
     return reviews;
 
   } catch (error) {
@@ -198,9 +195,6 @@ export const getClientReviews = async (): Promise<ClientReview[]> => {
  */
 export const getCarRentalById = async (id: number): Promise<CarRental | null> => {
   try {
-    console.log(`Récupération de l'entreprise de location ${id}...`);
-    
-    // Récupérer l'entreprise
     const { data: company, error: companyError } = await supabase
       .from('car_rental_companies')
       .select('*')
