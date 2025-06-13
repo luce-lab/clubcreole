@@ -1,8 +1,8 @@
-
+ 
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
-// Mock ResizeObserver which is not available in test environment
+// Mock ResizeObserver which is not available in test environment de test
 global.ResizeObserver = class ResizeObserver {
   observe() {}
   unobserve() {}
