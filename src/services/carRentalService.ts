@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import type { 
   CarRentalCompany, 
@@ -16,6 +15,32 @@ import {
   Users,
   type LucideIcon
 } from 'lucide-react';
+
+// Car rental reservation types
+export interface CarRentalReservation {
+  id: string;
+  rental_company_name: string;
+  selected_model: string;
+  start_date: string;
+  end_date: string;
+  driver_name: string;
+  driver_email: string;
+  driver_phone: string;
+  status: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateCarRentalReservationData {
+  rental_company_name: string;
+  selected_model: string;
+  start_date: string;
+  end_date: string;
+  driver_name: string;
+  driver_email: string;
+  driver_phone: string;
+}
 
 // Mapping des noms d'icônes vers les composants Lucide
 const iconMap: Record<string, LucideIcon> = {
@@ -293,6 +318,109 @@ export const getReviewsByCompany = async (companyName: string): Promise<ClientRe
 
   } catch (error) {
     console.error('Erreur lors de la récupération des avis de l\'entreprise:', error);
+    throw error;
+  }
+};
+
+/**
+ * Crée une nouvelle réservation de location de voiture
+ */
+export const createCarRentalReservation = async (reservationData: CreateCarRentalReservationData): Promise<CarRentalReservation> => {
+  try {
+    console.log('Création d\'une réservation de location:', reservationData);
+    
+    const { data, error } = await supabase
+      .from('car_rental_reservations')
+      .insert([reservationData])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Erreur lors de la création de la réservation:', error);
+      throw error;
+    }
+
+    console.log('Réservation créée avec succès:', data);
+    return data as CarRentalReservation;
+
+  } catch (error) {
+    console.error('Erreur lors de la création de la réservation:', error);
+    throw error;
+  }
+};
+
+/**
+ * Récupère toutes les réservations de location de voitures
+ */
+export const fetchCarRentalReservations = async (): Promise<CarRentalReservation[]> => {
+  try {
+    console.log('Récupération des réservations de location...');
+    
+    const { data, error } = await supabase
+      .from('car_rental_reservations')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Erreur lors de la récupération des réservations:', error);
+      throw error;
+    }
+
+    console.log(`${data?.length || 0} réservations récupérées`);
+    return data || [];
+
+  } catch (error) {
+    console.error('Erreur lors de la récupération des réservations:', error);
+    throw error;
+  }
+};
+
+/**
+ * Met à jour le statut d'une réservation de location de voiture
+ */
+export const updateCarRentalReservationStatus = async (id: string, status: string): Promise<void> => {
+  try {
+    console.log(`Mise à jour du statut de la réservation ${id} vers ${status}`);
+    
+    const { error } = await supabase
+      .from('car_rental_reservations')
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Erreur lors de la mise à jour du statut:', error);
+      throw error;
+    }
+
+    console.log('Statut mis à jour avec succès');
+
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour du statut:', error);
+    throw error;
+  }
+};
+
+/**
+ * Supprime une réservation de location de voiture
+ */
+export const deleteCarRentalReservation = async (id: string): Promise<void> => {
+  try {
+    console.log(`Suppression de la réservation ${id}`);
+    
+    const { error } = await supabase
+      .from('car_rental_reservations')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Erreur lors de la suppression de la réservation:', error);
+      throw error;
+    }
+
+    console.log('Réservation supprimée avec succès');
+
+  } catch (error) {
+    console.error('Erreur lors de la suppression de la réservation:', error);
     throw error;
   }
 };

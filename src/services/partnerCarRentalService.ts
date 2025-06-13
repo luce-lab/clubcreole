@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import type { CarRentalReservation } from './carRentalService.ts';
+import type { CarRentalReservation } from './carRentalService';
 
 export interface PartnerCarRentalReservation extends CarRentalReservation {
   company_name?: string;
