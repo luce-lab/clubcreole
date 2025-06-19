@@ -132,6 +132,7 @@ export const getCarRentals = async (): Promise<CarRental[]> => {
         name: company.name,
         type: company.type,
         image: company.image,
+        gallery_images: company.gallery_images || [],
         location: company.location,
         description: company.description,
         rating: Number(company.rating),
@@ -199,7 +200,7 @@ export const getCarRentalById = async (id: number): Promise<CarRental | null> =>
       .from('car_rental_companies')
       .select('*')
       .eq('id', id)
-      .single();
+      .single<CarRentalCompany>();
 
     if (companyError) {
       console.error('Erreur lors de la récupération de l\'entreprise:', companyError);
@@ -255,6 +256,7 @@ export const getCarRentalById = async (id: number): Promise<CarRental | null> =>
       name: company.name,
       type: company.type,
       image: company.image,
+      gallery_images: company.gallery_images || [],
       location: company.location,
       description: company.description,
       rating: Number(company.rating),

@@ -10,6 +10,7 @@ import RentalDetailHeader from "@/components/car-rental/RentalDetailHeader";
 import RentalDescription from "@/components/car-rental/RentalDescription";
 import RentalModels from "@/components/car-rental/RentalModels";
 import RentalReservationForm from "@/components/car-rental/RentalReservationForm";
+import RentalGallery from "@/components/car-rental/RentalGallery";
 
 const CarRentalDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -85,14 +86,11 @@ const CarRentalDetail = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left column - Images & Description */}
         <div className="lg:col-span-2 space-y-8">
-          {/* Main Image */}
-          <div className="rounded-lg overflow-hidden shadow-lg h-80">
-            <img 
-              src={carRental.image} 
-              alt={carRental.name}
-              className="w-full h-full object-cover" 
-            />
-          </div>
+          {/* Gallery */}
+          <RentalGallery 
+            images={[carRental.image, ...(carRental.gallery_images || [])]}
+            alt={carRental.name}
+          />
 
           {/* Description */}
           <RentalDescription rental={carRental} />

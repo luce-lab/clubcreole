@@ -6,6 +6,7 @@ export interface CarRentalCompany {
   name: string;
   type: string;
   image: string;
+  gallery_images?: string[];
   location: string;
   description: string;
   rating: number;
@@ -70,6 +71,7 @@ export interface CarRental {
   name: string;
   type: string;
   image: string;
+  gallery_images?: string[]; // Tableau optionnel d'URLs d'images supplémentaires
   location: string;
   description: string;
   rating: number;
