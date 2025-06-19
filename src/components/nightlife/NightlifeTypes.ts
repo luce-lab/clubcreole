@@ -29,8 +29,20 @@ export const getNightlifeEvents = async (): Promise<NightEvent[]> => {
   }
 
   return (data || []).map(event => ({
-    ...event,
-    features: Array.isArray(event.features) ? event.features : []
+    id: event.id,
+    name: event.name,
+    type: event.type,
+    venue: event.venue,
+    image: event.image,
+    description: event.description,
+    date: event.date,
+    time: event.time,
+    price: event.price,
+    offer: event.offer,
+    rating: event.rating,
+    features: Array.isArray(event.features) 
+      ? event.features.filter((item): item is string => typeof item === 'string')
+      : []
   }));
 };
 
