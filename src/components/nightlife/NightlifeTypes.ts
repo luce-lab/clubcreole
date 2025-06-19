@@ -30,7 +30,7 @@ export const getNightlifeEvents = async (): Promise<NightEvent[]> => {
 
   return (data || []).map(event => ({
     ...event,
-    features: event.features || []
+    features: Array.isArray(event.features) ? event.features : []
   }));
 };
 
