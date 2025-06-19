@@ -1,4 +1,4 @@
-
+import { useEffect, useState } from "react";
 import { concerts } from "@/components/concert/ConcertTypes";
 import { useConcertsSearch } from "@/hooks/useConcertsSearch";
 import ConcertPageHeader from "@/components/concert/ConcertPageHeader";
@@ -6,8 +6,19 @@ import ConcertList from "@/components/concert/ConcertList";
 import ConcertInfoCard from "@/components/concert/ConcertInfoCard";
 import ConcertsSearchBar from "@/components/concert/ConcertsSearchBar";
 import ConcertsEmptyState from "@/components/concert/ConcertsEmptyState";
+import { getConcerts } from "@/components/concert/ConcertTypes";
 
 const ConcertActivity = () => {
+  const [concerts, setConcerts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getConcerts().then(data => {
+      setConcerts(data);
+      setLoading(false);
+    });
+  }, []);
+
   const { 
     searchQuery, 
     setSearchQuery, 
@@ -16,6 +27,10 @@ const ConcertActivity = () => {
     totalResults, 
     isSearching 
   } = useConcertsSearch(concerts);
+
+  if (loading) {
+    return <div className="text-center py-10">Chargement des concerts...</div>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
