@@ -1,4 +1,3 @@
-
 import { Music } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -25,15 +24,17 @@ export const getConcerts = async (): Promise<Concert[]> => {
     .select('*')
     .order('date', { ascending: true });
 
-  if (error) {
+  if (error || !data) {
     console.error('Error fetching concerts:', error);
     return [];
   }
 
-  return data.map(concert => ({
-    ...concert,
-    icon: Music // Add icon since it's not stored in DB
-  }));
+  return (data as Partial<Concert>[])
+    .filter((concert): concert is Concert => !!concert && !!concert.id && !!concert.name)
+    .map(concert => ({
+      ...concert,
+      icon: Music
+    } as Concert));
 };
 
 // Initialize with empty array, will be populated after fetch

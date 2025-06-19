@@ -489,6 +489,60 @@ export type Database = {
           },
         ]
       }
+      concerts: {
+        Row: {
+          artist: string
+          created_at: string | null
+          date: string
+          description: string
+          genre: string
+          icon: string
+          id: number
+          image: string
+          location: string
+          name: string
+          offer: string
+          price: number
+          rating: number
+          time: string
+          updated_at: string | null
+        }
+        Insert: {
+          artist: string
+          created_at?: string | null
+          date: string
+          description: string
+          genre: string
+          icon?: string
+          id?: number
+          image: string
+          location: string
+          name: string
+          offer: string
+          price: number
+          rating: number
+          time: string
+          updated_at?: string | null
+        }
+        Update: {
+          artist?: string
+          created_at?: string | null
+          date?: string
+          description?: string
+          genre?: string
+          icon?: string
+          id?: number
+          image?: string
+          location?: string
+          name?: string
+          offer?: string
+          price?: number
+          rating?: number
+          time?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       diving_reservations: {
         Row: {
           created_at: string
@@ -1174,9 +1228,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_current_user_role: {
+      is_admin: {
         Args: Record<PropertyKey, never>
-        Returns: string
+        Returns: boolean
       }
     }
     Enums: {
