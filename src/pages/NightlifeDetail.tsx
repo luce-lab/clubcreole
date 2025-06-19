@@ -1,8 +1,9 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { nightEvents } from "@/components/nightlife/NightlifeTypes";
+import { getNightlifeEvents, NightEvent } from "@/components/nightlife/NightlifeTypes";
 import BackButton from "@/components/common/BackButton";
 
 // Imported components
@@ -19,25 +20,37 @@ const NightlifeDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [event, setEvent] = useState<any>(null);
+  const [event, setEvent] = useState<NightEvent | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isReservationDialogOpen, setIsReservationDialogOpen] = useState(false);
   const [isInvitationDialogOpen, setIsInvitationDialogOpen] = useState(false);
   const [isEventPassed, setIsEventPassed] = useState(false);
 
   useEffect(() => {
-    // Trouver l'événement correspondant à l'ID dans l'URL
-    const foundEvent = nightEvents.find(e => e.id === parseInt(id || "0"));
-    if (foundEvent) {
-      setEvent(foundEvent);
-      
-      // Vérifier si l'événement est passé (pour cet exemple, on vérifie si la date contient "Mercredis" ou "Jeudis")
-      // Dans une application réelle, vous compareriez avec la date actuelle
-      const isPassed = foundEvent.date.includes("Mercredis") || foundEvent.date.includes("Jeudis");
-      setIsEventPassed(isPassed);
+    const fetchEvent = async () => {
+      try {
+        const events = await getNightlifeEvents();
+        const foundEvent = events.find(e => e.id === parseInt(id || "0"));
+        
+        if (foundEvent) {
+          setEvent(foundEvent);
+          
+          // Vérifier si l'événement est passé (pour cet exemple, on vérifie si la date contient "Mercredis" ou "Jeudis")
+          // Dans une application réelle, vous compareriez avec la date actuelle
+          const isPassed = foundEvent.date.includes("Mercredis") || foundEvent.date.includes("Jeudis");
+          setIsEventPassed(isPassed);
+        } else {
+          navigate("/soiree");
+        }
+      } catch (error) {
+        console.error('Error loading event:', error);
+        navigate("/soiree");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    } else {
-      navigate("/soiree");
-    }
+    fetchEvent();
   }, [id, navigate]);
 
   const handleShare = () => {
@@ -60,10 +73,18 @@ const NightlifeDetail = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-20 flex justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
+
   if (!event) {
     return (
       <div className="container mx-auto px-4 py-20 flex justify-center">
-        <p>Chargement de l'événement...</p>
+        <p>Événement non trouvé</p>
       </div>
     );
   }

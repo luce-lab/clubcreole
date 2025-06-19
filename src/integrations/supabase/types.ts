@@ -495,6 +495,7 @@ export type Database = {
           created_at: string | null
           date: string
           description: string
+          gallery_images: Json | null
           genre: string
           icon: string
           id: number
@@ -512,6 +513,7 @@ export type Database = {
           created_at?: string | null
           date: string
           description: string
+          gallery_images?: Json | null
           genre: string
           icon?: string
           id?: number
@@ -529,6 +531,7 @@ export type Database = {
           created_at?: string | null
           date?: string
           description?: string
+          gallery_images?: Json | null
           genre?: string
           icon?: string
           id?: number
@@ -763,6 +766,57 @@ export type Database = {
           email?: string
           id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      nightlife_events: {
+        Row: {
+          created_at: string | null
+          date: string
+          description: string
+          features: Json
+          id: number
+          image: string
+          name: string
+          offer: string
+          price: number
+          rating: number
+          time: string
+          type: string
+          updated_at: string | null
+          venue: string
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          description: string
+          features?: Json
+          id?: number
+          image: string
+          name: string
+          offer: string
+          price: number
+          rating?: number
+          time: string
+          type: string
+          updated_at?: string | null
+          venue: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          description?: string
+          features?: Json
+          id?: number
+          image?: string
+          name?: string
+          offer?: string
+          price?: number
+          rating?: number
+          time?: string
+          type?: string
+          updated_at?: string | null
+          venue?: string
         }
         Relationships: []
       }
