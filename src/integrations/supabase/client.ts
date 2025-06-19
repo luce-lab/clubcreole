@@ -12,6 +12,7 @@ const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
+// Initialize Supabase client
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
     storage: localStorage,
@@ -21,32 +22,32 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
   }
 });
 
-// Completely clear all auth data
-export const cleanupAuthState = () => {
-  try {
-    // Clear all localStorage items related to Supabase auth
-    Object.keys(localStorage).forEach(key => {
-      if (key.includes('supabase') || key.includes('sb-')) {
-        localStorage.removeItem(key);
-      }
-    });
+// Completely clear all auth data (for debugging) - not used in the app but can be used to clear the auth state if needed (e.g. if you want to test the auth flow)
+// export const cleanupAuthState = () => {
+//   try {
+//     // Clear all localStorage items related to Supabase auth
+//     Object.keys(localStorage).forEach(key => {
+//       if (key.includes('supabase') || key.includes('sb-')) {
+//         localStorage.removeItem(key);
+//       }
+//     });
     
-    // Clear all sessionStorage items related to Supabase auth
-    Object.keys(sessionStorage || {}).forEach(key => {
-      if (key.includes('supabase') || key.includes('sb-')) {
-        sessionStorage.removeItem(key);
-      }
-    });
+//     // Clear all sessionStorage items related to Supabase auth
+//     Object.keys(sessionStorage || {}).forEach(key => {
+//       if (key.includes('supabase') || key.includes('sb-')) {
+//         sessionStorage.removeItem(key);
+//       }
+//     });
     
-    // Clear any cookies related to auth (optional but thorough)
-    document.cookie.split(';').forEach(cookie => {
-      const [name] = cookie.split('=');
-      if (name.trim().includes('sb-')) {
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-      }
-    });
+//     // Clear any cookies related to auth (optional but thorough)
+//     document.cookie.split(';').forEach(cookie => {
+//       const [name] = cookie.split('=');
+//       if (name.trim().includes('sb-')) {
+//         document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+//       }
+//     });
     
-  } catch (error) {
-    console.error('Error cleaning up auth state:', error);
-  }
-};
+//   } catch (error) {
+//     console.error('Error cleaning up auth state:', error);
+//   }
+// };
