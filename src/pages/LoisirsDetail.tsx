@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { Loisir } from "@/components/loisirs/types";
 import { getLoisirById } from "@/services/loisirService";
 import LoisirsDetailHeader from "@/components/loisirs/LoisirsDetailHeader";
@@ -59,43 +61,65 @@ const LoisirsDetail = () => {
   };
 
   if (loading) {
-    return <LoisirsDetailSkeleton />;
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1">
+          <LoisirsDetailSkeleton />
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
   if (error || !loisir) {
-    return <LoisirsDetailError error={error || "Activité non trouvée"} />;
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1">
+          <LoisirsDetailError error={error || "Activité non trouvée"} />
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <LoisirsDetailHeader title={loisir.title} />
-      
-      <LoisirsGallery 
-        mainImage={loisir.image} 
-        galleryImages={loisir.gallery_images as string[]} 
-        title={loisir.title} 
-      />
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-2">
-          <LoisirsDetailDescription 
-            title={loisir.title}
-            description={loisir.description}
-            location={loisir.location}
-            startDate={loisir.start_date}
-            endDate={loisir.end_date}
-            currentParticipants={loisir.current_participants}
-            maxParticipants={loisir.max_participants}
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <div className="container mx-auto px-4 py-8">
+          <LoisirsDetailHeader title={loisir.title} />
+          
+          <LoisirsGallery 
+            mainImage={loisir.image} 
+            galleryImages={loisir.gallery_images as string[]} 
+            title={loisir.title} 
           />
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="md:col-span-2">
+              <LoisirsDetailDescription 
+                title={loisir.title}
+                description={loisir.description}
+                location={loisir.location}
+                startDate={loisir.start_date}
+                endDate={loisir.end_date}
+                currentParticipants={loisir.current_participants}
+                maxParticipants={loisir.max_participants}
+              />
+            </div>
+            
+            <div className="md:col-span-1">
+              <LoisirsRegistrationBlock 
+                loisir={loisir} 
+                onUpdateLoisir={handleUpdateLoisir} 
+              />
+            </div>
+          </div>
         </div>
-        
-        <div className="md:col-span-1">
-          <LoisirsRegistrationBlock 
-            loisir={loisir} 
-            onUpdateLoisir={handleUpdateLoisir} 
-          />
-        </div>
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 };

@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { getNightlifeEvents, NightEvent } from "@/components/nightlife/NightlifeTypes";
 import BackButton from "@/components/common/BackButton";
 
@@ -75,64 +77,78 @@ const NightlifeDetail = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-20 flex justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
+        </main>
+        <Footer />
       </div>
     );
   }
 
   if (!event) {
     return (
-      <div className="container mx-auto px-4 py-20 flex justify-center">
-        <p>Événement non trouvé</p>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <p>Événement non trouvé</p>
+        </main>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <BackButton backTo="/soiree" />
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <div className="container mx-auto px-4 py-8">
+          <BackButton backTo="/soiree" />
 
-      {/* Image et titre */}
-      <EventHeader event={event} />
+          {/* Image et titre */}
+          <EventHeader event={event} />
 
-      {/* Alerte si l'événement est passé */}
-      {isEventPassed && <PastEventAlert />}
+          {/* Alerte si l'événement est passé */}
+          {isEventPassed && <PastEventAlert />}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-2 space-y-8">
-          {/* Informations sur l'événement */}
-          <EventDetailsCard event={event} onShare={handleShare} />
-          
-          {/* Caractéristiques */}
-          <EventFeatures event={event} />
-          
-          {/* Avantages Club Créole */}
-          <EventAdvantages event={event} />
-        </div>
-        
-        {/* Carte de réservation */}
-        <div>
-          <EventSideCard 
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="md:col-span-2 space-y-8">
+              {/* Informations sur l'événement */}
+              <EventDetailsCard event={event} onShare={handleShare} />
+              
+              {/* Caractéristiques */}
+              <EventFeatures event={event} />
+              
+              {/* Avantages Club Créole */}
+              <EventAdvantages event={event} />
+            </div>
+            
+            {/* Carte de réservation */}
+            <div>
+              <EventSideCard 
+                event={event}
+                isEventPassed={isEventPassed}
+                onOpenReservationDialog={() => setIsReservationDialogOpen(true)}
+                onOpenInvitationDialog={() => setIsInvitationDialogOpen(true)}
+              />
+            </div>
+          </div>
+
+          {/* Dialogs */}
+          <ReservationDialog 
             event={event}
-            isEventPassed={isEventPassed}
-            onOpenReservationDialog={() => setIsReservationDialogOpen(true)}
-            onOpenInvitationDialog={() => setIsInvitationDialogOpen(true)}
+            isOpen={isReservationDialogOpen} 
+            onOpenChange={setIsReservationDialogOpen} 
+          />
+          
+          <InvitationDialog 
+            isOpen={isInvitationDialogOpen} 
+            onOpenChange={setIsInvitationDialogOpen} 
           />
         </div>
-      </div>
-
-      {/* Dialogs */}
-      <ReservationDialog 
-        event={event}
-        isOpen={isReservationDialogOpen} 
-        onOpenChange={setIsReservationDialogOpen} 
-      />
-      
-      <InvitationDialog 
-        isOpen={isInvitationDialogOpen} 
-        onOpenChange={setIsInvitationDialogOpen} 
-      />
+      </main>
+      <Footer />
     </div>
   );
 };

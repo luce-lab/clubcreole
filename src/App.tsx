@@ -15,7 +15,14 @@ import VoyanceActivity from "./pages/VoyanceActivity";
 import TravelActivity from "./pages/TravelActivity";
 import Offers from "./pages/Offers";
 import PartnersManagement from "./pages/PartnersManagement";
-import TravelDetail from "./pages/TravelDetail";
+import VoyageDetail from "./pages/VoyageDetail";
+import LoisirsDetail from "./pages/LoisirsDetail";
+import ConcertDetail from "./pages/ConcertDetail";
+import NightlifeDetail from "./pages/NightlifeDetail";
+import CarRentalDetail from "./pages/CarRentalDetail";
+import RestaurantDetail from "./pages/RestaurantDetail";
+import AccommodationDetail from "./pages/AccommodationDetail";
+import Offer from "./pages/OfferDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
@@ -32,19 +39,34 @@ function App() {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/loisirs" element={<LoisirsActivity />} />
+          <Route path="/loisirs/:id" element={<LoisirsDetail />} />
           <Route path="/restauration" element={<RestaurantActivity />} />
+          <Route path="/restauration/:id" element={<RestaurantDetail />} />
           <Route path="/hebergements" element={<AccommodationActivity />} />
+          <Route path="/hebergements/:id" element={<AccommodationDetail />} />
           <Route path="/concerts" element={<ConcertActivity />} />
+          <Route path="/concerts/:id" element={<ConcertDetail />} />
           <Route path="/soiree" element={<NightlifeActivity />} />
+          <Route path="/soiree/:id" element={<NightlifeDetail />} />
           <Route path="/location" element={<CarRentalActivity />} />
+          <Route path="/location/:id" element={<CarRentalDetail />} />
           <Route path="/plongee" element={<DivingActivity />} />
           <Route path="/canoe" element={<CanoeActivity />} />
           <Route path="/randonnee" element={<HikingActivity />} />
           <Route path="/voyance" element={<VoyanceActivity />} />
           <Route path="/voyages" element={<TravelActivity />} />
+          <Route path="/voyages/:id" element={<VoyageDetail />} />
           <Route path="/offers" element={<Offers />} />
+          <Route path="/offers/:id" element={<OfferDetail />} />
           <Route path="/partners" element={<PartnersManagement />} />
-          <Route path="/voyages/:id" element={<TravelDetail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/users" element={<UsersManagement />} />
+          <Route path="/accommodations-management" element={<AccommodationsManagement />} />
+          <Route path="/clients" element={<Clients />} />
+          <Route path="/loisirs-management" element={<LoisirsManagement />} />
+          <Route path="/car-rental-management" element={<CarRentalManagement />} />
         </Routes>
       </BrowserRouter>
       <Toaster />

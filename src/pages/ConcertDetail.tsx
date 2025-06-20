@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 import { concerts, Concert } from "@/components/concert/ConcertTypes";
 import ConcertHeader from "@/components/concert/ConcertHeader";
@@ -23,8 +25,6 @@ const ConcertDetail = () => {
     const foundConcert = concerts.find(c => c.id === parseInt(id || "0"));
     if (foundConcert) {
       setConcert(foundConcert);
-      
-      // The code setting the selectedDate from the concert date is moved to ReservationCard component
     } else {
       navigate("/concerts");
     }
@@ -52,29 +52,39 @@ const ConcertDetail = () => {
 
   if (!concert) {
     return (
-      <div className="container mx-auto px-4 py-20 flex justify-center">
-        <p>Chargement du concert...</p>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <p>Chargement du concert...</p>
+        </main>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <BackButton backTo="/concerts" />
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <div className="container mx-auto px-4 py-8">
+          <BackButton backTo="/concerts" />
 
-      <ConcertHeader concert={concert} />
+          <ConcertHeader concert={concert} />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-2 space-y-8">
-          <ConcertInfo concert={concert} onShare={handleShare} />
-          <ConcertAdvantage concert={concert} />
-          <ConcertAdditionalInfo />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="md:col-span-2 space-y-8">
+              <ConcertInfo concert={concert} onShare={handleShare} />
+              <ConcertAdvantage concert={concert} />
+              <ConcertAdditionalInfo />
+            </div>
+            
+            <div>
+              <ReservationCard concert={concert} />
+            </div>
+          </div>
         </div>
-        
-        <div>
-          <ReservationCard concert={concert} />
-        </div>
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 };
