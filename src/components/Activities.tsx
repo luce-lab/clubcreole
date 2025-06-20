@@ -1,5 +1,5 @@
 
-import { Coffee, Bed, Music, Martini, Car, Gamepad2, Mountain, Ship, Waves, Eye } from "lucide-react";
+import { Coffee, Bed, Music, Martini, Car, Gamepad2, Mountain, Ship, Waves, Eye, Plane } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const activities = [
@@ -13,6 +13,7 @@ const activities = [
   { icon: Ship, name: "Canoë Kayak", path: "/canoe" },
   { icon: Mountain, name: "Randonnée", path: "/randonnee" },
   { icon: Eye, name: "Voyance", path: "/voyance" },
+  { icon: Plane, name: "Voyages", path: "/voyages" },
 ];
 
 export const Activities = () => {

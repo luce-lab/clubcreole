@@ -34,6 +34,7 @@ import CanoeActivity from "./pages/CanoeActivity";
 import JetSkiActivity from "./pages/JetSkiActivity";
 import HikingActivity from "./pages/HikingActivity";
 import VoyanceActivity from "./pages/VoyanceActivity";
+import TravelActivity from "./pages/TravelActivity";
 import NotFound from "./pages/NotFound";
 import Reservations from "./pages/Reservations";
 import Clients from "./pages/Clients";
@@ -80,6 +81,7 @@ function App() {
               <Route path="/jet-ski" element={<JetSkiActivity />} />
               <Route path="/randonnee" element={<HikingActivity />} />
               <Route path="/voyance" element={<VoyanceActivity />} />
+              <Route path="/voyages" element={<TravelActivity />} />
               <Route path="/reservations" element={<Reservations />} />
               <Route path="/clients" element={<Clients />} />
               <Route path="/offers" element={<Offers />} />

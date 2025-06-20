@@ -1287,6 +1287,80 @@ export type Database = {
           },
         ]
       }
+      travel_offers: {
+        Row: {
+          created_at: string | null
+          current_participants: number | null
+          departure_date: string | null
+          departure_location: string
+          description: string
+          destination: string
+          duration_days: number
+          exclusions: Json | null
+          gallery_images: Json | null
+          id: number
+          image: string | null
+          inclusions: Json | null
+          is_active: boolean | null
+          max_participants: number | null
+          partner_id: string | null
+          price: number
+          return_date: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_participants?: number | null
+          departure_date?: string | null
+          departure_location: string
+          description: string
+          destination: string
+          duration_days: number
+          exclusions?: Json | null
+          gallery_images?: Json | null
+          id?: number
+          image?: string | null
+          inclusions?: Json | null
+          is_active?: boolean | null
+          max_participants?: number | null
+          partner_id?: string | null
+          price: number
+          return_date?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_participants?: number | null
+          departure_date?: string | null
+          departure_location?: string
+          description?: string
+          destination?: string
+          duration_days?: number
+          exclusions?: Json | null
+          gallery_images?: Json | null
+          id?: number
+          image?: string | null
+          inclusions?: Json | null
+          is_active?: boolean | null
+          max_participants?: number | null
+          partner_id?: string | null
+          price?: number
+          return_date?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "travel_offers_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_consumption: {
         Row: {
           amount_consumed: number
