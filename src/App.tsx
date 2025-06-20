@@ -16,6 +16,14 @@ import TravelActivity from "./pages/TravelActivity";
 import Offers from "./pages/Offers";
 import PartnersManagement from "./pages/PartnersManagement";
 import TravelDetail from "./pages/TravelDetail";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import UsersManagement from "./pages/UsersManagement";
+import AccommodationsManagement from "./pages/AccommodationsManagement";
+import Clients from "./pages/Clients";
+import LoisirsManagement from "./pages/LoisirsManagement";
+import CarRentalManagement from "./pages/CarRentalManagement";
 
 function App() {
   return (
