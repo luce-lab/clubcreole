@@ -2,9 +2,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { VoyanceMediumCard } from "./VoyanceMediumCard";
-import { VoyanceEmptyState } from "./VoyanceEmptyState";
-import { VoyanceLoader } from "./VoyanceLoader";
-import { VoyanceError } from "./VoyanceError";
+import VoyanceEmptyState from "./VoyanceEmptyState";
+import VoyanceLoader from "./VoyanceLoader";
+import VoyanceError from "./VoyanceError";
 import type { VoyanceMedium } from "./types";
 
 interface VoyanceMediumsListProps {

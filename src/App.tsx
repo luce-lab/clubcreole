@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -32,6 +33,7 @@ import NightlifeDetail from "./pages/NightlifeDetail";
 import CanoeActivity from "./pages/CanoeActivity";
 import JetSkiActivity from "./pages/JetSkiActivity";
 import HikingActivity from "./pages/HikingActivity";
+import VoyanceActivity from "./pages/VoyanceActivity";
 import NotFound from "./pages/NotFound";
 import Reservations from "./pages/Reservations";
 import Clients from "./pages/Clients";
@@ -77,6 +79,7 @@ function App() {
               <Route path="/canoe" element={<CanoeActivity />} />
               <Route path="/jet-ski" element={<JetSkiActivity />} />
               <Route path="/randonnee" element={<HikingActivity />} />
+              <Route path="/voyance" element={<VoyanceActivity />} />
               <Route path="/reservations" element={<Reservations />} />
               <Route path="/clients" element={<Clients />} />
               <Route path="/offers" element={<Offers />} />
