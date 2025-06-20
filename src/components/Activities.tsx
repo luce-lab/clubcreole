@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { Coffee, Bed, Music, Martini, Car, Gamepad2, Mountain, Ship, Waves, Eye, Plane, LucideProps } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getActivities, Activity } from "../services/activityService";
-import { addVoyagesActivity } from "../scripts/addVoyagesActivity";
 
 // Map pour faire correspondre les noms d'icônes de la DB aux composants React
 const iconMap: { [key: string]: React.ComponentType<LucideProps> } = {
@@ -29,13 +28,10 @@ export const Activities = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        // Ajouter l'activité Voyages si elle n'existe pas
-        await addVoyagesActivity();
-        
-        // Récupérer toutes les activités
+        // Récupérer seulement les activités actives
         const data = await getActivities();
-        console.log('Activités récupérées:', data);
-        console.log('Nombre d\'activités:', data.length);
+        console.log('Activités actives récupérées:', data);
+        console.log('Nombre d\'activités actives:', data.length);
         
         setActivities(data);
       } catch (err) {
@@ -78,12 +74,13 @@ export const Activities = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
           {activities.map((activity) => {
             const IconComponent = iconMap[activity.icon_name];
-            console.log(`Activité: ${activity.name}, Icône: ${activity.icon_name}, Composant trouvé: ${!!IconComponent}`);
+            console.log(`Activité: ${activity.name}, Icône: ${activity.icon_name}, Composant trouvé: ${!!IconComponent}, Active: ${activity.is_active}`);
             
             if (!IconComponent) {
               console.warn(`Icône non trouvée pour l'activité: ${activity.name} (${activity.icon_name})`);
               return null;
             }
+            
             return (
               <div
                 key={activity.id}

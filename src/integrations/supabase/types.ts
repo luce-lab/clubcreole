@@ -71,6 +71,7 @@ export type Database = {
           created_at: string
           icon_name: string
           id: number
+          is_active: boolean
           name: string
           path: string
         }
@@ -78,6 +79,7 @@ export type Database = {
           created_at?: string
           icon_name: string
           id?: number
+          is_active?: boolean
           name: string
           path: string
         }
@@ -85,6 +87,7 @@ export type Database = {
           created_at?: string
           icon_name?: string
           id?: number
+          is_active?: boolean
           name?: string
           path?: string
         }
