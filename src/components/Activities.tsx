@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from "react";
-import { Coffee, Bed, Music, Martini, Car, Gamepad2, Mountain, Ship, Waves, Eye, LucideProps } from "lucide-react";
+import { Coffee, Bed, Music, Martini, Car, Gamepad2, Mountain, Ship, Waves, Eye, Plane, LucideProps } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getActivities, Activity } from "../services/activityService";
 
@@ -15,6 +16,7 @@ const iconMap: { [key: string]: React.ComponentType<LucideProps> } = {
   Ship,
   Mountain,
   Eye,
+  Plane,
 };
 
 export const Activities = () => {
@@ -65,7 +67,7 @@ export const Activities = () => {
         <h2 className="text-3xl font-bold text-center text-creole-blue mb-12">
           Nos Activités
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
           {activities.map((activity) => {
             const IconComponent = iconMap[activity.icon_name];
             if (!IconComponent) {
