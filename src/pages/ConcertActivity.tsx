@@ -1,6 +1,10 @@
+
 import { useEffect, useState } from "react";
 import { concerts } from "@/components/concert/ConcertTypes";
 import { useConcertsSearch } from "@/hooks/useConcertsSearch";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import ConcertPageHeader from "@/components/concert/ConcertPageHeader";
 import ConcertList from "@/components/concert/ConcertList";
 import ConcertInfoCard from "@/components/concert/ConcertInfoCard";
@@ -11,6 +15,7 @@ import { getConcerts } from "@/components/concert/ConcertTypes";
 const ConcertActivity = () => {
   const [concerts, setConcerts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getConcerts().then(data => {
@@ -34,6 +39,17 @@ const ConcertActivity = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <div className="mb-6">
+        <Button 
+          variant="outline" 
+          onClick={() => navigate('/')}
+          className="mb-6"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Retour à l'accueil
+        </Button>
+      </div>
+
       <ConcertPageHeader 
         title="Concerts & Événements Musicaux"
         description="Découvrez les concerts partenaires du Club Créole et profitez d'offres exclusives"

@@ -1,3 +1,7 @@
+
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import CarRentalHeader from "@/components/car-rental/CarRentalHeader";
 import CarRentalCard from "@/components/car-rental/CarRentalCard";
 import ReviewCarousel from "@/components/car-rental/ReviewCarousel";
@@ -8,6 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
 const CarRentalActivity = () => {
+  const navigate = useNavigate();
   const { carRentals, loading: carRentalsLoading, error: carRentalsError } = useCarRentals();
   const { reviews, loading: reviewsLoading, error: reviewsError } = useClientReviews();
 
@@ -26,6 +31,17 @@ const CarRentalActivity = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <div className="mb-6">
+        <Button 
+          variant="outline" 
+          onClick={() => navigate('/')}
+          className="mb-6"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Retour à l'accueil
+        </Button>
+      </div>
+
       <CarRentalHeader />
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
