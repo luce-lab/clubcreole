@@ -32,7 +32,7 @@ export const Header = () => {
               Activités
             </a>
             <a href="#advantages" className="text-gray-600 hover:text-creole-green transition-colors">
-              Avantages
+              Bons Plans
             </a>
             <a href="#pricing" className="text-gray-600 hover:text-creole-green transition-colors">
               Prix
