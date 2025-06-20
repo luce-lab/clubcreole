@@ -304,6 +304,7 @@ export type Database = {
           category: string
           company_id: number
           created_at: string | null
+          gallery_images: Json | null
           id: number
           image: string
           is_active: boolean
@@ -318,6 +319,7 @@ export type Database = {
           category: string
           company_id: number
           created_at?: string | null
+          gallery_images?: Json | null
           id?: number
           image: string
           is_active?: boolean
@@ -332,6 +334,7 @@ export type Database = {
           category?: string
           company_id?: number
           created_at?: string | null
+          gallery_images?: Json | null
           id?: number
           image?: string
           is_active?: boolean
@@ -355,6 +358,7 @@ export type Database = {
         Row: {
           created_at: string | null
           description: string
+          gallery_images: Json | null
           icon_name: string
           id: number
           image: string
@@ -369,6 +373,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           description: string
+          gallery_images?: Json | null
           icon_name: string
           id?: number
           image: string
@@ -383,6 +388,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           description?: string
+          gallery_images?: Json | null
           icon_name?: string
           id?: number
           image?: string
@@ -775,6 +781,7 @@ export type Database = {
           date: string
           description: string
           features: Json
+          gallery_images: Json | null
           id: number
           image: string
           name: string
@@ -791,12 +798,13 @@ export type Database = {
           date: string
           description: string
           features?: Json
+          gallery_images?: Json | null
           id?: number
           image: string
           name: string
           offer: string
           price: number
-          rating?: number
+          rating: number
           time: string
           type: string
           updated_at?: string | null
@@ -807,6 +815,7 @@ export type Database = {
           date?: string
           description?: string
           features?: Json
+          gallery_images?: Json | null
           id?: number
           image?: string
           name?: string
@@ -916,6 +925,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          admin_type: Database["public"]["Enums"]["admin_type"] | null
           company_id: number | null
           created_at: string
           email: string
@@ -926,6 +936,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          admin_type?: Database["public"]["Enums"]["admin_type"] | null
           company_id?: number | null
           created_at?: string
           email: string
@@ -936,6 +947,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          admin_type?: Database["public"]["Enums"]["admin_type"] | null
           company_id?: number | null
           created_at?: string
           email?: string
@@ -1108,6 +1120,7 @@ export type Database = {
       restaurants: {
         Row: {
           description: string
+          gallery_images: Json | null
           icon: string
           id: number
           image: string
@@ -1119,6 +1132,7 @@ export type Database = {
         }
         Insert: {
           description: string
+          gallery_images?: Json | null
           icon: string
           id?: number
           image: string
@@ -1130,6 +1144,7 @@ export type Database = {
         }
         Update: {
           description?: string
+          gallery_images?: Json | null
           icon?: string
           id?: number
           image?: string
@@ -1286,9 +1301,17 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      is_partner_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      is_super_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      admin_type: "super_admin" | "partner_admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1403,6 +1426,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      admin_type: ["super_admin", "partner_admin"],
+    },
   },
 } as const
