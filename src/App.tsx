@@ -1,97 +1,41 @@
-
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/auth";
 import Index from "./pages/Index";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import UsersManagement from "./pages/UsersManagement";
-import UserDetailsPage from "./pages/users/UserDetailsPage";
-import PartnersManagement from "./pages/PartnersManagement";
-import LoisirsActivity from "./pages/LoisirsActivity";
-import LoisirsDetail from "./pages/LoisirsDetail";
-import LoisirsManagement from "./pages/LoisirsManagement";
-import RestaurantActivity from "./pages/RestaurantActivity";
-import RestaurantDetail from "./pages/RestaurantDetail";
-import AccommodationActivity from "./pages/AccommodationActivity";
-import AccommodationDetail from "./pages/AccommodationDetail";
-import AccommodationsManagement from "./pages/AccommodationsManagement";
-import CarRentalActivity from "./pages/CarRentalActivity";
-import CarRentalDetail from "./pages/CarRentalDetail";
-import CarRentalManagement from "./pages/CarRentalManagement";
-import FleetManagement from "./pages/FleetManagement";
-import DivingActivity from "./pages/DivingActivity";
-import DivingManagement from "./pages/DivingManagement";
-import ConcertActivity from "./pages/ConcertActivity";
-import ConcertDetail from "./pages/ConcertDetail";
-import NightlifeActivity from "./pages/NightlifeActivity";
-import NightlifeDetail from "./pages/NightlifeDetail";
-import CanoeActivity from "./pages/CanoeActivity";
-import JetSkiActivity from "./pages/JetSkiActivity";
-import HikingActivity from "./pages/HikingActivity";
-import VoyanceActivity from "./pages/VoyanceActivity";
-import TravelActivity from "./pages/TravelActivity";
-import NotFound from "./pages/NotFound";
-import Reservations from "./pages/Reservations";
-import Clients from "./pages/Clients";
+import Loisirs from "./pages/Loisirs";
+import Restauration from "./pages/Restauration";
+import Hebergements from "./pages/Hebergements";
+import Concerts from "./pages/Concerts";
+import Soiree from "./pages/Soiree";
+import Location from "./pages/Location";
+import Plongee from "./pages/Plongee";
+import Canoe from "./pages/Canoe";
+import Randonnee from "./pages/Randonnee";
+import Voyance from "./pages/Voyance";
+import Voyages from "./pages/TravelActivity";
 import Offers from "./pages/Offers";
-import OfferDetail from "./pages/OfferDetail";
-
-const queryClient = new QueryClient();
+import PartnersManagement from "./pages/PartnersManagement";
+import TravelDetail from "./pages/TravelDetail";
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/users" element={<UsersManagement />} />
-              <Route path="/users/:id" element={<UserDetailsPage />} />
-              <Route path="/partners" element={<PartnersManagement />} />
-              <Route path="/loisirs" element={<LoisirsActivity />} />
-              <Route path="/loisirs/:id" element={<LoisirsDetail />} />
-              <Route path="/loisirs-management" element={<LoisirsManagement />} />
-              <Route path="/restauration" element={<RestaurantActivity />} />
-              <Route path="/restauration/:id" element={<RestaurantDetail />} />
-              <Route path="/hebergements" element={<AccommodationActivity />} />
-              <Route path="/hebergements/:id" element={<AccommodationDetail />} />
-              <Route path="/accommodations-management" element={<AccommodationsManagement />} />
-              <Route path="/location" element={<CarRentalActivity />} />
-              <Route path="/location/:id" element={<CarRentalDetail />} />
-              <Route path="/car-rental-management" element={<CarRentalManagement />} />
-              <Route path="/fleet-management" element={<FleetManagement />} />
-              <Route path="/plongee" element={<DivingActivity />} />
-              <Route path="/diving-management" element={<DivingManagement />} />
-              <Route path="/concerts" element={<ConcertActivity />} />
-              <Route path="/concerts/:id" element={<ConcertDetail />} />
-              <Route path="/soiree" element={<NightlifeActivity />} />
-              <Route path="/soiree/:id" element={<NightlifeDetail />} />
-              <Route path="/canoe" element={<CanoeActivity />} />
-              <Route path="/jet-ski" element={<JetSkiActivity />} />
-              <Route path="/randonnee" element={<HikingActivity />} />
-              <Route path="/voyance" element={<VoyanceActivity />} />
-              <Route path="/voyages" element={<TravelActivity />} />
-              <Route path="/reservations" element={<Reservations />} />
-              <Route path="/clients" element={<Clients />} />
-              <Route path="/offers" element={<Offers />} />
-              <Route path="/offers/:id" element={<OfferDetail />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/loisirs" element={<Loisirs />} />
+        <Route path="/restauration" element={<Restauration />} />
+        <Route path="/hebergements" element={<Hebergements />} />
+        <Route path="/concerts" element={<Concerts />} />
+        <Route path="/soiree" element={<Soiree />} />
+        <Route path="/location" element={<Location />} />
+        <Route path="/plongee" element={<Plongee />} />
+        <Route path="/canoe" element={<Canoe />} />
+        <Route path="/randonnee" element={<Randonnee />} />
+        <Route path="/voyance" element={<Voyance />} />
+        <Route path="/voyages" element={<Voyages />} />
+        <Route path="/offers" element={<Offers />} />
+        <Route path="/partners" element={<PartnersManagement />} />
+        <Route path="/voyages/:id" element={<TravelDetail />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
