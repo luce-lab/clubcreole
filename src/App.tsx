@@ -1,5 +1,6 @@
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "@/components/ui/toaster";
 import Index from "./pages/Index";
 import LoisirsActivity from "./pages/LoisirsActivity";
 import RestaurantActivity from "./pages/RestaurantActivity";
@@ -18,25 +19,28 @@ import TravelDetail from "./pages/TravelDetail";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/loisirs" element={<LoisirsActivity />} />
-        <Route path="/restauration" element={<RestaurantActivity />} />
-        <Route path="/hebergements" element={<AccommodationActivity />} />
-        <Route path="/concerts" element={<ConcertActivity />} />
-        <Route path="/soiree" element={<NightlifeActivity />} />
-        <Route path="/location" element={<CarRentalActivity />} />
-        <Route path="/plongee" element={<DivingActivity />} />
-        <Route path="/canoe" element={<CanoeActivity />} />
-        <Route path="/randonnee" element={<HikingActivity />} />
-        <Route path="/voyance" element={<VoyanceActivity />} />
-        <Route path="/voyages" element={<TravelActivity />} />
-        <Route path="/offers" element={<Offers />} />
-        <Route path="/partners" element={<PartnersManagement />} />
-        <Route path="/voyages/:id" element={<TravelDetail />} />
-      </Routes>
-    </BrowserRouter>
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/loisirs" element={<LoisirsActivity />} />
+          <Route path="/restauration" element={<RestaurantActivity />} />
+          <Route path="/hebergements" element={<AccommodationActivity />} />
+          <Route path="/concerts" element={<ConcertActivity />} />
+          <Route path="/soiree" element={<NightlifeActivity />} />
+          <Route path="/location" element={<CarRentalActivity />} />
+          <Route path="/plongee" element={<DivingActivity />} />
+          <Route path="/canoe" element={<CanoeActivity />} />
+          <Route path="/randonnee" element={<HikingActivity />} />
+          <Route path="/voyance" element={<VoyanceActivity />} />
+          <Route path="/voyages" element={<TravelActivity />} />
+          <Route path="/offers" element={<Offers />} />
+          <Route path="/partners" element={<PartnersManagement />} />
+          <Route path="/voyages/:id" element={<TravelDetail />} />
+        </Routes>
+      </BrowserRouter>
+      <Toaster />
+    </>
   );
 }
 
