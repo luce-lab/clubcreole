@@ -50,10 +50,12 @@ const ConcertActivity = () => {
         </Button>
       </div>
 
-      <ConcertPageHeader 
-        title="Concerts & Événements Musicaux"
-        description="Découvrez les concerts partenaires du Club Créole et profitez d'offres exclusives"
-      />
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-creole-blue">Concerts & Événements Musicaux</h1>
+        <p className="text-gray-600 mt-2">
+          Découvrez les concerts partenaires du Club Créole et profitez d'offres exclusives
+        </p>
+      </div>
 
       <ConcertsSearchBar 
         onSearch={setSearchQuery}
