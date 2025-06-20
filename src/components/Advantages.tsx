@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "./ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 // Mapping des icônes depuis les noms stockés en base
 const iconMap = {
@@ -30,12 +31,15 @@ interface BonPlan {
   icon: keyof typeof iconMap;
   image: string | null;
   badge: string | null;
+  url: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
 }
 
 export const Advantages = () => {
+  const navigate = useNavigate();
+
   const { data: bonsPlans, isLoading, error } = useQuery({
     queryKey: ['bons-plans'],
     queryFn: async () => {
@@ -55,6 +59,15 @@ export const Advantages = () => {
       return data as BonPlan[];
     },
   });
+
+  const handleBonPlanClick = (bonPlan: BonPlan) => {
+    if (bonPlan.url) {
+      console.log(`Navigation vers: ${bonPlan.url}`);
+      navigate(bonPlan.url);
+    } else {
+      console.log(`Aucune URL définie pour: ${bonPlan.title}`);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -173,8 +186,10 @@ export const Advantages = () => {
                       <Button 
                         variant="outline" 
                         className="text-creole-green border-creole-green hover:bg-creole-green hover:text-white w-full mt-2"
+                        onClick={() => handleBonPlanClick(bonPlan)}
+                        disabled={!bonPlan.url}
                       >
-                        En savoir plus
+                        {bonPlan.url ? 'En savoir plus' : 'Bientôt disponible'}
                       </Button>
                     </CardFooter>
                   </Card>
