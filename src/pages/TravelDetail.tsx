@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -54,7 +53,7 @@ const TravelDetail = () => {
             website
           )
         `)
-        .eq('id', id)
+        .eq('id', parseInt(id || '0'))
         .eq('is_active', true)
         .single();
 

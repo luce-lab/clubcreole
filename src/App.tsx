@@ -1,16 +1,17 @@
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import Loisirs from "./pages/Loisirs";
-import Restauration from "./pages/Restauration";
-import Hebergements from "./pages/Hebergements";
-import Concerts from "./pages/Concerts";
-import Soiree from "./pages/Soiree";
-import Location from "./pages/Location";
-import Plongee from "./pages/Plongee";
-import Canoe from "./pages/Canoe";
-import Randonnee from "./pages/Randonnee";
-import Voyance from "./pages/Voyance";
-import Voyages from "./pages/TravelActivity";
+import LoisirsActivity from "./pages/LoisirsActivity";
+import RestaurantActivity from "./pages/RestaurantActivity";
+import AccommodationActivity from "./pages/AccommodationActivity";
+import ConcertActivity from "./pages/ConcertActivity";
+import NightlifeActivity from "./pages/NightlifeActivity";
+import CarRentalActivity from "./pages/CarRentalActivity";
+import DivingActivity from "./pages/DivingActivity";
+import CanoeActivity from "./pages/CanoeActivity";
+import HikingActivity from "./pages/HikingActivity";
+import VoyanceActivity from "./pages/VoyanceActivity";
+import TravelActivity from "./pages/TravelActivity";
 import Offers from "./pages/Offers";
 import PartnersManagement from "./pages/PartnersManagement";
 import TravelDetail from "./pages/TravelDetail";
@@ -20,17 +21,17 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Index />} />
-        <Route path="/loisirs" element={<Loisirs />} />
-        <Route path="/restauration" element={<Restauration />} />
-        <Route path="/hebergements" element={<Hebergements />} />
-        <Route path="/concerts" element={<Concerts />} />
-        <Route path="/soiree" element={<Soiree />} />
-        <Route path="/location" element={<Location />} />
-        <Route path="/plongee" element={<Plongee />} />
-        <Route path="/canoe" element={<Canoe />} />
-        <Route path="/randonnee" element={<Randonnee />} />
-        <Route path="/voyance" element={<Voyance />} />
-        <Route path="/voyages" element={<Voyages />} />
+        <Route path="/loisirs" element={<LoisirsActivity />} />
+        <Route path="/restauration" element={<RestaurantActivity />} />
+        <Route path="/hebergements" element={<AccommodationActivity />} />
+        <Route path="/concerts" element={<ConcertActivity />} />
+        <Route path="/soiree" element={<NightlifeActivity />} />
+        <Route path="/location" element={<CarRentalActivity />} />
+        <Route path="/plongee" element={<DivingActivity />} />
+        <Route path="/canoe" element={<CanoeActivity />} />
+        <Route path="/randonnee" element={<HikingActivity />} />
+        <Route path="/voyance" element={<VoyanceActivity />} />
+        <Route path="/voyages" element={<TravelActivity />} />
         <Route path="/offers" element={<Offers />} />
         <Route path="/partners" element={<PartnersManagement />} />
         <Route path="/voyages/:id" element={<TravelDetail />} />

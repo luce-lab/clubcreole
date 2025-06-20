@@ -66,6 +66,30 @@ export type Database = {
         }
         Relationships: []
       }
+      activities: {
+        Row: {
+          created_at: string
+          icon_name: string
+          id: number
+          name: string
+          path: string
+        }
+        Insert: {
+          created_at?: string
+          icon_name: string
+          id?: number
+          name: string
+          path: string
+        }
+        Update: {
+          created_at?: string
+          icon_name?: string
+          id?: number
+          name?: string
+          path?: string
+        }
+        Relationships: []
+      }
       activity_images: {
         Row: {
           activity_id: number
