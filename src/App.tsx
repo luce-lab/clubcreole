@@ -22,7 +22,7 @@ import NightlifeDetail from "./pages/NightlifeDetail";
 import CarRentalDetail from "./pages/CarRentalDetail";
 import RestaurantDetail from "./pages/RestaurantDetail";
 import AccommodationDetail from "./pages/AccommodationDetail";
-import Offer from "./pages/OfferDetail";
+import OfferDetail from "./pages/OfferDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
