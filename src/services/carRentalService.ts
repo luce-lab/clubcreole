@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import type { 
   CarRentalCompany, 
@@ -110,7 +111,7 @@ export const getCarRentals = async (): Promise<CarRental[]> => {
     console.log(`${models?.length || 0} modèles et ${features.length} caractéristiques récupérés`);
 
     // Traitement des données
-    const carRentals: CarRental[] = companies.map((company: CarRentalCompany) => {
+    const carRentals: CarRental[] = companies.map((company) => {
       // Mapper les modèles pour cette entreprise
       const companyModels = models?.filter(model => model.company_id === company.id) || [];
       const mappedModels: CarModelForDisplay[] = companyModels.map(model => ({
@@ -127,12 +128,27 @@ export const getCarRentals = async (): Promise<CarRental[]> => {
       // Obtenir l'icône Lucide
       const IconComponent = iconMap[company.icon_name] || Car;
 
+      // Safely handle gallery_images as Json type
+      let galleryImages: string[] = [];
+      if (company.gallery_images) {
+        if (Array.isArray(company.gallery_images)) {
+          galleryImages = company.gallery_images as string[];
+        } else if (typeof company.gallery_images === 'string') {
+          try {
+            const parsed = JSON.parse(company.gallery_images);
+            galleryImages = Array.isArray(parsed) ? parsed : [];
+          } catch {
+            galleryImages = [];
+          }
+        }
+      }
+
       return {
         id: company.id,
         name: company.name,
         type: company.type,
         image: company.image,
-        gallery_images: company.gallery_images || [],
+        gallery_images: galleryImages,
         location: company.location,
         description: company.description,
         rating: Number(company.rating),
