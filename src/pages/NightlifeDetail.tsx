@@ -78,7 +78,6 @@ const NightlifeDetail = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
         </main>
@@ -90,7 +89,6 @@ const NightlifeDetail = () => {
   if (!event) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
         <main className="flex-1 flex items-center justify-center">
           <p>Événement non trouvé</p>
         </main>
@@ -101,7 +99,6 @@ const NightlifeDetail = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8">
           <BackButton backTo="/soiree" />

@@ -53,7 +53,6 @@ const ConcertDetail = () => {
   if (!concert) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
         <main className="flex-1 flex items-center justify-center">
           <p>Chargement du concert...</p>
         </main>
@@ -64,7 +63,6 @@ const ConcertDetail = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8">
           <BackButton backTo="/concerts" />

@@ -27,7 +27,6 @@ const CarRentalDetail = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
         <main className="flex-1">
           <div className="container mx-auto px-4 py-8">
             <div className="space-y-8">
@@ -63,7 +62,6 @@ const CarRentalDetail = () => {
   if (error || !carRental) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
         <main className="flex-1">
           <div className="container mx-auto px-4 py-8">
             <BackButton backTo="/location" />
@@ -96,7 +94,6 @@ const CarRentalDetail = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8">
           <BackButton backTo="/location" />
