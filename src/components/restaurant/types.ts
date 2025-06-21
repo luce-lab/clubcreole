@@ -9,4 +9,5 @@ export interface Restaurant {
   rating: number;
   offer: string;
   icon: string;
+  gallery_images?: string[] | null;
 }
