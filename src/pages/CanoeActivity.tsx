@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Ship, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+
 const CanoeActivity = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string>("");
