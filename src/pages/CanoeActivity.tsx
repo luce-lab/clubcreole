@@ -3,13 +3,14 @@ import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Ship } from "lucide-react";
-import BackButton from "@/components/common/BackButton";
+import { Ship, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const CanoeActivity = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string>("");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const availableTimes = ["09:00", "11:00", "14:00", "16:00"];
   const price = 45;
@@ -45,7 +46,16 @@ const CanoeActivity = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <BackButton backTo="/loisirs" />
+      <div className="mb-6">
+        <Button 
+          variant="outline" 
+          onClick={() => navigate('/')}
+          className="mb-6"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Retour à l'accueil
+        </Button>
+      </div>
 
       <div className="flex items-center gap-4 mb-8">
         <Ship className="h-8 w-8 text-creole-green" />
