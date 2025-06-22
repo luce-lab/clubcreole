@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Restaurant } from "@/components/restaurant/types";
+import { Restaurant, getGalleryImages } from "@/components/restaurant/types";
 import { RestaurantReservationForm } from "@/components/restaurant/RestaurantReservationForm";
 import BackButton from "@/components/common/BackButton";
 import RestaurantDetailHeader from "@/components/restaurant/RestaurantDetailHeader";
@@ -69,10 +69,11 @@ const RestaurantDetail = () => {
     return <RestaurantDetailError error={error || "Restaurant non trouvé"} />;
   }
 
-  // Combine main image with gallery images
+  // Combine main image with gallery images using helper function
+  const galleryImagesArray = getGalleryImages(restaurant.gallery_images);
   const galleryPhotos = [
     restaurant.image,
-...(restaurant.gallery_images || [])
+    ...galleryImagesArray
   ];
 
   return (
