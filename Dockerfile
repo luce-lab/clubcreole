@@ -6,19 +6,6 @@ WORKDIR /app
 # Copier les fichiers de configuration
 COPY package*.json ./
 
-# Installer TOUTES les dépendances
-RUN npm ci
-
-# Copier le code source
-COPY . .
-# Étape de build
-FROM node:18-alpine AS builder
-
-WORKDIR /app
-
-# Copier les fichiers de configuration
-COPY package*.json ./
-
 # Installer TOUTES les dépendances (y compris devDependencies pour le build)
 RUN npm ci
 
