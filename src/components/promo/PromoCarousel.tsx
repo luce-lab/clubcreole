@@ -39,38 +39,8 @@ export const PromoCarousel = () => {
     );
   }
 
-  if (error) {
-    return (
-      <section className="py-20 bg-gradient-to-br from-creole-blue/5 to-creole-green/5">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-creole-blue mb-4">
-              Offres Exclusives Club Créole
-            </h2>
-            <p className="text-lg text-red-600 max-w-2xl mx-auto">
-              Une erreur est survenue lors du chargement des promotions.
-            </p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (promotions.length === 0) {
-    return (
-      <section className="py-20 bg-gradient-to-br from-creole-blue/5 to-creole-green/5">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-creole-blue mb-4">
-              Offres Exclusives Club Créole
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Aucune promotion disponible pour le moment.
-            </p>
-          </div>
-        </div>
-      </section>
-    );
+  if (error || promotions.length === 0) {
+    return null;
   }
 
   return (
