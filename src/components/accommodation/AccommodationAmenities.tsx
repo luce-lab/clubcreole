@@ -12,6 +12,20 @@ interface AccommodationAmenitiesProps {
 }
 
 export const AccommodationAmenities = ({ amenities }: AccommodationAmenitiesProps) => {
+  // Filtrer et valider les amenities pour s'assurer qu'elles sont correctement structurées
+  const validAmenities = amenities?.filter(amenity => 
+    amenity && 
+    typeof amenity === 'object' && 
+    amenity.name && 
+    typeof amenity.name === 'string' &&
+    typeof amenity.available === 'boolean'
+  ) || [];
+
+  // Si aucun équipement valide, ne pas afficher la section
+  if (validAmenities.length === 0) {
+    return null;
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -19,7 +33,7 @@ export const AccommodationAmenities = ({ amenities }: AccommodationAmenitiesProp
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {amenities.map((amenity, index) => (
+          {validAmenities.map((amenity, index) => (
             <div key={index} className="flex items-center">
               {amenity.available ? (
                 <Check className="h-5 w-5 text-creole-green mr-2" />

@@ -19,6 +19,48 @@ type RawAmenity = {
   available: boolean;
 };
 
+// Fonction utilitaire pour transformer et valider les amenities
+const transformAmenities = (rawAmenities: any): Amenity[] => {
+  console.log("🔧 Transformation des amenities dans AccommodationDetail:", rawAmenities);
+  
+  if (!rawAmenities) {
+    console.log("❌ Aucune amenity fournie");
+    return [];
+  }
+
+  // Si c'est déjà un array
+  if (Array.isArray(rawAmenities)) {
+    const result = rawAmenities
+      .filter(amenity => amenity && typeof amenity === 'object')
+      .map((amenity: RawAmenity) => ({
+        name: amenity.name || "",
+        available: amenity.available === true
+      }))
+      .filter(amenity => amenity.name.trim() !== "");
+    
+    console.log("✅ Amenities transformées (array):", result);
+    return result;
+  }
+
+  // Si c'est un objet, essayer de le convertir
+  if (typeof rawAmenities === 'object') {
+    try {
+      const result = Object.entries(rawAmenities).map(([key, value]) => ({
+        name: key,
+        available: Boolean(value)
+      }));
+      console.log("✅ Amenities transformées (object):", result);
+      return result;
+    } catch (error) {
+      console.error("❌ Erreur lors de la transformation des amenities:", error);
+      return [];
+    }
+  }
+
+  console.log("⚠️ Format d'amenities non reconnu:", typeof rawAmenities);
+  return [];
+};
+
 const AccommodationDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -33,6 +75,8 @@ const AccommodationDetail = () => {
         setLoading(true);
         const accommodationId = parseInt(id || "0");
         
+        console.log("🔍 Récupération de l'hébergement ID:", accommodationId);
+        
         const { data, error } = await supabase
           .from("accommodations")
           .select("*")
@@ -41,12 +85,11 @@ const AccommodationDetail = () => {
         
         if (error) throw error;
         
+        console.log("📋 Données brutes récupérées:", data);
+        console.log("🛠️ Amenities brutes:", data.amenities);
+        
         // Transformer les données JSON de la base avec un typage explicite
-        const amenitiesArray = data.amenities as RawAmenity[];
-        const typedAmenities: Amenity[] = amenitiesArray.map((amenity: RawAmenity) => ({
-          name: amenity.name || "",
-          available: amenity.available || false
-        }));
+        const typedAmenities = transformAmenities(data.amenities);
 
         const formattedData = {
           ...data,
@@ -56,9 +99,12 @@ const AccommodationDetail = () => {
           rules: data.rules as string[]
         };
         
+        console.log("✅ Données formatées finales:", formattedData);
+        console.log("🏷️ Amenities finales:", formattedData.amenities);
+        
         setAccommodation(formattedData);
       } catch (err) {
-        console.error("Erreur lors de la récupération de l'hébergement:", err);
+        console.error("❌ Erreur lors de la récupération de l'hébergement:", err);
         setError("Impossible de trouver cet hébergement.");
         setTimeout(() => {
           navigate("/hebergements");

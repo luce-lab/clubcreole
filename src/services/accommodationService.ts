@@ -8,6 +8,43 @@ type RawAmenity = {
   available: boolean;
 };
 
+// Fonction utilitaire pour transformer et valider les amenities
+const transformAmenities = (rawAmenities: any): Amenity[] => {
+  console.log("Transformation des amenities:", rawAmenities);
+  
+  if (!rawAmenities) {
+    console.log("Aucune amenity fournie");
+    return [];
+  }
+
+  // Si c'est déjà un array
+  if (Array.isArray(rawAmenities)) {
+    return rawAmenities
+      .filter(amenity => amenity && typeof amenity === 'object')
+      .map((amenity: RawAmenity) => ({
+        name: amenity.name || "",
+        available: amenity.available === true
+      }))
+      .filter(amenity => amenity.name.trim() !== "");
+  }
+
+  // Si c'est un objet, essayer de le convertir
+  if (typeof rawAmenities === 'object') {
+    try {
+      return Object.entries(rawAmenities).map(([key, value]) => ({
+        name: key,
+        available: Boolean(value)
+      }));
+    } catch (error) {
+      console.error("Erreur lors de la transformation des amenities:", error);
+      return [];
+    }
+  }
+
+  console.log("Format d'amenities non reconnu:", typeof rawAmenities);
+  return [];
+};
+
 // Données d'exemple avec réduction pour La Colline Verte
 const mockAccommodationsWithDiscounts: Accommodation[] = [
   {
@@ -28,10 +65,14 @@ const mockAccommodationsWithDiscounts: Accommodation[] = [
     bathrooms: 1,
     max_guests: 4,
     amenities: [
-      { name: "WiFi", available: true },
-      { name: "Climatisation", available: true },
-      { name: "Piscine", available: true },
-      { name: "Restaurant", available: true }
+      { name: "WiFi gratuit", available: true },
+      { name: "Barbecue", available: true },
+      { name: "Service de ménage", available: false },
+      { name: "Parking gratuit", available: true },
+      { name: "Jardin tropical", available: true },
+      { name: "Hamac", available: true },
+      { name: "Animaux acceptés", available: true },
+      { name: "Climatisation", available: false }
     ],
     rules: ["Check-in à partir de 15h", "Check-out avant 11h", "Animaux non autorisés"],
     discount: 50
@@ -49,12 +90,10 @@ export async function fetchAccommodations(): Promise<Accommodation[]> {
     // Si nous avons des données de la base, les transformer
     if (data && data.length > 0) {
       const formattedData = data.map(item => {
-        // Convert amenities with explicit type assertion
-        const amenitiesArray = item.amenities as RawAmenity[];
-        const typedAmenities: Amenity[] = amenitiesArray.map((amenity: RawAmenity) => ({
-          name: amenity.name || "",
-          available: amenity.available || false
-        }));
+        console.log("Données brutes de l'hébergement:", item.id, item.amenities);
+        
+        const typedAmenities = transformAmenities(item.amenities);
+        console.log("Amenities transformées:", typedAmenities);
         
         return {
           ...item,
@@ -121,11 +160,7 @@ export async function createAccommodation(accommodationData: Omit<Accommodation,
   const insertedData = data[0];
 
   // Transform the data with proper typing
-  const amenitiesArray = insertedData.amenities as RawAmenity[];
-  const typedAmenities: Amenity[] = amenitiesArray.map((amenity: RawAmenity) => ({
-    name: amenity.name || "",
-    available: amenity.available || false
-  }));
+  const typedAmenities = transformAmenities(insertedData.amenities);
   
   return {
     ...insertedData,
@@ -198,11 +233,7 @@ export async function updateAccommodation(id: number, accommodationData: Partial
   }
 
   // Transform the data with proper typing
-  const amenitiesArray = updatedData.amenities as RawAmenity[];
-  const typedAmenities: Amenity[] = amenitiesArray.map((amenity: RawAmenity) => ({
-    name: amenity.name || "",
-    available: amenity.available || false
-  }));
+  const typedAmenities = transformAmenities(updatedData.amenities);
   
   const result = {
     ...updatedData,
