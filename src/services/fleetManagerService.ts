@@ -38,7 +38,7 @@ export async function fetchFleetManagersByCompany(companyId: string): Promise<Fl
     .from("fleet_managers")
     .select(`
       *,
-      user:profiles!fleet_managers_user_id_fkey (
+      user:profiles (
         email,
         first_name,
         last_name
@@ -52,7 +52,20 @@ export async function fetchFleetManagersByCompany(companyId: string): Promise<Fl
     throw error;
   }
 
-  return data || [];
+  // Transformer les données pour correspondre au type FleetManager
+  const managers: FleetManager[] = (data || []).map(item => ({
+    id: item.id,
+    user_id: item.user_id,
+    company_id: item.company_id,
+    permissions: typeof item.permissions === 'object' && item.permissions !== null 
+      ? item.permissions as { manage_vehicles: boolean; view_reservations: boolean; manage_reservations: boolean; }
+      : { manage_vehicles: true, view_reservations: true, manage_reservations: false },
+    created_at: item.created_at,
+    updated_at: item.updated_at,
+    user: Array.isArray(item.user) && item.user.length > 0 ? item.user[0] : undefined
+  }));
+
+  return managers;
 }
 
 // Créer un nouveau gestionnaire de flotte
@@ -62,7 +75,7 @@ export async function createFleetManager(managerData: CreateFleetManagerData): P
     .from("profiles")
     .select("id")
     .eq("email", managerData.email)
-    .single();
+    .maybeSingle();
 
   if (profileError && profileError.code !== 'PGRST116') {
     console.error("Erreur lors de la vérification du profil:", profileError);
@@ -75,14 +88,17 @@ export async function createFleetManager(managerData: CreateFleetManagerData): P
     userId = existingProfile.id;
   } else {
     // Créer un nouveau profil utilisateur (sans authentification pour l'instant)
+    const profileData = {
+      email: managerData.email,
+      first_name: managerData.first_name,
+      last_name: managerData.last_name,
+      role: 'fleet_manager',
+      id: crypto.randomUUID()
+    };
+
     const { data: newProfile, error: createProfileError } = await supabase
       .from("profiles")
-      .insert([{
-        email: managerData.email,
-        first_name: managerData.first_name,
-        last_name: managerData.last_name,
-        role: 'fleet_manager'
-      }])
+      .insert([profileData])
       .select()
       .single();
 
@@ -110,7 +126,7 @@ export async function createFleetManager(managerData: CreateFleetManagerData): P
     }])
     .select(`
       *,
-      user:profiles!fleet_managers_user_id_fkey (
+      user:profiles (
         email,
         first_name,
         last_name
@@ -123,7 +139,20 @@ export async function createFleetManager(managerData: CreateFleetManagerData): P
     throw error;
   }
 
-  return data;
+  // Transformer les données pour correspondre au type FleetManager
+  const manager: FleetManager = {
+    id: data.id,
+    user_id: data.user_id,
+    company_id: data.company_id,
+    permissions: typeof data.permissions === 'object' && data.permissions !== null 
+      ? data.permissions as { manage_vehicles: boolean; view_reservations: boolean; manage_reservations: boolean; }
+      : defaultPermissions,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+    user: Array.isArray(data.user) && data.user.length > 0 ? data.user[0] : undefined
+  };
+
+  return manager;
 }
 
 // Mettre à jour les permissions d'un gestionnaire

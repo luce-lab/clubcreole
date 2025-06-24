@@ -1,8 +1,9 @@
+
 import { LucideIcon } from "lucide-react";
 
 // Types de base depuis Supabase
 export interface CarRentalCompany {
-  id: number;
+  id: string;
   name: string;
   type: string;
   image: string;
@@ -18,7 +19,7 @@ export interface CarRentalCompany {
 
 export interface CarModel {
   id: number;
-  company_id: number;
+  company_id: string;
   name: string;
   image: string;
   price_per_day: number;
@@ -33,7 +34,7 @@ export interface CarModel {
 // Interface pour les modèles de voitures avec propriétés mappées pour l'affichage
 export interface CarModelForDisplay {
   id: number;
-  company_id: number;
+  company_id: string;
   name: string;
   image: string;
   pricePerDay: number; // Mappé depuis price_per_day
@@ -47,7 +48,7 @@ export interface CarModelForDisplay {
 
 export interface CarRentalFeature {
   id: number;
-  company_id: number;
+  company_id: string;
   feature: string;
   created_at: string;
 }
@@ -67,7 +68,7 @@ export interface CarClientReview {
 
 // Types combinés pour l'affichage (avec les icônes Lucide)
 export interface CarRental {
-  id: number;
+  id: string;
   name: string;
   type: string;
   image: string;

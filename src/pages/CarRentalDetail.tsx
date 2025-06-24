@@ -21,7 +21,7 @@ const CarRentalDetail = () => {
   
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
 
-  const carRentalId = id ? Number(id) : null;
+  const carRentalId = id || null;
   const { carRental, loading, error } = useCarRental(carRentalId);
 
   if (loading) {

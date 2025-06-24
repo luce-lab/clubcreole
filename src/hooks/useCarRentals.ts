@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { 
@@ -93,13 +94,13 @@ export const useClientReviews = () => {
 /**
  * Hook pour récupérer une entreprise de location spécifique
  */
-export const useCarRental = (id: number | null) => {
+export const useCarRental = (id: string | null) => {
   const [carRental, setCarRental] = useState<CarRental | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const fetchCarRental = async (rentalId: number) => {
+  const fetchCarRental = async (rentalId: string) => {
     try {
       setLoading(true);
       setError(null);
@@ -182,4 +183,4 @@ export const useCompanyReviews = (companyName: string | null) => {
     error,
     refetch: companyName ? () => fetchCompanyReviews(companyName) : undefined
   };
-}; 
+};

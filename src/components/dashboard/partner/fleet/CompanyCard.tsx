@@ -10,8 +10,8 @@ interface CompanyCardProps {
   vehicleCount: number;
   activeVehicleCount: number;
   managerCount: number;
-  onManageFleet: (companyId: number) => void;
-  onViewDetails: (companyId: number) => void;
+  onManageFleet: (companyId: string) => void;
+  onViewDetails: (companyId: string) => void;
 }
 
 export const CompanyCard = ({ 
@@ -31,11 +31,11 @@ export const CompanyCard = ({
               <Building className="h-6 w-6 text-creole-green" />
             </div>
             <div>
-              <CardTitle className="text-lg">{company.name}</CardTitle>
+              <CardTitle className="text-lg">{company.business_name}</CardTitle>
               <p className="text-sm text-gray-500">{company.location}</p>
             </div>
           </div>
-          <Badge variant="secondary">{company.type}</Badge>
+          <Badge variant="secondary">{company.business_type}</Badge>
         </div>
       </CardHeader>
       

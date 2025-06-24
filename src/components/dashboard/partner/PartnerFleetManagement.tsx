@@ -13,7 +13,7 @@ import {
 import { fetchFleetManagersByCompany } from "@/services/fleetManagerService";
 
 export const PartnerFleetManagement = () => {
-  const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(null);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
   const [selectedCompanyName, setSelectedCompanyName] = useState<string>("");
 
   const { data: companies = [], isLoading: companiesLoading } = useQuery({
@@ -28,17 +28,17 @@ export const PartnerFleetManagement = () => {
 
   // Récupérer les statistiques pour chaque entreprise
   const companiesWithStats = companies.map(company => {
-    const companyReservations = reservations.filter(r => r.rental_company_name === company.name);
+    const companyReservations = reservations.filter(r => r.rental_company_name === company.business_name);
     return {
       ...company,
       reservationCount: companyReservations.length
     };
   });
 
-  const handleManageFleet = (companyId: number) => {
+  const handleManageFleet = (companyId: string) => {
     const company = companies.find(c => c.id === companyId);
     setSelectedCompanyId(companyId);
-    setSelectedCompanyName(company?.name || "");
+    setSelectedCompanyName(company?.business_name || "");
   };
 
   const handleBack = () => {

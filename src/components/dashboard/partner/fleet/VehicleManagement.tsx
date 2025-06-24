@@ -15,7 +15,7 @@ import {
 } from "@/services/partnerCarRentalService";
 
 interface VehicleManagementProps {
-  companyId: number;
+  companyId: string;
   companyName: string;
   onBack: () => void;
 }

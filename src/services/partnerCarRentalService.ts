@@ -40,7 +40,7 @@ export async function fetchPartnerCarRentalCompanies(): Promise<CarRentalCompany
   const { data, error } = await supabase
     .from("partners")
     .select("*")
-    .eq("business_type", "Location de voitures")
+    .eq("business_type", "car_rental")
     .order("business_name");
 
   if (error) {

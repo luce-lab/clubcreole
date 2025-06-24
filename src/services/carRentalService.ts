@@ -36,7 +36,7 @@ const getIconFromName = (iconName: string) => {
 // Données d'exemple pour les entreprises de location de voitures
 const mockCarRentals: CarRental[] = [
   {
-    id: 1,
+    id: "1",
     name: "Rent-A-Car Antilles",
     type: "Location premium",
     image: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
@@ -53,7 +53,7 @@ const mockCarRentals: CarRental[] = [
     models: [
       {
         id: 1,
-        company_id: 1,
+        company_id: "1",
         name: "Peugeot 208",
         image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         pricePerDay: 35,
@@ -66,7 +66,7 @@ const mockCarRentals: CarRental[] = [
       },
       {
         id: 2,
-        company_id: 1,
+        company_id: "1",
         name: "Renault Clio",
         image: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         pricePerDay: 32,
@@ -80,7 +80,7 @@ const mockCarRentals: CarRental[] = [
     ]
   },
   {
-    id: 2,
+    id: "2",
     name: "Tropical Cars",
     type: "Location familiale",
     image: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
@@ -96,7 +96,7 @@ const mockCarRentals: CarRental[] = [
     models: [
       {
         id: 3,
-        company_id: 2,
+        company_id: "2",
         name: "Citroën C4 Picasso",
         image: "https://images.unsplash.com/photo-1550355291-bbee04a92027?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         pricePerDay: 45,
@@ -110,7 +110,7 @@ const mockCarRentals: CarRental[] = [
     ]
   },
   {
-    id: 3,
+    id: "3",
     name: "Luxury Drive Caraïbes",
     type: "Location de luxe",
     image: "https://images.unsplash.com/photo-1550355291-bbee04a92027?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
@@ -126,7 +126,7 @@ const mockCarRentals: CarRental[] = [
     models: [
       {
         id: 4,
-        company_id: 3,
+        company_id: "3",
         name: "BMW Série 3",
         image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         pricePerDay: 85,
@@ -185,7 +185,7 @@ export async function getCarRentals(): Promise<CarRental[]> {
     const { data: partners, error } = await supabase
       .from("partners")
       .select("*")
-      .eq("business_type", "Location de voitures");
+      .eq("business_type", "car_rental");
 
     if (error) {
       console.error("Erreur lors de la récupération depuis partners:", error);
@@ -204,9 +204,9 @@ export async function getCarRentals(): Promise<CarRental[]> {
     const carRentals: CarRental[] = partners.map(partner => ({
       id: partner.id,
       name: partner.business_name,
-      type: partner.type || "Location de voitures",
+      type: partner.business_type || "Location de voitures",
       image: partner.image || "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-      gallery_images: partner.gallery_images || [],
+      gallery_images: Array.isArray(partner.gallery_images) ? partner.gallery_images : [],
       location: partner.location || partner.address || "Antilles",
       description: partner.description || "Service de location de voitures professionnel",
       rating: partner.rating || 4.5,
@@ -229,7 +229,7 @@ export async function getCarRentals(): Promise<CarRental[]> {
 /**
  * Récupère une entreprise de location spécifique par son ID
  */
-export async function getCarRentalById(id: number): Promise<CarRental | null> {
+export async function getCarRentalById(id: string): Promise<CarRental | null> {
   try {
     const { data: partner, error } = await supabase
       .from("partners")
@@ -251,9 +251,9 @@ export async function getCarRentalById(id: number): Promise<CarRental | null> {
     const carRental: CarRental = {
       id: partner.id,
       name: partner.business_name,
-      type: partner.type || "Location de voitures",
+      type: partner.business_type || "Location de voitures",
       image: partner.image || "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-      gallery_images: partner.gallery_images || [],
+      gallery_images: Array.isArray(partner.gallery_images) ? partner.gallery_images : [],
       location: partner.location || partner.address || "Antilles",
       description: partner.description || "Service de location de voitures professionnel",
       rating: partner.rating || 4.5,
@@ -406,9 +406,14 @@ export async function deleteCarRentalReservation(id: string): Promise<void> {
 }
 
 export async function createCarRentalReservation(reservation: Omit<CarRentalReservation, 'id' | 'created_at' | 'updated_at'>): Promise<CarRentalReservation> {
+  const reservationWithStatus = {
+    ...reservation,
+    status: 'confirmed'
+  };
+
   const { data, error } = await supabase
     .from("car_rental_reservations")
-    .insert([reservation])
+    .insert([reservationWithStatus])
     .select()
     .single();
 
