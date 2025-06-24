@@ -7,23 +7,22 @@ export interface PartnerCarRentalReservation extends CarRentalReservation {
 }
 
 export interface CarRentalCompanyForPartner {
-  id: number;
-  name: string;
-  type: string;
+  id: string;
+  business_name: string;
+  business_type: string;
   image: string;
   location: string;
   description: string;
   rating: number;
   offer: string;
   icon_name: string;
-  partner_id: string;
   created_at: string;
   updated_at: string;
 }
 
 export interface CarModelForPartner {
   id: number;
-  company_id: number;
+  company_id: string;
   name: string;
   image: string;
   price_per_day: number;
@@ -36,12 +35,13 @@ export interface CarModelForPartner {
   updated_at: string;
 }
 
-// Récupérer les entreprises de location du partenaire connecté
+// Récupérer les entreprises de location du partenaire connecté depuis la table partners
 export async function fetchPartnerCarRentalCompanies(): Promise<CarRentalCompanyForPartner[]> {
   const { data, error } = await supabase
-    .from("car_rental_companies")
+    .from("partners")
     .select("*")
-    .order("name");
+    .eq("business_type", "Location de voitures")
+    .order("business_name");
 
   if (error) {
     console.error("Erreur lors de la récupération des entreprises:", error);
@@ -70,7 +70,7 @@ export async function fetchPartnerCarRentalReservations(): Promise<PartnerCarRen
 }
 
 // Récupérer les modèles de voitures d'une entreprise spécifique
-export async function fetchCarModelsByCompany(companyId: number): Promise<CarModelForPartner[]> {
+export async function fetchCarModelsByCompany(companyId: string): Promise<CarModelForPartner[]> {
   const { data, error } = await supabase
     .from("car_models")
     .select("*")

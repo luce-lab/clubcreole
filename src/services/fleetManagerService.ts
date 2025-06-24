@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 export interface FleetManager {
   id: string;
   user_id: string;
-  company_id: number;
+  company_id: string;
   permissions: {
     manage_vehicles: boolean;
     view_reservations: boolean;
@@ -12,64 +12,38 @@ export interface FleetManager {
   };
   created_at: string;
   updated_at: string;
-  user_email?: string;
-  user_name?: string;
-  company_name?: string;
+  // Données du profil utilisateur associé
+  user?: {
+    email: string;
+    first_name?: string;
+    last_name?: string;
+  };
 }
 
 export interface CreateFleetManagerData {
   email: string;
-  password: string;
-  name: string;
-  company_id: number;
-  permissions: {
+  first_name?: string;
+  last_name?: string;
+  company_id: string;
+  permissions?: {
     manage_vehicles: boolean;
     view_reservations: boolean;
     manage_reservations: boolean;
   };
 }
 
-// Récupérer tous les gestionnaires de flotte
-export async function fetchFleetManagers(): Promise<FleetManager[]> {
+// Récupérer les gestionnaires de flotte d'une entreprise
+export async function fetchFleetManagersByCompany(companyId: string): Promise<FleetManager[]> {
   const { data, error } = await supabase
     .from("fleet_managers")
     .select(`
       *,
-      car_rental_companies!inner(name)
+      user:profiles!fleet_managers_user_id_fkey (
+        email,
+        first_name,
+        last_name
+      )
     `)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Erreur lors de la récupération des gestionnaires:", error);
-    throw error;
-  }
-
-  // Récupérer les profils séparément
-  const userIds = data?.map(manager => manager.user_id) || [];
-  const { data: profiles } = await supabase
-    .from("profiles")
-    .select("id, email, first_name, last_name")
-    .in("id", userIds);
-
-  return (data || []).map(manager => {
-    const profile = profiles?.find(p => p.id === manager.user_id);
-    return {
-      ...manager,
-      permissions: manager.permissions as FleetManager['permissions'],
-      user_email: profile?.email,
-      user_name: profile?.first_name 
-        ? `${profile.first_name} ${profile.last_name || ''}`
-        : profile?.email,
-      company_name: manager.car_rental_companies?.name
-    };
-  });
-}
-
-// Récupérer les gestionnaires d'une entreprise spécifique
-export async function fetchFleetManagersByCompany(companyId: number): Promise<FleetManager[]> {
-  const { data, error } = await supabase
-    .from("fleet_managers")
-    .select("*")
     .eq("company_id", companyId)
     .order("created_at", { ascending: false });
 
@@ -78,82 +52,83 @@ export async function fetchFleetManagersByCompany(companyId: number): Promise<Fl
     throw error;
   }
 
-  // Récupérer les profils séparément
-  const userIds = data?.map(manager => manager.user_id) || [];
-  const { data: profiles } = await supabase
-    .from("profiles")
-    .select("id, email, first_name, last_name")
-    .in("id", userIds);
-
-  return (data || []).map(manager => {
-    const profile = profiles?.find(p => p.id === manager.user_id);
-    return {
-      ...manager,
-      permissions: manager.permissions as FleetManager['permissions'],
-      user_email: profile?.email,
-      user_name: profile?.first_name 
-        ? `${profile.first_name} ${profile.last_name || ''}`
-        : profile?.email
-    };
-  });
+  return data || [];
 }
 
-// Créer un gestionnaire de flotte
-export async function createFleetManager(managerData: CreateFleetManagerData): Promise<void> {
-  // 1. Créer l'utilisateur avec Supabase Auth
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email: managerData.email,
-    password: managerData.password,
-    options: {
-      data: {
-        first_name: managerData.name,
-        role: 'partner'
-      }
-    }
-  });
-
-  if (authError) {
-    console.error("Erreur lors de la création de l'utilisateur:", authError);
-    throw authError;
-  }
-
-  if (!authData.user) {
-    throw new Error("Utilisateur non créé");
-  }
-
-  // 2. Mettre à jour le profil avec le rôle et l'entreprise
-  const { error: profileError } = await supabase
+// Créer un nouveau gestionnaire de flotte
+export async function createFleetManager(managerData: CreateFleetManagerData): Promise<FleetManager> {
+  // D'abord, vérifier si l'utilisateur existe dans profiles
+  const { data: existingProfile, error: profileError } = await supabase
     .from("profiles")
-    .update({ 
-      role: 'partner',
-      first_name: managerData.name,
-      company_id: managerData.company_id
-    })
-    .eq("id", authData.user.id);
+    .select("id")
+    .eq("email", managerData.email)
+    .single();
 
-  if (profileError) {
-    console.error("Erreur lors de la mise à jour du profil:", profileError);
+  if (profileError && profileError.code !== 'PGRST116') {
+    console.error("Erreur lors de la vérification du profil:", profileError);
     throw profileError;
   }
 
-  // 3. Créer l'entrée gestionnaire de flotte
-  const { error: managerError } = await supabase
-    .from("fleet_managers")
-    .insert({
-      user_id: authData.user.id,
-      company_id: managerData.company_id,
-      permissions: managerData.permissions
-    });
+  let userId: string;
 
-  if (managerError) {
-    console.error("Erreur lors de la création du gestionnaire:", managerError);
-    throw managerError;
+  if (existingProfile) {
+    userId = existingProfile.id;
+  } else {
+    // Créer un nouveau profil utilisateur (sans authentification pour l'instant)
+    const { data: newProfile, error: createProfileError } = await supabase
+      .from("profiles")
+      .insert([{
+        email: managerData.email,
+        first_name: managerData.first_name,
+        last_name: managerData.last_name,
+        role: 'fleet_manager'
+      }])
+      .select()
+      .single();
+
+    if (createProfileError) {
+      console.error("Erreur lors de la création du profil:", createProfileError);
+      throw createProfileError;
+    }
+
+    userId = newProfile.id;
   }
+
+  // Créer le gestionnaire de flotte
+  const defaultPermissions = {
+    manage_vehicles: true,
+    view_reservations: true,
+    manage_reservations: false
+  };
+
+  const { data, error } = await supabase
+    .from("fleet_managers")
+    .insert([{
+      user_id: userId,
+      company_id: managerData.company_id,
+      permissions: managerData.permissions || defaultPermissions
+    }])
+    .select(`
+      *,
+      user:profiles!fleet_managers_user_id_fkey (
+        email,
+        first_name,
+        last_name
+      )
+    `)
+    .single();
+
+  if (error) {
+    console.error("Erreur lors de la création du gestionnaire:", error);
+    throw error;
+  }
+
+  return data;
 }
 
 // Mettre à jour les permissions d'un gestionnaire
 export async function updateFleetManagerPermissions(
-  managerId: string,
+  managerId: string, 
   permissions: FleetManager['permissions']
 ): Promise<void> {
   const { error } = await supabase
