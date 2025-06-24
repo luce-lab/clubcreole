@@ -14,7 +14,7 @@ import {
 } from "@/services/fleetManagerService";
 
 interface FleetManagersListProps {
-  companyId: number;
+  companyId: string;
   companyName: string;
 }
 
@@ -123,9 +123,11 @@ export const FleetManagersList = ({ companyId, companyName }: FleetManagersListP
               {managers.map((manager) => (
                 <TableRow key={manager.id}>
                   <TableCell>
-                    <div className="font-medium">{manager.user_name}</div>
+                    <div className="font-medium">
+                      {manager.user?.first_name} {manager.user?.last_name}
+                    </div>
                   </TableCell>
-                  <TableCell>{manager.user_email}</TableCell>
+                  <TableCell>{manager.user?.email}</TableCell>
                   <TableCell>
                     <div className="space-y-2">
                       <div className="flex items-center space-x-2">

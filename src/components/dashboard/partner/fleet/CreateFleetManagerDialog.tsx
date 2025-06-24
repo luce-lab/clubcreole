@@ -19,7 +19,7 @@ import { Plus } from "lucide-react";
 import { createFleetManager, CreateFleetManagerData } from "@/services/fleetManagerService";
 
 interface CreateFleetManagerDialogProps {
-  companyId: number;
+  companyId: string;
   companyName: string;
 }
 
@@ -27,8 +27,8 @@ export const CreateFleetManagerDialog = ({ companyId, companyName }: CreateFleet
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<CreateFleetManagerData>({
     email: "",
-    password: "",
-    name: "",
+    first_name: "",
+    last_name: "",
     company_id: companyId,
     permissions: {
       manage_vehicles: true,
@@ -51,8 +51,8 @@ export const CreateFleetManagerDialog = ({ companyId, companyName }: CreateFleet
       setOpen(false);
       setFormData({
         email: "",
-        password: "",
-        name: "",
+        first_name: "",
+        last_name: "",
         company_id: companyId,
         permissions: {
           manage_vehicles: true,
@@ -73,7 +73,7 @@ export const CreateFleetManagerDialog = ({ companyId, companyName }: CreateFleet
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.email || !formData.password || !formData.name) {
+    if (!formData.email || !formData.first_name || !formData.last_name) {
       toast({
         title: "Erreur",
         description: "Tous les champs sont requis.",
@@ -112,11 +112,22 @@ export const CreateFleetManagerDialog = ({ companyId, companyName }: CreateFleet
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="name">Nom complet</Label>
+            <Label htmlFor="first_name">Prénom</Label>
             <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              id="first_name"
+              value={formData.first_name}
+              onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value }))}
+              placeholder="Prénom du gestionnaire"
+              required
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="last_name">Nom</Label>
+            <Input
+              id="last_name"
+              value={formData.last_name}
+              onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value }))}
               placeholder="Nom du gestionnaire"
               required
             />
@@ -134,24 +145,12 @@ export const CreateFleetManagerDialog = ({ companyId, companyName }: CreateFleet
             />
           </div>
           
-          <div>
-            <Label htmlFor="password">Mot de passe</Label>
-            <Input
-              id="password"
-              type="password"
-              value={formData.password}
-              onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-              placeholder="Mot de passe sécurisé"
-              required
-            />
-          </div>
-          
           <div className="space-y-3">
             <Label>Permissions</Label>
             
             <div className="flex items-center space-x-2">
               <Switch
-                checked={formData.permissions.manage_vehicles}
+                checked={formData.permissions?.manage_vehicles}
                 onCheckedChange={(checked) => handlePermissionChange('manage_vehicles', checked)}
               />
               <span className="text-sm">Gérer les véhicules</span>
@@ -159,7 +158,7 @@ export const CreateFleetManagerDialog = ({ companyId, companyName }: CreateFleet
             
             <div className="flex items-center space-x-2">
               <Switch
-                checked={formData.permissions.view_reservations}
+                checked={formData.permissions?.view_reservations}
                 onCheckedChange={(checked) => handlePermissionChange('view_reservations', checked)}
               />
               <span className="text-sm">Voir les réservations</span>
@@ -167,7 +166,7 @@ export const CreateFleetManagerDialog = ({ companyId, companyName }: CreateFleet
             
             <div className="flex items-center space-x-2">
               <Switch
-                checked={formData.permissions.manage_reservations}
+                checked={formData.permissions?.manage_reservations}
                 onCheckedChange={(checked) => handlePermissionChange('manage_reservations', checked)}
               />
               <span className="text-sm">Gérer les réservations</span>

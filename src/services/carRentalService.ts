@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { 
   CarRental, 
@@ -31,6 +30,15 @@ const getIconFromName = (iconName: string) => {
   };
   
   return iconMap[iconName.toLowerCase()] || LucideIcons.Car;
+};
+
+// Helper function to safely convert JSON to string array
+const jsonToStringArray = (jsonData: any): string[] => {
+  if (!jsonData) return [];
+  if (Array.isArray(jsonData)) {
+    return jsonData.filter(item => typeof item === 'string');
+  }
+  return [];
 };
 
 // Données d'exemple pour les entreprises de location de voitures
@@ -206,7 +214,7 @@ export async function getCarRentals(): Promise<CarRental[]> {
       name: partner.business_name,
       type: partner.business_type || "Location de voitures",
       image: partner.image || "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-      gallery_images: Array.isArray(partner.gallery_images) ? partner.gallery_images : [],
+      gallery_images: jsonToStringArray(partner.gallery_images),
       location: partner.location || partner.address || "Antilles",
       description: partner.description || "Service de location de voitures professionnel",
       rating: partner.rating || 4.5,
@@ -253,7 +261,7 @@ export async function getCarRentalById(id: string): Promise<CarRental | null> {
       name: partner.business_name,
       type: partner.business_type || "Location de voitures",
       image: partner.image || "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-      gallery_images: Array.isArray(partner.gallery_images) ? partner.gallery_images : [],
+      gallery_images: jsonToStringArray(partner.gallery_images),
       location: partner.location || partner.address || "Antilles",
       description: partner.description || "Service de location de voitures professionnel",
       rating: partner.rating || 4.5,
@@ -406,14 +414,9 @@ export async function deleteCarRentalReservation(id: string): Promise<void> {
 }
 
 export async function createCarRentalReservation(reservation: Omit<CarRentalReservation, 'id' | 'created_at' | 'updated_at'>): Promise<CarRentalReservation> {
-  const reservationWithStatus = {
-    ...reservation,
-    status: 'confirmed'
-  };
-
   const { data, error } = await supabase
     .from("car_rental_reservations")
-    .insert([reservationWithStatus])
+    .insert([reservation])
     .select()
     .single();
 

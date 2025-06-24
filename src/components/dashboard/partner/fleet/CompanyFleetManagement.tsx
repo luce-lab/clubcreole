@@ -8,7 +8,7 @@ import { CreateFleetManagerDialog } from "./CreateFleetManagerDialog";
 import { VehicleManagement } from "./VehicleManagement";
 
 interface CompanyFleetManagementProps {
-  companyId: number;
+  companyId: string;
   companyName: string;
   onBack: () => void;
 }

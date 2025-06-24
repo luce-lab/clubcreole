@@ -61,7 +61,8 @@ const RentalReservationForm = ({ rentalName, selectedModel, models }: RentalRese
         end_date: values.endDate,
         driver_name: values.driverName,
         driver_email: values.driverEmail,
-        driver_phone: values.driverPhone
+        driver_phone: values.driverPhone,
+        status: 'confirmed'
       });
 
       toast({
