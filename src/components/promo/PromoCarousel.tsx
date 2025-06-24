@@ -1,4 +1,3 @@
-
 import {
   Carousel,
   CarouselContent,
@@ -15,7 +14,16 @@ export const PromoCarousel = () => {
   const { promotions, loading, error } = usePromotions();
 
   const handleCtaClick = (url: string) => {
-    navigate(url);
+    // Vérifier si l'URL est externe (commence par http ou https)
+    const isExternalLink = url.startsWith('http://') || url.startsWith('https://');
+    
+    if (isExternalLink) {
+      // Ouvrir dans un nouvel onglet pour les liens externes
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } else {
+      // Utiliser la navigation interne pour les liens internes
+      navigate(url);
+    }
   };
 
   if (loading) {
