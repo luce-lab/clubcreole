@@ -6,7 +6,7 @@ export type UserRole = 'admin' | 'partner' | 'client' | null;
 export interface UserWithRole extends User {
   role?: UserRole;
   name?: string;
-  company_id?: number;
+  company_id?: string; // Changed from number to string to match UUID type from database
 }
 
 export interface AuthContextType {
