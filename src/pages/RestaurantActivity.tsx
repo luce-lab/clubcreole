@@ -30,7 +30,10 @@ const RestaurantActivity = () => {
         const { data, error } = await supabase
           .from('restaurants')
           .select('*')
-          .order('rating', { ascending: false });
+          .order('poids', { ascending: false })
+          .order('rating', { ascending: false })
+          .order('created_at', { ascending: false })
+          .order('updated_at', { ascending: false });
 
         if (error) {
           throw error;
