@@ -1,5 +1,5 @@
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { Newsletter } from "./Newsletter";
@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/auth";
 
 export const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { user, signOut } = useAuth();
 
@@ -16,6 +17,8 @@ export const Header = () => {
     navigate("/");
   };
 
+  const isActive = (path: string) => location.pathname === path;
+
   return (
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -23,7 +26,8 @@ export const Header = () => {
           <img 
             src="/lovable-uploads/ee9cef8d-d74a-4118-94e3-80f17f1e3fc2.png" 
             alt="Club Créole Logo" 
-            className="h-20 w-auto"
+            className="h-20 w-auto cursor-pointer"
+            onClick={() => navigate("/")}
           />
         </div>
         <div className="flex items-center gap-6">
@@ -40,9 +44,16 @@ export const Header = () => {
             <a href="#cyclone" className="text-gray-600 hover:text-creole-green transition-colors">
               Club Cyclone
             </a>
-            <a href="/devenir-partenaire" className="text-gray-600 hover:text-creole-green transition-colors">
+            <button 
+              onClick={() => navigate("/devenir-partenaire")}
+              className={`transition-colors ${
+                isActive("/devenir-partenaire") 
+                  ? "text-creole-green font-semibold" 
+                  : "text-gray-600 hover:text-creole-green"
+              }`}
+            >
               Devenir partenaire
-            </a>
+            </button>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <button className="text-gray-600 hover:text-creole-green transition-colors">
