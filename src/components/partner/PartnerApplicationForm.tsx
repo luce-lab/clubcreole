@@ -7,9 +7,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const PartnerApplicationForm = () => {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     business_name: "",
     contact_name: "",
@@ -29,23 +31,59 @@ export const PartnerApplicationForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
-    // Ici on pourrait ajouter la logique pour envoyer les données
-    toast({
-      title: "Demande envoyée !",
-      description: "Nous vous contacterons sous peu pour discuter de votre partenariat.",
-    });
-    
-    // Reset du formulaire
-    setFormData({
-      business_name: "",
-      contact_name: "",
-      email: "",
-      phone: "",
-      business_type: "",
-      description: "",
-      location: ""
-    });
+    try {
+      // Insérer les données dans la table partners avec le statut "en_attente"
+      const { error } = await supabase
+        .from('partners')
+        .insert([
+          {
+            business_name: formData.business_name,
+            business_type: formData.business_type,
+            description: formData.description,
+            address: formData.location,
+            phone: formData.phone,
+            status: 'en_attente'
+          }
+        ]);
+
+      if (error) {
+        console.error('Erreur lors de la soumission:', error);
+        toast({
+          title: "Erreur",
+          description: "Une erreur s'est produite lors de l'envoi de votre candidature. Veuillez réessayer.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      toast({
+        title: "Demande envoyée !",
+        description: "Nous vous contacterons sous peu pour discuter de votre partenariat.",
+      });
+      
+      // Reset du formulaire
+      setFormData({
+        business_name: "",
+        contact_name: "",
+        email: "",
+        phone: "",
+        business_type: "",
+        description: "",
+        location: ""
+      });
+
+    } catch (error) {
+      console.error('Erreur lors de la soumission:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur s'est produite lors de l'envoi de votre candidature. Veuillez réessayer.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -110,7 +148,7 @@ export const PartnerApplicationForm = () => {
 
                 <div>
                   <Label htmlFor="business_type">Type d'activité *</Label>
-                  <Select onValueChange={(value) => handleInputChange("business_type", value)}>
+                  <Select onValueChange={(value) => handleInputChange("business_type", value)} value={formData.business_type}>
                     <SelectTrigger>
                       <SelectValue placeholder="Sélectionnez votre secteur d'activité" />
                     </SelectTrigger>
@@ -151,8 +189,9 @@ export const PartnerApplicationForm = () => {
                   type="submit"
                   className="w-full bg-creole-green hover:bg-creole-green/90"
                   size="lg"
+                  disabled={isSubmitting}
                 >
-                  Envoyer ma candidature
+                  {isSubmitting ? "Envoi en cours..." : "Envoyer ma candidature"}
                 </Button>
               </form>
             </CardContent>

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { 
   Card, 
@@ -12,19 +12,155 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ShoppingBag, Plus, Search, Edit, Trash2 } from "lucide-react";
+import { ShoppingBag, Plus, Search, Edit, Trash2, CheckCircle, XCircle, Clock } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+
+interface Partner {
+  id: string;
+  business_name: string;
+  business_type: string;
+  status: string;
+  created_at: string;
+  phone?: string;
+  address?: string;
+}
 
 const PartnersManagement = () => {
   const [activeTab, setActiveTab] = useState<string>("all");
-  
-  // Données de partenaires fictives pour la démonstration
-  const partners = [
-    { id: "1", name: "Aqua Plongée", category: "Activité", status: "active", joinedDate: "01/02/2025", revenue: "2450€" },
-    { id: "2", name: "Hôtel Karibea", category: "Hébergement", status: "active", joinedDate: "15/01/2025", revenue: "12350€" },
-    { id: "3", name: "Location Caraïbes", category: "Location", status: "pending", joinedDate: "05/03/2025", revenue: "0€" },
-    { id: "4", name: "Restaurant du Port", category: "Restauration", status: "active", joinedDate: "20/02/2025", revenue: "3650€" },
-    { id: "5", name: "Club Cyclone", category: "Événement", status: "inactive", joinedDate: "10/12/2024", revenue: "8900€" },
-  ];
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [filteredPartners, setFilteredPartners] = useState<Partner[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchPartners();
+  }, []);
+
+  useEffect(() => {
+    filterPartners();
+  }, [partners, activeTab, searchTerm]);
+
+  const fetchPartners = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('partners')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Erreur lors du chargement des partenaires:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les partenaires",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setPartners(data || []);
+    } catch (error) {
+      console.error('Erreur:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filterPartners = () => {
+    let filtered = partners;
+
+    // Filtrer par statut selon l'onglet actif
+    if (activeTab !== "all") {
+      filtered = filtered.filter(partner => partner.status === activeTab);
+    }
+
+    // Filtrer par terme de recherche
+    if (searchTerm) {
+      filtered = filtered.filter(partner =>
+        partner.business_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        partner.business_type.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    setFilteredPartners(filtered);
+  };
+
+  const updatePartnerStatus = async (partnerId: string, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from('partners')
+        .update({ status: newStatus })
+        .eq('id', partnerId);
+
+      if (error) {
+        console.error('Erreur lors de la mise à jour:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de mettre à jour le statut",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      toast({
+        title: "Succès",
+        description: `Statut mis à jour avec succès`,
+      });
+
+      // Recharger les données
+      fetchPartners();
+    } catch (error) {
+      console.error('Erreur:', error);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('fr-FR');
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'approuve':
+        return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case 'rejete':
+        return <XCircle className="h-4 w-4 text-red-600" />;
+      default:
+        return <Clock className="h-4 w-4 text-orange-600" />;
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'approuve':
+        return 'Approuvé';
+      case 'rejete':
+        return 'Rejeté';
+      default:
+        return 'En attente';
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'approuve':
+        return 'bg-green-100 text-green-700';
+      case 'rejete':
+        return 'bg-red-100 text-red-700';
+      default:
+        return 'bg-orange-100 text-orange-700';
+    }
+  };
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex justify-center items-center h-64">
+          <div className="text-lg">Chargement des partenaires...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -55,6 +191,8 @@ const PartnersManagement = () => {
                   <Input
                     placeholder="Rechercher un partenaire..."
                     className="pl-8 w-full"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
               </div>
@@ -63,26 +201,21 @@ const PartnersManagement = () => {
           <CardContent>
             <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="mb-4">
-                <TabsTrigger value="all">Tous</TabsTrigger>
-                <TabsTrigger value="active">Actifs</TabsTrigger>
-                <TabsTrigger value="pending">En attente</TabsTrigger>
-                <TabsTrigger value="inactive">Inactifs</TabsTrigger>
+                <TabsTrigger value="all">Tous ({partners.length})</TabsTrigger>
+                <TabsTrigger value="en_attente">En attente ({partners.filter(p => p.status === 'en_attente').length})</TabsTrigger>
+                <TabsTrigger value="approuve">Approuvés ({partners.filter(p => p.status === 'approuve').length})</TabsTrigger>
+                <TabsTrigger value="rejete">Rejetés ({partners.filter(p => p.status === 'rejete').length})</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="all">
-                <PartnersList partners={partners} />
-              </TabsContent>
-              
-              <TabsContent value="active">
-                <PartnersList partners={partners.filter(p => p.status === 'active')} />
-              </TabsContent>
-              
-              <TabsContent value="pending">
-                <PartnersList partners={partners.filter(p => p.status === 'pending')} />
-              </TabsContent>
-              
-              <TabsContent value="inactive">
-                <PartnersList partners={partners.filter(p => p.status === 'inactive')} />
+              <TabsContent value={activeTab}>
+                <PartnersList 
+                  partners={filteredPartners} 
+                  onUpdateStatus={updatePartnerStatus}
+                  getStatusIcon={getStatusIcon}
+                  getStatusLabel={getStatusLabel}
+                  getStatusColor={getStatusColor}
+                  formatDate={formatDate}
+                />
               </TabsContent>
             </Tabs>
           </CardContent>
@@ -93,17 +226,31 @@ const PartnersManagement = () => {
 };
 
 // Sous-composant pour la liste des partenaires
-const PartnersList = ({ partners }: { partners: any[] }) => {
+const PartnersList = ({ 
+  partners, 
+  onUpdateStatus, 
+  getStatusIcon, 
+  getStatusLabel, 
+  getStatusColor, 
+  formatDate 
+}: { 
+  partners: Partner[];
+  onUpdateStatus: (id: string, status: string) => void;
+  getStatusIcon: (status: string) => JSX.Element;
+  getStatusLabel: (status: string) => string;
+  getStatusColor: (status: string) => string;
+  formatDate: (date: string) => string;
+}) => {
   return (
     <div className="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Nom</TableHead>
-            <TableHead>Catégorie</TableHead>
+            <TableHead>Nom de l'entreprise</TableHead>
+            <TableHead>Type d'activité</TableHead>
             <TableHead>Statut</TableHead>
-            <TableHead>Date d'inscription</TableHead>
-            <TableHead>Revenus générés</TableHead>
+            <TableHead>Date de candidature</TableHead>
+            <TableHead>Contact</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -122,24 +269,44 @@ const PartnersList = ({ partners }: { partners: any[] }) => {
                     <div className="bg-creole-green/10 p-2 rounded-md">
                       <ShoppingBag className="h-4 w-4 text-creole-green" />
                     </div>
-                    {partner.name}
+                    {partner.business_name}
                   </div>
                 </TableCell>
-                <TableCell>{partner.category}</TableCell>
+                <TableCell>{partner.business_type}</TableCell>
                 <TableCell>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    partner.status === 'active' ? 'bg-green-100 text-green-700' :
-                    partner.status === 'pending' ? 'bg-amber-100 text-amber-700' :
-                    'bg-gray-100 text-gray-700'
-                  }`}>
-                    {partner.status === 'active' ? 'Actif' :
-                     partner.status === 'pending' ? 'En attente' : 'Inactif'}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon(partner.status)}
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(partner.status)}`}>
+                      {getStatusLabel(partner.status)}
+                    </span>
+                  </div>
                 </TableCell>
-                <TableCell>{partner.joinedDate}</TableCell>
-                <TableCell>{partner.revenue}</TableCell>
+                <TableCell>{formatDate(partner.created_at)}</TableCell>
+                <TableCell>{partner.phone || '-'}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
+                    {partner.status === 'en_attente' && (
+                      <>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => onUpdateStatus(partner.id, 'approuve')}
+                          className="text-green-600 hover:text-green-700"
+                        >
+                          <CheckCircle className="h-4 w-4 mr-1" />
+                          Approuver
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => onUpdateStatus(partner.id, 'rejete')}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <XCircle className="h-4 w-4 mr-1" />
+                          Rejeter
+                        </Button>
+                      </>
+                    )}
                     <Button variant="ghost" size="icon">
                       <Edit className="h-4 w-4" />
                     </Button>
