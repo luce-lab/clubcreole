@@ -49,7 +49,7 @@ export const PartnerApplicationForm = () => {
   };
 
   return (
-    <section className="py-16">
+    <section id="application" className="py-16">
       <div className="container mx-auto px-4">
         <div className="max-w-2xl mx-auto">
           <Card>
