@@ -37,16 +37,14 @@ export const PartnerApplicationForm = () => {
       // Insérer les données dans la table partners avec le statut "en_attente"
       const { error } = await supabase
         .from('partners')
-        .insert([
-          {
-            business_name: formData.business_name,
-            business_type: formData.business_type,
-            description: formData.description,
-            address: formData.location,
-            phone: formData.phone,
-            status: 'en_attente'
-          }
-        ]);
+        .insert({
+          business_name: formData.business_name,
+          business_type: formData.business_type,
+          description: formData.description,
+          address: formData.location,
+          phone: formData.phone,
+          status: 'en_attente'
+        });
 
       if (error) {
         console.error('Erreur lors de la soumission:', error);
