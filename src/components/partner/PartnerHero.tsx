@@ -10,7 +10,7 @@ export const PartnerHero = () => {
             Devenez Partenaire Club Créole
           </h1>
           <p className="text-xl md:text-2xl mb-8 opacity-90">
-            Rejoignez notre réseau de partenaires et développez votre activité en Martinique
+            Rejoignez notre réseau de partenaires et développez votre activité en Guadeloupe
           </p>
           <div className="flex justify-center">
             <Handshake className="h-16 w-16 opacity-80" />
