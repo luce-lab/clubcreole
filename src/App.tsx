@@ -31,6 +31,7 @@ import AccommodationsManagement from "./pages/AccommodationsManagement";
 import Clients from "./pages/Clients";
 import LoisirsManagement from "./pages/LoisirsManagement";
 import CarRentalManagement from "./pages/CarRentalManagement";
+import DevenirPartenaire from "./pages/DevenirPartenaire";
 
 function App() {
   return (
@@ -59,6 +60,7 @@ function App() {
           <Route path="/offers" element={<Offers />} />
           <Route path="/offers/:id" element={<OfferDetail />} />
           <Route path="/partners" element={<PartnersManagement />} />
+          <Route path="/devenir-partenaire" element={<DevenirPartenaire />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />

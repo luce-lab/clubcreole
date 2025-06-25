@@ -40,6 +40,9 @@ export const Header = () => {
             <a href="#cyclone" className="text-gray-600 hover:text-creole-green transition-colors">
               Club Cyclone
             </a>
+            <a href="/devenir-partenaire" className="text-gray-600 hover:text-creole-green transition-colors">
+              Devenir partenaire
+            </a>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <button className="text-gray-600 hover:text-creole-green transition-colors">
