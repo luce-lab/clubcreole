@@ -1,7 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { TravelDetailHeader } from "@/components/travel/TravelDetailHeader";
 import { TravelDetailInfo } from "@/components/travel/TravelDetailInfo";
@@ -71,7 +70,6 @@ const TravelDetail = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
@@ -86,7 +84,6 @@ const TravelDetail = () => {
   if (error || !travelOffer) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <p className="text-red-600 text-lg mb-4">Offre de voyage introuvable</p>
@@ -103,16 +100,15 @@ const TravelDetail = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8">
           <Button 
             variant="outline" 
-            onClick={() => navigate('/voyages')}
+            onClick={() => navigate('/')}
             className="mb-6"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Retour aux offres
+            Retour à l'accueil
           </Button>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
