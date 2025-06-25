@@ -43,7 +43,8 @@ export const PartnerApplicationForm = () => {
           description: formData.description,
           address: formData.location,
           phone: formData.phone,
-          status: 'en_attente'
+          status: 'en_attente',
+          created_at: new Date().toISOString()
         });
 
       if (error) {
