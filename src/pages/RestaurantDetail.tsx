@@ -96,8 +96,8 @@ const RestaurantDetail = () => {
               photos={galleryPhotos.slice(1)}
               restaurantName={restaurant.name}
             />
-
             <RestaurantTabs 
+              restaurantId={restaurant.id}
               description={restaurant.description}
               type={restaurant.type}
               location={restaurant.location}

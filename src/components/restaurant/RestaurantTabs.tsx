@@ -1,15 +1,61 @@
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { supabase } from "@/integrations/supabase/client";
+
+type MenuItem = {
+  name: string;
+  price: number;
+};
+
+type MenuCategory = {
+  name: string;
+  items: MenuItem[];
+};
 
 interface RestaurantTabsProps {
   description: string;
   type: string;
   location: string;
+  restaurantId: number;
 }
 
-const RestaurantTabs = ({ description, type, location }: RestaurantTabsProps) => {
+const RestaurantTabs = ({ description, type, location, restaurantId }: RestaurantTabsProps) => {
+  const [menus, setMenus] = useState<MenuCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMenus = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('restaurants')
+          .select('menus')
+          .eq('id', restaurantId)
+          .single();
+
+        console.log( 'data',data,'id',restaurantId);
+        if (error) {
+          console.error('Erreur lors du chargement des menus:', error);
+          setMenus([]);
+          return;
+        }
+
+        if (!data) {
+          setMenus([]);
+          return;
+        }
+
+        setMenus(data?.menus || []);
+      } catch (err) {
+        console.error('Erreur:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMenus();
+  }, []);
+
   return (
     <Tabs defaultValue="about" className="w-full">
       <TabsList className="w-full justify-start">
@@ -45,59 +91,25 @@ const RestaurantTabs = ({ description, type, location }: RestaurantTabsProps) =>
       </TabsContent>
       <TabsContent value="menu" className="space-y-4 mt-4">
         <h2 className="text-xl font-semibold">Notre carte</h2>
-        <div className="space-y-6">
-          <div>
-            <h3 className="font-medium text-lg border-b pb-1">Entrées</h3>
-            <ul className="mt-2 space-y-2">
-              <li className="flex justify-between">
-                <span>Salade César</span>
-                <span>12€</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Carpaccio de bœuf</span>
-                <span>14€</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Soupe du jour</span>
-                <span>9€</span>
-              </li>
-            </ul>
+        {loading ? (
+          <p>Chargement du menu...</p>
+        ) : (
+          <div className="space-y-6">
+            {menus.map((category, index) => (
+              <div key={index}>
+                <h3 className="font-medium text-lg border-b pb-1">{category.name}</h3>
+                <ul className="mt-2 space-y-2">
+                  {category.items.map((item: MenuItem, itemIndex: number) => (
+                    <li key={itemIndex} className="flex justify-between">
+                      <span>{item.name}</span>
+                      <span>{item.price}€</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
-          <div>
-            <h3 className="font-medium text-lg border-b pb-1">Plats principaux</h3>
-            <ul className="mt-2 space-y-2">
-              <li className="flex justify-between">
-                <span>Filet de bœuf, sauce au poivre</span>
-                <span>28€</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Risotto aux champignons</span>
-                <span>21€</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Poisson du jour</span>
-                <span>24€</span>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-medium text-lg border-b pb-1">Desserts</h3>
-            <ul className="mt-2 space-y-2">
-              <li className="flex justify-between">
-                <span>Tiramisu maison</span>
-                <span>9€</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Crème brûlée</span>
-                <span>8€</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Mousse au chocolat</span>
-                <span>7€</span>
-              </li>
-            </ul>
-          </div>
-        </div>
+        )}
       </TabsContent>
       <TabsContent value="reviews" className="space-y-4 mt-4">
         <h2 className="text-xl font-semibold">Avis des clients</h2>
