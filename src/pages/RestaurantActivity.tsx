@@ -1,31 +1,31 @@
 
 import RestaurantHeader from "@/components/restaurant/RestaurantHeader";
-import RestaurantGrid from "@/components/restaurant/RestaurantGrid";
+import RestaurantGridInfinite from "@/components/restaurant/RestaurantGridInfinite";
 import RestaurantInfo from "@/components/restaurant/RestaurantInfo";
 import RestaurantsSearchBar from "@/components/restaurant/RestaurantsSearchBar";
 import RestaurantsEmptyState from "@/components/restaurant/RestaurantsEmptyState";
-import { useRestaurantsSearch } from "@/hooks/useRestaurantsSearch";
-import { useProgressiveRestaurants } from "@/hooks/useProgressiveRestaurants";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
+import { useState } from "react";
 
 const RestaurantActivity = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  
   const {
     restaurants,
     loading,
-    loadingMore,
     error,
     hasMore,
-    loadMore,
-    refresh
-  } = useProgressiveRestaurants();
+    totalCount,
+    reset,
+    isLoadingMore
+  } = useInfiniteScroll({
+    initialLimit: 12,
+    threshold: 200,
+    searchQuery
+  });
 
-  const { 
-    searchQuery, 
-    setSearchQuery, 
-    filteredRestaurants, 
-    hasResults, 
-    totalResults, 
-    isSearching 
-  } = useRestaurantsSearch(restaurants);
+  const hasResults = restaurants.length > 0;
+  const isSearching = searchQuery.trim().length > 0;
 
   if (error) {
     return (
@@ -35,7 +35,7 @@ const RestaurantActivity = () => {
           {error}
         </div>
         <button 
-          onClick={refresh}
+          onClick={reset}
           className="px-4 py-2 bg-creole-green text-white rounded hover:bg-creole-green/90"
         >
           Réessayer
@@ -53,24 +53,22 @@ const RestaurantActivity = () => {
         placeholder="Rechercher par nom, type, lieu, offre..."
       />
 
-      {isSearching && (
+      {isSearching && totalCount > 0 && (
         <div className="mb-6 text-center">
           <p className="text-gray-600">
-            {totalResults} restaurant{totalResults !== 1 ? 's' : ''} trouvé{totalResults !== 1 ? 's' : ''}
-            {totalResults > 0 && ` pour "${searchQuery}"`}
+            {totalCount} restaurant{totalCount !== 1 ? 's' : ''} trouvé{totalCount !== 1 ? 's' : ''}
+            {` pour "${searchQuery}"`}
           </p>
         </div>
       )}
 
       {hasResults || loading ? (
         <>
-          <RestaurantGrid 
-            restaurants={filteredRestaurants}
-            loading={loading}
-            loadingMore={loadingMore}
-            hasMore={hasMore && !isSearching}
-            onLoadMore={loadMore}
-            showLoadMore={!isSearching}
+          <RestaurantGridInfinite 
+            restaurants={restaurants}
+            isLoadingMore={isLoadingMore}
+            hasMore={hasMore}
+            error={null}
           />
           <RestaurantInfo />
         </>
