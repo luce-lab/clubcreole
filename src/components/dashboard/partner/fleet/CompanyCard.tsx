@@ -10,8 +10,8 @@ interface CompanyCardProps {
   vehicleCount: number;
   activeVehicleCount: number;
   managerCount: number;
-  onManageFleet: (companyId: string) => void;
-  onViewDetails: (companyId: string) => void;
+  onManageFleet: (companyId: number) => void;
+  onViewDetails: (companyId: number) => void;
 }
 
 export const CompanyCard = ({ 

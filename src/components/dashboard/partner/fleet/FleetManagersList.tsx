@@ -14,7 +14,7 @@ import {
 } from "@/services/fleetManagerService";
 
 interface FleetManagersListProps {
-  companyId: string;
+  companyId: number;
   companyName: string;
 }
 

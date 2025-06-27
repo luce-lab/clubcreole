@@ -7,7 +7,7 @@ import { ManagersTabContent } from "./ManagersTabContent";
 import { VehiclesTabContent } from "./VehiclesTabContent";
 
 interface CompanyFleetManagementProps {
-  companyId: string;
+  companyId: number;
   companyName: string;
   onBack: () => void;
 }

@@ -19,7 +19,7 @@ import { Plus } from "lucide-react";
 import { createFleetManager, CreateFleetManagerData } from "@/services/fleetManagerService";
 
 interface CreateFleetManagerDialogProps {
-  companyId: string;
+  companyId: number;
   companyName: string;
 }
 
