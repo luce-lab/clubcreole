@@ -1,75 +1,56 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import LoisirsHeader from "@/components/loisirs/LoisirsHeader";
 import LoisirsLoader from "@/components/loisirs/LoisirsLoader";
-import LoisirsGrid from "@/components/loisirs/LoisirsGrid";
+import LoisirsGridInfinite from "@/components/loisirs/LoisirsGridInfinite";
 import LoisirsSearchBar from "@/components/loisirs/LoisirsSearchBar";
 import LoisirsEmptyState from "@/components/loisirs/LoisirsEmptyState";
-import { useLoisirsSearch } from "@/hooks/useLoisirsSearch";
+import { useInfiniteLoisirs } from "@/hooks/useInfiniteLoisirs";
+import { useDebounce } from "@/hooks/useDebounce";
 import { Loisir } from "@/components/loisirs/types";
 
 const LoisirsActivity = () => {
-  const [loisirs, setLoisirs] = useState<Loisir[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  // Debouncer la recherche pour éviter trop de requêtes
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-  const { 
-    searchQuery, 
-    setSearchQuery, 
-    filteredLoisirs, 
-    hasResults, 
-    totalResults, 
-    isSearching 
-  } = useLoisirsSearch(loisirs);
+  const {
+    loisirs,
+    loading,
+    error,
+    hasMore,
+    totalCount,
+    reset,
+    isLoadingMore
+  } = useInfiniteLoisirs({
+    initialLimit: 12,
+    threshold: 200,
+    searchQuery: debouncedSearchQuery
+  });
 
-  // Charger les données depuis Supabase
-  useEffect(() => {
-    const fetchLoisirs = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('loisirs')
-          .select('*')
-          .order('start_date', { ascending: true });
-        
-        if (error) {
-          throw error;
-        }
-        
-        if (data) {
-          // Conversion du champ gallery_images pour chaque loisir
-          const formattedLoisirs = data.map(loisir => ({
-            ...loisir,
-            gallery_images: Array.isArray(loisir.gallery_images) 
-              ? loisir.gallery_images 
-              : []
-          })) as Loisir[];
-          
-          setLoisirs(formattedLoisirs);
-        }
-      } catch (error) {
-        console.error("Erreur lors du chargement des loisirs:", error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de charger les activités de loisirs.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchLoisirs();
-  }, []);
+  const hasResults = loisirs.length > 0;
+  const isSearching = searchQuery.trim().length > 0;
+  const isSearchPending = searchQuery !== debouncedSearchQuery;
 
   const handleUpdateLoisir = (updatedLoisir: Loisir) => {
-    setLoisirs(loisirs.map(loisir => 
-      loisir.id === updatedLoisir.id ? updatedLoisir : loisir
-    ));
+    // Cette fonction pourrait être étendue pour mettre à jour les données localement
+    // Pour l'instant, on peut simplement faire un reset pour recharger les données
+    console.log("Loisir mis à jour:", updatedLoisir);
+    // Optionnel: reset() pour recharger toutes les données
   };
 
   if (loading) {
     return <LoisirsLoader />;
+  }
+
+  if (error && !hasResults) {
+    toast({
+      title: "Erreur",
+      description: error,
+      variant: "destructive",
+    });
   }
 
   return (
@@ -77,22 +58,30 @@ const LoisirsActivity = () => {
       <LoisirsHeader />
       
       <LoisirsSearchBar 
+        value={searchQuery}
         onSearch={setSearchQuery}
         placeholder="Rechercher par titre, description ou lieu de l'activité..."
       />
 
       {isSearching && (
         <div className="mb-6 text-center">
-          <p className="text-gray-600">
-            {totalResults} activité{totalResults !== 1 ? 's' : ''} trouvée{totalResults !== 1 ? 's' : ''}
-            {totalResults > 0 && ` pour "${searchQuery}"`}
-          </p>
+          {isSearchPending ? (
+            <p className="text-gray-500 italic">Recherche en cours...</p>
+          ) : totalCount > 0 ? (
+            <p className="text-gray-600">
+              {totalCount} activité{totalCount !== 1 ? 's' : ''} trouvée{totalCount !== 1 ? 's' : ''}
+              {` pour "${searchQuery}"`}
+            </p>
+          ) : null}
         </div>
       )}
 
       {hasResults ? (
-        <LoisirsGrid 
-          loisirs={filteredLoisirs} 
+        <LoisirsGridInfinite 
+          loisirs={loisirs} 
+          isLoadingMore={isLoadingMore}
+          hasMore={hasMore}
+          error={error}
           onUpdateLoisir={handleUpdateLoisir} 
         />
       ) : (

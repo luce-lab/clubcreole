@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, X } from "lucide-react";
@@ -7,18 +6,17 @@ import { Search, X } from "lucide-react";
 interface LoisirsSearchBarProps {
   onSearch: (query: string) => void;
   placeholder?: string;
+  value?: string;
 }
 
-const LoisirsSearchBar = ({ onSearch, placeholder = "Rechercher par mots-clés..." }: LoisirsSearchBarProps) => {
-  const [searchQuery, setSearchQuery] = useState("");
+const LoisirsSearchBar = ({ onSearch, placeholder = "Rechercher par mots-clés...", value = "" }: LoisirsSearchBarProps) => {
+  const searchQuery = value;
 
   const handleSearch = (query: string) => {
-    setSearchQuery(query);
     onSearch(query);
   };
 
   const clearSearch = () => {
-    setSearchQuery("");
     onSearch("");
   };
 

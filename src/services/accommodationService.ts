@@ -194,6 +194,153 @@ function weightedRandomSort(accommodations: Accommodation[]): Accommodation[] {
   return uniqueAccommodations;
 }
 
+export interface AccommodationPaginationResult {
+  accommodations: Accommodation[];
+  totalCount: number;
+  hasMore: boolean;
+  nextOffset: number;
+}
+
+export const fetchAccommodationsPaginated = async (
+  offset: number = 0,
+  limit: number = 12,
+  searchQuery?: string
+): Promise<AccommodationPaginationResult> => {
+  try {
+    // D'abord essayer de récupérer depuis la base de données
+    let query = supabase
+      .from('accommodations')
+      .select('*', { count: 'exact' });
+
+    // Appliquer la recherche si présente
+    if (searchQuery && searchQuery.trim() !== '') {
+      const searchTerm = `%${searchQuery.trim()}%`;
+      query = query.or(`name.ilike.${searchTerm},type.ilike.${searchTerm},location.ilike.${searchTerm}`);
+    }
+
+    // Appliquer le tri pondéré et la pagination
+    const { data, error, count } = await query
+      .order('weight', { ascending: false })
+      .order('rating', { ascending: false })
+      .order('id', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    // Si la requête réussit et qu'on a des données
+    if (!error && data && data.length > 0) {
+      // Transformer les données
+      const formattedData = data.map(item => {
+        const typedAmenities = transformAmenities(item.amenities);
+        
+        return {
+          ...item,
+          gallery_images: item.gallery_images as string[],
+          features: item.features as string[],
+          amenities: typedAmenities,
+          rules: item.rules as string[],
+          discount: item.discount || undefined,
+          weight: item.weight || 1
+        };
+      });
+
+      const totalCount = count || 0;
+      const hasMore = offset + limit < totalCount;
+      const nextOffset = offset + limit;
+
+      return {
+        accommodations: formattedData,
+        totalCount,
+        hasMore,
+        nextOffset
+      };
+    }
+
+    // Si pas de données en base ou erreur, utiliser les données mock
+    console.log('Utilisation des données mock pour les hébergements');
+    
+    // Créer plus de données mock pour tester la pagination
+    const mockData = [
+      ...mockAccommodationsWithDiscounts,
+      {
+        id: 2,
+        name: "Villa Sunset",
+        type: "Villa",
+        location: "Sainte-Anne, Guadeloupe",
+        price: 120,
+        rating: 4.8,
+        image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        gallery_images: [
+          "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+          "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+        ],
+        features: ["Vue mer", "Piscine privée", "Jardin tropical", "Climatisation"],
+        description: "Villa luxueuse avec vue panoramique sur la mer des Caraïbes. Parfaite pour des vacances de rêve en famille ou entre amis.",
+        rooms: 3,
+        bathrooms: 2,
+        max_guests: 6,
+        amenities: [
+          { name: "WiFi gratuit", available: true },
+          { name: "Piscine privée", available: true },
+          { name: "Parking gratuit", available: true },
+          { name: "Climatisation", available: true }
+        ],
+        rules: ["Check-in à partir de 16h", "Check-out avant 10h", "Animaux acceptés"],
+        weight: 3
+      },
+      {
+        id: 3,
+        name: "Bungalow Paradis",
+        type: "Bungalow",
+        location: "Le Gosier, Guadeloupe",
+        price: 95,
+        rating: 4.6,
+        image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        gallery_images: [
+          "https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+        ],
+        features: ["Proche plage", "Terrasse", "Kitchenette"],
+        description: "Bungalow confortable à quelques minutes de la plage. Idéal pour un séjour authentique.",
+        rooms: 1,
+        bathrooms: 1,
+        max_guests: 2,
+        amenities: [
+          { name: "WiFi gratuit", available: true },
+          { name: "Kitchenette", available: true },
+          { name: "Terrasse", available: true }
+        ],
+        rules: ["Check-in à partir de 15h", "Check-out avant 11h"],
+        weight: 2
+      }
+    ];
+
+    // Appliquer la recherche sur les données mock
+    let filteredData = mockData;
+    if (searchQuery && searchQuery.trim() !== '') {
+      const searchLower = searchQuery.toLowerCase();
+      filteredData = mockData.filter(item => 
+        item.name.toLowerCase().includes(searchLower) ||
+        item.location.toLowerCase().includes(searchLower) ||
+        item.type.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Appliquer la pagination
+    const paginatedData = filteredData.slice(offset, offset + limit);
+    const totalCount = filteredData.length;
+    const hasMore = offset + limit < totalCount;
+    const nextOffset = offset + limit;
+
+    return {
+      accommodations: paginatedData,
+      totalCount,
+      hasMore,
+      nextOffset
+    };
+  } catch (err) {
+    console.error('Erreur lors du chargement paginé des hébergements:', err);
+    throw err;
+  }
+};
+
 export async function createAccommodation(accommodationData: Omit<Accommodation, 'id'>): Promise<Accommodation> {
   console.log("Tentative de création d'hébergement:", accommodationData);
   

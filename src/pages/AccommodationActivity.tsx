@@ -1,61 +1,44 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AccommodationSearch } from "@/components/accommodation/AccommodationSearch";
-import { AccommodationGrid } from "@/components/accommodation/AccommodationGrid";
+import { AccommodationGridInfinite } from "@/components/accommodation/AccommodationGridInfinite";
 import { AccommodationAdvantages } from "@/components/accommodation/AccommodationAdvantages";
 import { MembershipCard } from "@/components/accommodation/MembershipCard";
 import { AccommodationLoading } from "@/components/accommodation/AccommodationLoading";
 import { AccommodationError } from "@/components/accommodation/AccommodationError";
 import { AccommodationEmptyState } from "@/components/accommodation/AccommodationEmptyState";
-import { Accommodation } from "@/components/accommodation/AccommodationTypes";
-import { fetchAccommodationsWeightedRandom } from "@/services/accommodationService";
+import { useInfiniteAccommodations } from "@/hooks/useInfiniteAccommodations";
 
 const AccommodationActivity = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [priceFilter, setPriceFilter] = useState<string>("");
-  const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadAccommodations = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchAccommodationsWeightedRandom();
-        setAccommodations(data);
-      } catch (err) {
-        console.error("Erreur lors de la récupération des hébergements:", err);
-        setError("Impossible de charger les hébergements. Veuillez réessayer plus tard.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadAccommodations();
-  }, []);
-
-  const filteredAccommodations = accommodations.filter(accommodation => {
-    const matchesSearch = accommodation.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                        accommodation.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        accommodation.type.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesPrice = priceFilter === "" || 
-                        (priceFilter === "low" && accommodation.price < 80) ||
-                        (priceFilter === "medium" && accommodation.price >= 80 && accommodation.price < 100) ||
-                        (priceFilter === "high" && accommodation.price >= 100);
-    
-    return matchesSearch && matchesPrice;
+  const {
+    accommodations,
+    loading,
+    error,
+    hasMore,
+    totalCount,
+    reset,
+    isLoadingMore
+  } = useInfiniteAccommodations({
+    initialLimit: 12,
+    threshold: 200,
+    searchQuery: searchTerm,
+    priceFilter: priceFilter
   });
+
+  const hasResults = accommodations.length > 0;
 
   if (loading) {
     return <AccommodationLoading />;
   }
 
-  if (error) {
+  if (error && !hasResults) {
     return <AccommodationError error={error} />;
   }
 
@@ -86,8 +69,13 @@ const AccommodationActivity = () => {
         setPriceFilter={setPriceFilter}
       />
 
-      {filteredAccommodations.length > 0 ? (
-        <AccommodationGrid accommodations={filteredAccommodations} />
+      {hasResults ? (
+        <AccommodationGridInfinite 
+          accommodations={accommodations}
+          isLoadingMore={isLoadingMore}
+          hasMore={hasMore}
+          error={error}
+        />
       ) : (
         <AccommodationEmptyState />
       )}

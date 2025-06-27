@@ -135,3 +135,61 @@ export const getLoisirById = async (id: number): Promise<Loisir> => {
     throw error;
   }
 };
+
+export interface LoisirPaginationResult {
+  loisirs: Loisir[];
+  totalCount: number;
+  hasMore: boolean;
+  nextOffset: number;
+}
+
+export const fetchLoisirsPaginated = async (
+  offset: number = 0,
+  limit: number = 12,
+  searchQuery?: string
+): Promise<LoisirPaginationResult> => {
+  try {
+    let query = supabase
+      .from('loisirs')
+      .select('*', { count: 'exact' });
+
+    // Appliquer la recherche si présente
+    if (searchQuery && searchQuery.trim() !== '') {
+      const searchTerm = `%${searchQuery.trim()}%`;
+      query = query.or(`title.ilike.${searchTerm},description.ilike.${searchTerm},location.ilike.${searchTerm}`);
+    }
+
+    // Appliquer le tri et la pagination
+    const { data, error, count } = await query
+      .order('start_date', { ascending: true })
+      .order('id', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (error) {
+      console.error('Erreur lors du chargement paginé des loisirs:', error);
+      throw error;
+    }
+
+    // Transformer les données
+    const formattedData = data ? data.map(item => ({
+      ...item,
+      gallery_images: Array.isArray(item.gallery_images) 
+        ? item.gallery_images 
+        : []
+    })) as Loisir[] : [];
+
+    const totalCount = count || 0;
+    const hasMore = offset + limit < totalCount;
+    const nextOffset = offset + limit;
+
+    return {
+      loisirs: formattedData,
+      totalCount,
+      hasMore,
+      nextOffset
+    };
+  } catch (err) {
+    console.error('Erreur lors du chargement paginé des loisirs:', err);
+    throw err;
+  }
+};

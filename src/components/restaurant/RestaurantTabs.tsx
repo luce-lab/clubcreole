@@ -1,18 +1,24 @@
-
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 
-type MenuItem = {
+interface MenuItem {
   name: string;
   price: number;
-};
+}
 
-type MenuCategory = {
+interface MenuCategory {
   name: string;
   items: MenuItem[];
-};
+}
+
+interface OpeningHours {
+  ouverture: string;
+  fermeture: string;
+  soir_ouverture?: string;
+  soir_fermeture?: string;
+}
 
 interface RestaurantTabsProps {
   description: string;
@@ -24,31 +30,39 @@ interface RestaurantTabsProps {
 const RestaurantTabs = ({ description, type, location, restaurantId }: RestaurantTabsProps) => {
   const [menus, setMenus] = useState<MenuCategory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [openingHours, setOpeningHours] = useState<Record<string, OpeningHours>>({});
 
   useEffect(() => {
     const fetchMenus = async () => {
       try {
         const { data, error } = await supabase
           .from('restaurants')
-          .select('menus')
+          .select('menus, opening_hours')
           .eq('id', restaurantId)
           .single();
 
-        console.log( 'data',data,'id',restaurantId);
         if (error) {
           console.error('Erreur lors du chargement des menus:', error);
           setMenus([]);
           return;
         }
 
-        if (data == null || typeof data !== "object" || !("menus" in data)) {
+        if (!data || typeof data !== "object") {
           setMenus([]);
           return;
         }
 
-        // Properly type the menus data
-        const menusData = data.menus as MenuCategory[] || [];
-        setMenus(menusData);
+        // Safely handle menus data
+        if (data.menus && Array.isArray(data.menus)) {
+          setMenus(data.menus as MenuCategory[]);
+        } else {
+          setMenus([]);
+        }
+
+        // Safely handle opening hours data
+        if (data.opening_hours && typeof data.opening_hours === "object") {
+          setOpeningHours(data.opening_hours as Record<string, OpeningHours>);
+        }
       } catch (err) {
         console.error('Erreur:', err);
       } finally {
@@ -88,7 +102,18 @@ const RestaurantTabs = ({ description, type, location, restaurantId }: Restauran
           </div>
           <div>
             <h3 className="font-medium">Horaires</h3>
-            <p className="text-gray-700">Lun-Dim: 12h00-15h00, 19h00-23h00</p>
+            {Object.keys(openingHours).length > 0 && (
+              <div className="space-y-1">
+                {Object.entries(openingHours).map(([jour, horaires]) => (
+                  <div key={jour} className="text-sm">
+                    <strong>{jour}:</strong> {horaires.ouverture} - {horaires.fermeture}
+                    {horaires.soir_ouverture && (
+                      <> / {horaires.soir_ouverture} - {horaires.soir_fermeture}</>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </TabsContent>
@@ -96,14 +121,14 @@ const RestaurantTabs = ({ description, type, location, restaurantId }: Restauran
         <h2 className="text-xl font-semibold">Notre carte</h2>
         {loading ? (
           <p>Chargement du menu...</p>
-        ) : (
+        ) : menus.length > 0 ? (
           <div className="space-y-6">
-            {menus.map((category) => (
-              <div key={category.name}>
+            {menus.map((category, categoryIndex) => (
+              <div key={`${category.name}-${categoryIndex}`}>
                 <h3 className="font-medium text-lg border-b pb-1">{category.name}</h3>
                 <ul className="mt-2 space-y-2">
                   {category.items.map((item, itemIndex) => (
-                    <li key={`${item.name}-${itemIndex}`} className="flex justify-between">
+                    <li key={`${category.name}-${item.name}-${itemIndex}`} className="flex justify-between">
                       <span>{item.name}</span>
                       <span>{item.price}€</span>
                     </li>
@@ -112,6 +137,8 @@ const RestaurantTabs = ({ description, type, location, restaurantId }: Restauran
               </div>
             ))}
           </div>
+        ) : (
+          <p className="text-gray-500">Aucun menu disponible pour le moment.</p>
         )}
       </TabsContent>
       <TabsContent value="reviews" className="space-y-4 mt-4">
