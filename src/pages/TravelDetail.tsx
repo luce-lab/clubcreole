@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -31,7 +32,7 @@ interface TravelOffer {
     business_name: string;
     phone: string | null;
     website: string | null;
-  };
+  } | null;
 }
 
 const TravelDetail = () => {

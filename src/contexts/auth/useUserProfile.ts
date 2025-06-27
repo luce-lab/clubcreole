@@ -48,7 +48,7 @@ export const fetchUserProfile = async (user: User): Promise<UserWithRole> => {
       name: profileData.first_name 
         ? `${profileData.first_name} ${profileData.last_name || ''}`.trim()
         : user.email || 'Utilisateur',
-      company_id: profileData.company_id
+      company_id: profileData.company_id || undefined
     };
   } catch (err) {
     console.error('Error in profile fetch:', err);

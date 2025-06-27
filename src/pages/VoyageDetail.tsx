@@ -33,7 +33,7 @@ interface TravelOffer {
     business_name: string;
     phone: string | null;
     website: string | null;
-  };
+  } | null;
 }
 
 const VoyageDetail = () => {

@@ -7,7 +7,7 @@ export interface PartnerCarRentalReservation extends CarRentalReservation {
 }
 
 export interface CarRentalCompanyForPartner {
-  id: string;
+  id: number; // Changed from string to number
   business_name: string;
   business_type: string;
   image: string;
@@ -22,7 +22,7 @@ export interface CarRentalCompanyForPartner {
 
 export interface CarModelForPartner {
   id: number;
-  company_id: string;
+  company_id: number; // Changed from string to number
   name: string;
   image: string;
   price_per_day: number;
@@ -70,7 +70,7 @@ export async function fetchPartnerCarRentalReservations(): Promise<PartnerCarRen
 }
 
 // Récupérer les modèles de voitures d'une entreprise spécifique
-export async function fetchCarModelsByCompany(companyId: string): Promise<CarModelForPartner[]> {
+export async function fetchCarModelsByCompany(companyId: number): Promise<CarModelForPartner[]> { // Changed parameter type
   const { data, error } = await supabase
     .from("car_models")
     .select("*")

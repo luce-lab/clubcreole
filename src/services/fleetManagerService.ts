@@ -1,9 +1,10 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 export interface FleetManager {
   id: string;
   user_id: string;
-  company_id: string;
+  company_id: number; // Changed from string to number
   permissions: {
     manage_vehicles: boolean;
     view_reservations: boolean;
@@ -23,7 +24,7 @@ export interface CreateFleetManagerData {
   email: string;
   first_name?: string;
   last_name?: string;
-  company_id: string;
+  company_id: number; // Changed from string to number
   permissions?: {
     manage_vehicles: boolean;
     view_reservations: boolean;
@@ -32,7 +33,7 @@ export interface CreateFleetManagerData {
 }
 
 // Récupérer les gestionnaires de flotte d'une entreprise
-export async function fetchFleetManagersByCompany(companyId: string): Promise<FleetManager[]> {
+export async function fetchFleetManagersByCompany(companyId: number): Promise<FleetManager[]> { // Changed parameter type
   const { data, error } = await supabase
     .from("fleet_managers")
     .select(`
@@ -55,7 +56,7 @@ export async function fetchFleetManagersByCompany(companyId: string): Promise<Fl
   const managers: FleetManager[] = (data || []).map(item => ({
     id: item.id,
     user_id: item.user_id,
-    company_id: item.company_id,
+    company_id: item.company_id, // This is already a number from the database
     permissions: typeof item.permissions === 'object' && item.permissions !== null 
       ? item.permissions as { manage_vehicles: boolean; view_reservations: boolean; manage_reservations: boolean; }
       : { manage_vehicles: true, view_reservations: true, manage_reservations: false },
@@ -120,7 +121,7 @@ export async function createFleetManager(managerData: CreateFleetManagerData): P
     .from("fleet_managers")
     .insert([{
       user_id: userId,
-      company_id: managerData.company_id,
+      company_id: managerData.company_id, // This is already a number
       permissions: managerData.permissions || defaultPermissions
     }])
     .select(`
@@ -142,7 +143,7 @@ export async function createFleetManager(managerData: CreateFleetManagerData): P
   const manager: FleetManager = {
     id: data.id,
     user_id: data.user_id,
-    company_id: data.company_id,
+    company_id: data.company_id, // This is already a number
     permissions: typeof data.permissions === 'object' && data.permissions !== null 
       ? data.permissions as { manage_vehicles: boolean; view_reservations: boolean; manage_reservations: boolean; }
       : defaultPermissions,

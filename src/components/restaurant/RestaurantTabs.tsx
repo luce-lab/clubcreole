@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
@@ -45,7 +46,9 @@ const RestaurantTabs = ({ description, type, location, restaurantId }: Restauran
           return;
         }
 
-        setMenus(data?.menus || []);
+        // Properly type the menus data
+        const menusData = data.menus as MenuCategory[] || [];
+        setMenus(menusData);
       } catch (err) {
         console.error('Erreur:', err);
       } finally {
@@ -54,7 +57,7 @@ const RestaurantTabs = ({ description, type, location, restaurantId }: Restauran
     };
 
     fetchMenus();
-  }, []);
+  }, [restaurantId]);
 
   return (
     <Tabs defaultValue="about" className="w-full">

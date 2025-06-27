@@ -17,7 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface Partner {
-  id: string;
+  id: number; // Changed from string to number
   business_name: string;
   business_type: string;
   status: string;
@@ -86,7 +86,7 @@ const PartnersManagement = () => {
     setFilteredPartners(filtered);
   };
 
-  const updatePartnerStatus = async (partnerId: string, newStatus: string) => {
+  const updatePartnerStatus = async (partnerId: number, newStatus: string) => { // Changed parameter type
     try {
       const { error } = await supabase
         .from('partners')
@@ -235,7 +235,7 @@ const PartnersList = ({
   formatDate 
 }: { 
   partners: Partner[];
-  onUpdateStatus: (id: string, status: string) => void;
+  onUpdateStatus: (id: number, status: string) => void; // Changed parameter type
   getStatusIcon: (status: string) => JSX.Element;
   getStatusLabel: (status: string) => string;
   getStatusColor: (status: string) => string;

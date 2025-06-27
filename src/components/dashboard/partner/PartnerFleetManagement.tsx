@@ -13,7 +13,7 @@ import {
 import { fetchFleetManagersByCompany } from "@/services/fleetManagerService";
 
 export const PartnerFleetManagement = () => {
-  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(null); // Changed from string to number
   const [selectedCompanyName, setSelectedCompanyName] = useState<string>("");
 
   const { data: companies = [], isLoading: companiesLoading } = useQuery({
@@ -35,7 +35,7 @@ export const PartnerFleetManagement = () => {
     };
   });
 
-  const handleManageFleet = (companyId: string) => {
+  const handleManageFleet = (companyId: number) => { // Changed parameter type
     const company = companies.find(c => c.id === companyId);
     setSelectedCompanyId(companyId);
     setSelectedCompanyName(company?.business_name || "");

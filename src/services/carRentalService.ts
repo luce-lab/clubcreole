@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { 
   CarRental, 
@@ -210,7 +211,7 @@ export async function getCarRentals(): Promise<CarRental[]> {
 
     // Transformer les données partners en format CarRental
     const carRentals: CarRental[] = partners.map(partner => ({
-      id: partner.id,
+      id: partner.id.toString(), // Convert number to string
       name: partner.business_name,
       type: partner.business_type || "Location de voitures",
       image: partner.image || "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
@@ -242,7 +243,7 @@ export async function getCarRentalById(id: string): Promise<CarRental | null> {
     const { data: partner, error } = await supabase
       .from("partners")
       .select("*")
-      .eq("id", id)
+      .eq("id", parseInt(id)) // Convert string to number for query
       .single();
 
     if (error) {
@@ -257,7 +258,7 @@ export async function getCarRentalById(id: string): Promise<CarRental | null> {
 
     // Transformer en format CarRental
     const carRental: CarRental = {
-      id: partner.id,
+      id: partner.id.toString(), // Convert number to string
       name: partner.business_name,
       type: partner.business_type || "Location de voitures",
       image: partner.image || "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
