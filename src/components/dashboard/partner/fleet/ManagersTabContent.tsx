@@ -3,7 +3,7 @@ import { FleetManagersList } from "./FleetManagersList";
 import { CreateFleetManagerDialog } from "./CreateFleetManagerDialog";
 
 interface ManagersTabContentProps {
-  companyId: string;
+  companyId: number;
   companyName: string;
 }
 

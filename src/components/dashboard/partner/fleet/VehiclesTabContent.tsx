@@ -2,7 +2,7 @@
 import { VehicleManagement } from "./VehicleManagement";
 
 interface VehiclesTabContentProps {
-  companyId: string;
+  companyId: number;
   companyName: string;
 }
 

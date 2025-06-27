@@ -64,7 +64,14 @@ const VoyageDetail = () => {
       }
 
       console.log('Offre de voyage récupérée:', data);
-      return data as TravelOffer;
+      
+      // Transform the data to match our interface
+      const transformedData: TravelOffer = {
+        ...data,
+        partners: Array.isArray(data.partners) && data.partners.length > 0 ? data.partners[0] : null
+      };
+      
+      return transformedData;
     },
     enabled: !!id,
   });
