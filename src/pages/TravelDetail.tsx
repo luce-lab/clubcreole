@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -67,7 +66,10 @@ const TravelDetail = () => {
       // Transform the data to match our interface
       const transformedData: TravelOffer = {
         ...data,
-        partners: Array.isArray(data.partners) && data.partners.length > 0 ? data.partners[0] : null
+        partners: Array.isArray(data.partners) && data.partners.length > 0 ? data.partners[0] : null,
+        gallery_images: Array.isArray(data.gallery_images) ? data.gallery_images as string[] : [],
+        inclusions: Array.isArray(data.inclusions) ? data.inclusions as string[] : [],
+        exclusions: Array.isArray(data.exclusions) ? data.exclusions as string[] : []
       };
       
       return transformedData;
