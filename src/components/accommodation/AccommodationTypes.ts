@@ -21,4 +21,5 @@ export interface Accommodation {
   amenities: Amenity[];
   rules: string[];
   discount?: number; // Propriété optionnelle pour la réduction en pourcentage
+  weight?: number; // Poids pour le tri pondéré (plus élevé = priorité plus haute)
 }

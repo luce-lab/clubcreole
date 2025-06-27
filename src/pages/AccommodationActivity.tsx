@@ -11,7 +11,7 @@ import { AccommodationLoading } from "@/components/accommodation/AccommodationLo
 import { AccommodationError } from "@/components/accommodation/AccommodationError";
 import { AccommodationEmptyState } from "@/components/accommodation/AccommodationEmptyState";
 import { Accommodation } from "@/components/accommodation/AccommodationTypes";
-import { fetchAccommodations } from "@/services/accommodationService";
+import { fetchAccommodationsWeightedRandom } from "@/services/accommodationService";
 
 const AccommodationActivity = () => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const AccommodationActivity = () => {
     const loadAccommodations = async () => {
       try {
         setLoading(true);
-        const data = await fetchAccommodations();
+        const data = await fetchAccommodationsWeightedRandom();
         setAccommodations(data);
       } catch (err) {
         console.error("Erreur lors de la récupération des hébergements:", err);

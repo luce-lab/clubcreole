@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import LazyImage from "@/components/ui/LazyImage";
 import { Restaurant } from "./types";
 
 interface RestaurantCardProps {
@@ -34,7 +35,7 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <div className="relative h-48 overflow-hidden">
-        <img 
+        <LazyImage 
           src={restaurant.image} 
           alt={restaurant.name} 
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"

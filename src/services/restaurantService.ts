@@ -1,6 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
+import { Restaurant } from "@/components/restaurant/types";
 
 export interface RestaurantReservation {
   id?: string;
@@ -113,6 +114,78 @@ export const getRestaurantReservations = async (restaurantId: number) => {
     return data;
   } catch (err) {
     console.error("Erreur lors de la récupération des réservations:", err);
+    throw err;
+  }
+};
+
+export interface RestaurantPaginationResult {
+  restaurants: Restaurant[];
+  totalCount: number;
+  hasMore: boolean;
+  nextOffset: number;
+}
+
+export const fetchRestaurantsPaginated = async (
+  offset: number = 0,
+  limit: number = 12,
+  searchQuery?: string
+): Promise<RestaurantPaginationResult> => {
+  try {
+    let query = supabase
+      .from('restaurants')
+      .select('*', { count: 'exact' });
+
+    // Appliquer la recherche si présente
+    if (searchQuery && searchQuery.trim() !== '') {
+      const searchTerm = `%${searchQuery.trim()}%`;
+      query = query.or(`name.ilike.${searchTerm},type.ilike.${searchTerm},location.ilike.${searchTerm},offer.ilike.${searchTerm}`);
+    }
+
+    // Appliquer le tri pondéré et la pagination
+    const { data, error, count } = await query
+      .order('poids', { ascending: false })
+      .order('rating', { ascending: false })
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (error) {
+      console.error('Erreur lors du chargement paginé des restaurants:', error);
+      throw error;
+    }
+
+    const totalCount = count || 0;
+    const hasMore = offset + limit < totalCount;
+    const nextOffset = offset + limit;
+
+    return {
+      restaurants: data || [],
+      totalCount,
+      hasMore,
+      nextOffset
+    };
+  } catch (err) {
+    console.error('Erreur lors du chargement paginé des restaurants:', err);
+    throw err;
+  }
+};
+
+export const fetchAllRestaurants = async (): Promise<Restaurant[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('restaurants')
+      .select('*')
+      .order('poids', { ascending: false })
+      .order('rating', { ascending: false })
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Erreur lors du chargement des restaurants:', error);
+      throw error;
+    }
+
+    return data || [];
+  } catch (err) {
+    console.error('Erreur lors du chargement des restaurants:', err);
     throw err;
   }
 };

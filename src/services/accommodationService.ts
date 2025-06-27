@@ -75,7 +75,8 @@ const mockAccommodationsWithDiscounts: Accommodation[] = [
       { name: "Climatisation", available: false }
     ],
     rules: ["Check-in à partir de 15h", "Check-out avant 11h", "Animaux non autorisés"],
-    discount: 50
+    discount: 50,
+    weight: 5
   }
 ];
 
@@ -101,7 +102,8 @@ export async function fetchAccommodations(): Promise<Accommodation[]> {
           features: item.features as string[],
           amenities: typedAmenities,
           rules: item.rules as string[],
-          discount: item.discount || undefined
+          discount: item.discount || undefined,
+          weight: item.weight || 1
         };
       });
       
@@ -115,6 +117,81 @@ export async function fetchAccommodations(): Promise<Accommodation[]> {
     // En cas d'erreur, retourner les données d'exemple
     return mockAccommodationsWithDiscounts;
   }
+}
+
+export async function fetchAccommodationsWeightedRandom(): Promise<Accommodation[]> {
+  try {
+    // Récupérer les hébergements avec tri pondéré aléatoire en SQL
+    const { data, error } = await supabase
+      .from("accommodations")
+      .select("*")
+      // Utilise une fonction PostgreSQL pour le tri pondéré aléatoire
+      // Plus le weight est élevé, plus l'hébergement a de chances d'apparaître en premier
+      .order('weight', { ascending: false })
+      .order('random()', { ascending: true });
+    
+    if (error) throw error;
+
+    // Si nous avons des données de la base, les transformer et appliquer un tri pondéré côté client
+    if (data && data.length > 0) {
+      const formattedData = data.map(item => {
+        const typedAmenities = transformAmenities(item.amenities);
+        
+        return {
+          ...item,
+          gallery_images: item.gallery_images as string[],
+          features: item.features as string[],
+          amenities: typedAmenities,
+          rules: item.rules as string[],
+          discount: item.discount || undefined,
+          weight: item.weight || 1
+        };
+      });
+      
+      // Appliquer un tri pondéré aléatoire côté client pour plus de contrôle
+      return weightedRandomSort(formattedData);
+    }
+    
+    // Sinon, retourner les données d'exemple
+    return mockAccommodationsWithDiscounts;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des hébergements avec tri pondéré:", error);
+    // En cas d'erreur, utiliser la fonction normale
+    return fetchAccommodations();
+  }
+}
+
+// Fonction utilitaire pour le tri pondéré aléatoire côté client
+function weightedRandomSort(accommodations: Accommodation[]): Accommodation[] {
+  // Créer une liste pondérée où chaque hébergement apparaît selon son poids
+  const weightedList: Accommodation[] = [];
+  
+  accommodations.forEach(accommodation => {
+    const weight = accommodation.weight || 1;
+    // Ajouter l'hébergement plusieurs fois selon son poids
+    for (let i = 0; i < weight; i++) {
+      weightedList.push(accommodation);
+    }
+  });
+  
+  // Mélanger la liste pondérée
+  for (let i = weightedList.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [weightedList[i], weightedList[j]] = [weightedList[j], weightedList[i]];
+  }
+  
+  // Retourner une liste unique (sans doublons) dans l'ordre mélangé
+  const uniqueAccommodations: Accommodation[] = [];
+  const seenIds = new Set<number>();
+  
+  weightedList.forEach(accommodation => {
+    if (!seenIds.has(accommodation.id)) {
+      uniqueAccommodations.push(accommodation);
+      seenIds.add(accommodation.id);
+    }
+  });
+  
+  return uniqueAccommodations;
 }
 
 export async function createAccommodation(accommodationData: Omit<Accommodation, 'id'>): Promise<Accommodation> {
@@ -136,7 +213,8 @@ export async function createAccommodation(accommodationData: Omit<Accommodation,
     features: accommodationData.features || [] as any,
     amenities: accommodationData.amenities || [] as any,
     rules: accommodationData.rules || [] as any,
-    discount: accommodationData.discount || null
+    discount: accommodationData.discount || null,
+    weight: accommodationData.weight || 1
   };
 
   console.log("Données envoyées à la base:", dbData);
@@ -168,7 +246,8 @@ export async function createAccommodation(accommodationData: Omit<Accommodation,
     features: insertedData.features as string[],
     amenities: typedAmenities,
     rules: insertedData.rules as string[],
-    discount: insertedData.discount || undefined
+    discount: insertedData.discount || undefined,
+    weight: insertedData.weight || 1
   };
 }
 
@@ -241,7 +320,8 @@ export async function updateAccommodation(id: number, accommodationData: Partial
     features: updatedData.features as string[],
     amenities: typedAmenities,
     rules: updatedData.rules as string[],
-    discount: updatedData.discount || undefined
+    discount: updatedData.discount || undefined,
+    weight: updatedData.weight || 1
   };
 
   console.log("=== RÉSULTAT FINAL ===", result);

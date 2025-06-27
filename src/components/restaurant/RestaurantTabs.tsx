@@ -41,7 +41,7 @@ const RestaurantTabs = ({ description, type, location, restaurantId }: Restauran
           return;
         }
 
-        if (!data) {
+        if (data == null || typeof data !== "object" || !("menus" in data)) {
           setMenus([]);
           return;
         }
@@ -98,12 +98,12 @@ const RestaurantTabs = ({ description, type, location, restaurantId }: Restauran
           <p>Chargement du menu...</p>
         ) : (
           <div className="space-y-6">
-            {menus.map((category, index) => (
-              <div key={index}>
+            {menus.map((category) => (
+              <div key={category.name}>
                 <h3 className="font-medium text-lg border-b pb-1">{category.name}</h3>
                 <ul className="mt-2 space-y-2">
-                  {category.items.map((item: MenuItem, itemIndex: number) => (
-                    <li key={itemIndex} className="flex justify-between">
+                  {category.items.map((item, itemIndex) => (
+                    <li key={`${item.name}-${itemIndex}`} className="flex justify-between">
                       <span>{item.name}</span>
                       <span>{item.price}€</span>
                     </li>
