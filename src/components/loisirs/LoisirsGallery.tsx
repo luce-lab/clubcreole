@@ -9,8 +9,8 @@ interface LoisirsGalleryProps {
 }
 
 const LoisirsGallery = ({ mainImage, galleryImages = [], title }: LoisirsGalleryProps) => {
-  // Nous combinons l'image principale avec les images de la galerie
-  const allImages = [mainImage, ...(galleryImages || [])].filter(Boolean);
+  // On utilise soit les images de la galerie si elles existent, soit l'image principale
+  const allImages = galleryImages?.length ? galleryImages : [mainImage];
   
   return (
     <div className="mb-8">
