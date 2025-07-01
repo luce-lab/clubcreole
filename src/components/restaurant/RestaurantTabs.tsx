@@ -54,14 +54,14 @@ const RestaurantTabs = ({ description, type, location, restaurantId }: Restauran
 
         // Safely handle menus data
         if (data.menus && Array.isArray(data.menus)) {
-          setMenus(data.menus as MenuCategory[]);
+          setMenus(data.menus as unknown as MenuCategory[]);
         } else {
           setMenus([]);
         }
 
         // Safely handle opening hours data
-        if (data.opening_hours && typeof data.opening_hours === "object") {
-          setOpeningHours(data.opening_hours as Record<string, OpeningHours>);
+        if (data.opening_hours && typeof data.opening_hours === "object" && !Array.isArray(data.opening_hours)) {
+          setOpeningHours(data.opening_hours as unknown as Record<string, OpeningHours>);
         }
       } catch (err) {
         console.error('Erreur:', err);

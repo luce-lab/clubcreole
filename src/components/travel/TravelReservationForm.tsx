@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Users, Phone, Mail, MessageSquare, Euro, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/auth";
 
 interface TravelOffer {
   id: number;
@@ -29,6 +31,7 @@ interface TravelReservationFormProps {
 
 export const TravelReservationForm = ({ offer }: TravelReservationFormProps) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     participants: 1,
     contactName: '',
@@ -65,9 +68,29 @@ export const TravelReservationForm = ({ offer }: TravelReservationFormProps) => 
     setIsSubmitting(true);
 
     try {
-      // Ici, on enverrait normalement la réservation à la base de données
-      // Pour l'instant, on simule juste le succès
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Create the reservation in the database
+      const { data, error } = await supabase
+        .from('travel_reservations')
+        .insert({
+          travel_offer_id: offer.id,
+          user_id: user?.id || null,
+          contact_name: formData.contactName,
+          contact_email: formData.contactEmail,
+          contact_phone: formData.contactPhone,
+          participants: formData.participants,
+          special_requests: formData.specialRequests || null,
+          total_price: totalPrice,
+          status: 'pending'
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Erreur lors de la création de la réservation:', error);
+        throw error;
+      }
+
+      console.log('Réservation créée avec succès:', data);
       
       toast({
         title: "Demande de réservation envoyée",
@@ -84,9 +107,10 @@ export const TravelReservationForm = ({ offer }: TravelReservationFormProps) => 
       });
 
     } catch (error) {
+      console.error('Erreur lors de la réservation:', error);
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue lors de l'envoi de votre demande",
+        description: "Une erreur est survenue lors de l'envoi de votre demande. Veuillez réessayer.",
         variant: "destructive",
       });
     } finally {

@@ -22,11 +22,13 @@ export type Database = {
           location: string
           max_guests: number
           name: string
+          partner_id: number | null
           price: number
           rating: number
           rooms: number
           rules: Json
           type: string
+          weight: number | null
         }
         Insert: {
           amenities: Json
@@ -40,11 +42,13 @@ export type Database = {
           location: string
           max_guests: number
           name: string
+          partner_id?: number | null
           price: number
           rating: number
           rooms: number
           rules: Json
           type: string
+          weight?: number | null
         }
         Update: {
           amenities?: Json
@@ -58,13 +62,23 @@ export type Database = {
           location?: string
           max_guests?: number
           name?: string
+          partner_id?: number | null
           price?: number
           rating?: number
           rooms?: number
           rules?: Json
           type?: string
+          weight?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "accommodations_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       activities: {
         Row: {
@@ -637,6 +651,7 @@ export type Database = {
           location: string
           name: string
           offer: string
+          partner_id: number | null
           price: number
           rating: number
           time: string
@@ -655,6 +670,7 @@ export type Database = {
           location: string
           name: string
           offer: string
+          partner_id?: number | null
           price: number
           rating: number
           time: string
@@ -673,12 +689,21 @@ export type Database = {
           location?: string
           name?: string
           offer?: string
+          partner_id?: number | null
           price?: number
           rating?: number
           time?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "concerts_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       diving_reservations: {
         Row: {
@@ -834,6 +859,7 @@ export type Database = {
           image: string
           location: string
           max_participants: number
+          partner_id: number | null
           start_date: string
           title: string
         }
@@ -846,6 +872,7 @@ export type Database = {
           image: string
           location: string
           max_participants: number
+          partner_id?: number | null
           start_date: string
           title: string
         }
@@ -858,10 +885,19 @@ export type Database = {
           image?: string
           location?: string
           max_participants?: number
+          partner_id?: number | null
           start_date?: string
           title?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "loisirs_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       loisirs_inscriptions: {
         Row: {
@@ -933,6 +969,7 @@ export type Database = {
           image: string
           name: string
           offer: string
+          partner_id: number | null
           price: number
           rating: number
           time: string
@@ -950,6 +987,7 @@ export type Database = {
           image: string
           name: string
           offer: string
+          partner_id?: number | null
           price: number
           rating: number
           time: string
@@ -967,6 +1005,7 @@ export type Database = {
           image?: string
           name?: string
           offer?: string
+          partner_id?: number | null
           price?: number
           rating?: number
           time?: string
@@ -974,7 +1013,15 @@ export type Database = {
           updated_at?: string | null
           venue?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "nightlive_events_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       offers: {
         Row: {
@@ -1086,7 +1133,9 @@ export type Database = {
           status: string
           type: string | null
           updated_at: string
+          user_id: string | null
           website: string | null
+          weight: number | null
         }
         Insert: {
           address?: string | null
@@ -1105,7 +1154,9 @@ export type Database = {
           status?: string
           type?: string | null
           updated_at?: string
+          user_id?: string | null
           website?: string | null
+          weight?: number | null
         }
         Update: {
           address?: string | null
@@ -1124,7 +1175,9 @@ export type Database = {
           status?: string
           type?: string | null
           updated_at?: string
+          user_id?: string | null
           website?: string | null
+          weight?: number | null
         }
         Relationships: []
       }
@@ -1527,6 +1580,8 @@ export type Database = {
           menus: Json | null
           name: string
           offer: string
+          opening_hours: Json | null
+          partner_id: number | null
           poids: number
           rating: number
           type: string
@@ -1543,6 +1598,8 @@ export type Database = {
           menus?: Json | null
           name: string
           offer: string
+          opening_hours?: Json | null
+          partner_id?: number | null
           poids?: number
           rating: number
           type: string
@@ -1559,12 +1616,22 @@ export type Database = {
           menus?: Json | null
           name?: string
           offer?: string
+          opening_hours?: Json | null
+          partner_id?: number | null
           poids?: number
           rating?: number
           type?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "restaurants_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       restaurants_managers: {
         Row: {
@@ -1781,7 +1848,15 @@ export type Database = {
           title?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "travel_offers_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       travel_offers_backup: {
         Row: {
@@ -1848,6 +1923,62 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      travel_reservations: {
+        Row: {
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          created_at: string
+          id: string
+          participants: number
+          reservation_date: string
+          special_requests: string | null
+          status: string
+          total_price: number
+          travel_offer_id: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          created_at?: string
+          id?: string
+          participants?: number
+          reservation_date?: string
+          special_requests?: string | null
+          status?: string
+          total_price: number
+          travel_offer_id: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string
+          created_at?: string
+          id?: string
+          participants?: number
+          reservation_date?: string
+          special_requests?: string | null
+          status?: string
+          total_price?: number
+          travel_offer_id?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "travel_reservations_travel_offer_id_fkey"
+            columns: ["travel_offer_id"]
+            isOneToOne: false
+            referencedRelation: "travel_offers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_consumption: {
         Row: {
