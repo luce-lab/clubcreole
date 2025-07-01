@@ -1,11 +1,12 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@/contexts/auth";
 
 interface LoisirsInvitationFormProps {
   loisirTitle: string;
@@ -13,10 +14,18 @@ interface LoisirsInvitationFormProps {
 }
 
 const LoisirsInvitationForm = ({ loisirTitle, onClose }: LoisirsInvitationFormProps) => {
+  const { user } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{name?: string, email?: string}>({});
+
+  useEffect(() => {
+    if (user) {
+      setEmail(user.email || "");
+      setName(user.user_metadata?.full_name || user.user_metadata?.name || "");
+    }
+  }, [user]);
 
   const validateForm = () => {
     const newErrors: {name?: string, email?: string} = {};
@@ -108,7 +117,7 @@ const LoisirsInvitationForm = ({ loisirTitle, onClose }: LoisirsInvitationFormPr
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={errors.email ? "border-red-500" : ""}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !!user}
             />
             {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
           </div>

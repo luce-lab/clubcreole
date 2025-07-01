@@ -1,14 +1,15 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Calendar, Clock, AlertCircle } from "lucide-react";
-import { format, isAfter, isBefore, parseISO, isValid } from "date-fns";
-import { fr } from "date-fns/locale";
+import { AlertCircle } from "lucide-react";
+import { isBefore } from "date-fns";
 import LoisirsRegistrationForm from "./LoisirsRegistrationForm";
 import { Loisir } from "./types";
 import LoisirsInvitationForm from "./LoisirsInvitationForm";
-import { isActivityPast, isDateValid, parseDate } from "@/services/loisirs";
+import { parseDate } from "@/services/loisirs";
+import { useAuth } from "@/contexts/auth";
 
 interface LoisirsRegistrationBlockProps {
   loisir: Loisir;
@@ -18,23 +19,25 @@ interface LoisirsRegistrationBlockProps {
 const LoisirsRegistrationBlock = ({ loisir, onUpdateLoisir }: LoisirsRegistrationBlockProps) => {
   const [openRegistration, setOpenRegistration] = useState(false);
   const [openInvitation, setOpenInvitation] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-  // Parse les dates
   const startDate = parseDate(loisir.start_date);
   const endDate = parseDate(loisir.end_date);
   const now = new Date();
   
-  // Vérifier si les dates sont valides
   const areDatesValid = startDate !== null && endDate !== null;
-  
-  // Vérifier si l'activité est terminée (seulement si les dates sont valides)
   const isPast = endDate ? isBefore(endDate, now) : false;
-
-  // Vérifier si l'activité est complète
   const isFull = loisir.current_participants >= loisir.max_participants;
-
-  // Déterminer si nous devons proposer l'inscription ou l'invitation
   const shouldShowInvitation = isPast || !areDatesValid;
+
+  const handleRegistrationClick = () => {
+    if (!user) {
+      navigate("/login");
+    } else {
+      setOpenRegistration(true);
+    }
+  };
 
   return (
     <Card>
@@ -109,21 +112,22 @@ const LoisirsRegistrationBlock = ({ loisir, onUpdateLoisir }: LoisirsRegistratio
             />
           </Dialog>
         ) : (
-          <Dialog open={openRegistration} onOpenChange={setOpenRegistration}>
-            <DialogTrigger asChild>
-              <Button 
-                className="w-full"
-                disabled={isFull}
-              >
-                {isFull ? "Complet" : "S'inscrire maintenant"}
-              </Button>
-            </DialogTrigger>
-            <LoisirsRegistrationForm 
-              selectedLoisir={loisir}
-              onSuccess={onUpdateLoisir}
-              onClose={() => setOpenRegistration(false)}
-            />
-          </Dialog>
+          <>
+            <Button 
+              className="w-full"
+              disabled={isFull}
+              onClick={handleRegistrationClick}
+            >
+              {isFull ? "Complet" : "S'inscrire maintenant"}
+            </Button>
+            <Dialog open={openRegistration} onOpenChange={setOpenRegistration}>
+              <LoisirsRegistrationForm 
+                selectedLoisir={loisir}
+                onSuccess={onUpdateLoisir}
+                onClose={() => setOpenRegistration(false)}
+              />
+            </Dialog>
+          </>
         )}
       </CardFooter>
     </Card>

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,6 +8,7 @@ import { toast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { Loisir } from "./types";
 import { createInscription } from "@/services/inscriptionService";
+import { useAuth } from "@/contexts/auth";
 
 interface LoisirsRegistrationFormProps {
   selectedLoisir: Loisir;
@@ -20,11 +21,20 @@ const LoisirsRegistrationForm = ({
   onSuccess, 
   onClose 
 }: LoisirsRegistrationFormProps) => {
+  const { user } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{name?: string, email?: string, phone?: string}>({});
+
+  useEffect(() => {
+    if (user) {
+      setEmail(user.email || "");
+      // You might need to adjust this depending on your user profile structure
+      setName(user.user_metadata?.full_name || user.user_metadata?.name || "");
+    }
+  }, [user]);
 
   const validateForm = () => {
     const newErrors: {name?: string, email?: string, phone?: string} = {};
@@ -58,7 +68,6 @@ const LoisirsRegistrationForm = ({
     }
 
     setIsSubmitting(true);
-    console.log("Tentative d'inscription pour:", selectedLoisir.id, name, email, phone);
 
     try {
       const result = await createInscription(
@@ -67,8 +76,6 @@ const LoisirsRegistrationForm = ({
         email,
         phone
       );
-
-      console.log("Résultat de l'inscription:", result);
 
       if (result.success) {
         toast({
@@ -81,9 +88,6 @@ const LoisirsRegistrationForm = ({
           current_participants: selectedLoisir.current_participants + 1
         });
         
-        setName("");
-        setEmail("");
-        setPhone("");
         onClose();
       } else {
         throw new Error(result.error);
@@ -137,7 +141,7 @@ const LoisirsRegistrationForm = ({
               onChange={(e) => setEmail(e.target.value)}
               className={errors.email ? "border-red-500" : ""}
               required
-              disabled={isSubmitting}
+              disabled={isSubmitting || !!user}
             />
             {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
           </div>
