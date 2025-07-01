@@ -31,20 +31,29 @@ const Login = () => {
     if (user && !authLoading) {
       setClientSideLoading(true);
       
-      // Redirection selon le rôle de l'utilisateur
-      const userRole = user?.user_metadata?.role || user?.role || 'client';
-      const finalUserRole = user?.email === 'admin@clubcreole.com' ? 'admin' : userRole;
+      // Check for redirect parameter in URL
+      const searchParams = new URLSearchParams(location.search);
+      const redirectTo = searchParams.get('redirect');
       
-      if (finalUserRole === 'admin' || finalUserRole === 'partner') {
-        navigate("/dashboard", { replace: true });
+      if (redirectTo) {
+        // Redirect to the original page
+        navigate(decodeURIComponent(redirectTo), { replace: true });
       } else {
-        // Rediriger les clients vers la page d'accueil
-        navigate("/", { replace: true });
+        // Default redirection selon le rôle de l'utilisateur
+        const userRole = user?.user_metadata?.role || user?.role || 'client';
+        const finalUserRole = user?.email === 'admin@clubcreole.com' ? 'admin' : userRole;
+        
+        if (finalUserRole === 'admin' || finalUserRole === 'partner') {
+          navigate("/dashboard", { replace: true });
+        } else {
+          // Rediriger les clients vers la page d'accueil
+          navigate("/", { replace: true });
+        }
       }
     } else {
       setClientSideLoading(false);
     }
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, navigate, location.search]);
 
   const handleLoginSuccess = () => {
     toast({

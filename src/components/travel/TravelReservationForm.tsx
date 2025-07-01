@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,10 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Users, Phone, Mail, MessageSquare, Euro, Calendar } from "lucide-react";
+import { Users, Phone, Mail, MessageSquare, Euro, Calendar, LogIn } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/auth";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface TravelOffer {
   id: number;
@@ -32,6 +33,8 @@ interface TravelReservationFormProps {
 export const TravelReservationForm = ({ offer }: TravelReservationFormProps) => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [formData, setFormData] = useState({
     participants: 1,
     contactName: '',
@@ -44,8 +47,36 @@ export const TravelReservationForm = ({ offer }: TravelReservationFormProps) => 
   const availableSpots = (offer.max_participants || 20) - (offer.current_participants || 0);
   const totalPrice = formData.participants * offer.price;
 
+  // Auto-fill user info if logged in
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        contactEmail: user.email || '',
+        contactName: user.user_metadata?.full_name || user.user_metadata?.name || ''
+      }));
+    }
+  }, [user]);
+
+  const handleAuthRequired = () => {
+    // Store current URL for redirect after login
+    const currentPath = location.pathname + location.search;
+    navigate(`/login?redirect=${encodeURIComponent(currentPath)}`);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check if user is authenticated first
+    if (!user) {
+      toast({
+        title: "Connexion requise",
+        description: "Vous devez être connecté pour effectuer une réservation",
+        variant: "destructive",
+      });
+      handleAuthRequired();
+      return;
+    }
     
     if (!formData.contactName || !formData.contactEmail || !formData.contactPhone) {
       toast({
@@ -127,6 +158,17 @@ export const TravelReservationForm = ({ offer }: TravelReservationFormProps) => 
         </CardTitle>
       </CardHeader>
       <CardContent>
+        {!user && (
+          <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg mb-4">
+            <div className="flex items-center gap-2 text-amber-800">
+              <LogIn className="h-4 w-4" />
+              <p className="text-sm font-medium">Connexion requise</p>
+            </div>
+            <p className="text-xs text-amber-700 mt-1">
+              Vous devez être connecté pour effectuer une réservation
+            </p>
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Partner Info */}
           {offer.partners && (
