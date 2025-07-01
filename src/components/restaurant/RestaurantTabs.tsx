@@ -39,7 +39,7 @@ const RestaurantTabs = ({ description, type, location, restaurantId }: Restauran
           .from('restaurants')
           .select('menus, opening_hours')
           .eq('id', restaurantId)
-          .single();
+          .single<{ menus: MenuCategory[]; opening_hours: Record<string, OpeningHours> }>();
 
         if (error) {
           console.error('Erreur lors du chargement des menus:', error);
@@ -54,14 +54,14 @@ const RestaurantTabs = ({ description, type, location, restaurantId }: Restauran
 
         // Safely handle menus data
         if (data.menus && Array.isArray(data.menus)) {
-          setMenus(data.menus as unknown as MenuCategory[]);
+          setMenus(data.menus as MenuCategory[]);
         } else {
           setMenus([]);
         }
 
         // Safely handle opening hours data
-        if (data.opening_hours && typeof data.opening_hours === "object" && !Array.isArray(data.opening_hours)) {
-          setOpeningHours(data.opening_hours as unknown as Record<string, OpeningHours>);
+        if (data.opening_hours && typeof data.opening_hours === "object") {
+          setOpeningHours(data.opening_hours as Record<string, OpeningHours>);
         }
       } catch (err) {
         console.error('Erreur:', err);

@@ -123,6 +123,7 @@ export const TravelReservationForm = ({ offer }: TravelReservationFormProps) => 
 
       console.log('Réservation créée avec succès:', data);
       
+      // Si la requête réussit, on affiche un message de succès avec toast
       toast({
         title: "Demande de réservation envoyée",
         description: "Votre demande a été transmise à notre partenaire. Vous recevrez une confirmation par email.",
