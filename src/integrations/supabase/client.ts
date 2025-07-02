@@ -9,6 +9,9 @@ const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 // const SUPABASE_URL = "https://supabase.clubcreole.fr";
 // const SUPABASE_PUBLISHABLE_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc0OTcxOTQwMCwiZXhwIjo0OTA1MzkzMDAwLCJyb2xlIjoiYW5vbiJ9.0WYDVcKmJDfC9yGCyW9GA38zfKG-_11TBqESdlB43P0";
 
+// const SUPABASE_URL = "http://localhost:54321";
+// const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
+
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 

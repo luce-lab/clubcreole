@@ -37,10 +37,12 @@ export const TravelReservationForm = ({ offer }: TravelReservationFormProps) => 
   const location = useLocation();
   const [formData, setFormData] = useState({
     participants: 1,
-    contactName: '',
+    contactFirstName: '',
+    contactLastName: '',
     contactEmail: '',
     contactPhone: '',
-    specialRequests: ''
+    specialRequests: '',
+    participantsDetails: [] as Array<{ firstName: string; lastName: string }>
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -50,13 +52,41 @@ export const TravelReservationForm = ({ offer }: TravelReservationFormProps) => 
   // Auto-fill user info if logged in
   useEffect(() => {
     if (user) {
-      setFormData(prev => ({
-        ...prev,
-        contactEmail: user.email || '',
-        contactName: user.user_metadata?.full_name || user.user_metadata?.name || ''
-      }));
+      const fullName = user.user_metadata?.full_name || user.user_metadata?.name || '';
+      const [firstName, ...lastNameParts] = fullName.split(' ');
+      const lastName = lastNameParts.join(' ');
+      
+      setFormData(prev => {
+        const newParticipantsDetails = [...prev.participantsDetails];
+        if (newParticipantsDetails.length === 0) {
+          newParticipantsDetails.push({ firstName: firstName || '', lastName: lastName || '' });
+        } else {
+          newParticipantsDetails[0] = { firstName: firstName || '', lastName: lastName || '' };
+        }
+        
+        return {
+          ...prev,
+          contactEmail: user.email || '',
+          contactFirstName: firstName || '',
+          contactLastName: lastName || '',
+          participantsDetails: newParticipantsDetails
+        };
+      });
     }
   }, [user]);
+
+  // Update participants details when number of participants changes
+  useEffect(() => {
+    setFormData(prev => {
+      const newParticipantsDetails = Array.from({ length: prev.participants }, (_, i) => 
+        prev.participantsDetails[i] || { firstName: '', lastName: '' }
+      );
+      return {
+        ...prev,
+        participantsDetails: newParticipantsDetails
+      };
+    });
+  }, [formData.participants]);
 
   const handleAuthRequired = () => {
     // Store current URL for redirect after login
@@ -78,10 +108,21 @@ export const TravelReservationForm = ({ offer }: TravelReservationFormProps) => 
       return;
     }
     
-    if (!formData.contactName || !formData.contactEmail || !formData.contactPhone) {
+    if (!formData.contactFirstName || !formData.contactLastName || !formData.contactEmail || !formData.contactPhone) {
       toast({
         title: "Champs requis",
         description: "Veuillez remplir tous les champs obligatoires",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate all participants have names
+    const incompleteParticipants = formData.participantsDetails.some(p => !p.firstName || !p.lastName);
+    if (incompleteParticipants) {
+      toast({
+        title: "Informations manquantes",
+        description: "Veuillez remplir le nom et prénom de tous les participants",
         variant: "destructive",
       });
       return;
@@ -105,10 +146,13 @@ export const TravelReservationForm = ({ offer }: TravelReservationFormProps) => 
         .insert({
           travel_offer_id: offer.id,
           user_id: user?.id || null,
-          contact_name: formData.contactName,
+          contact_name: `${formData.contactFirstName} ${formData.contactLastName}`,
+          contact_first_name: formData.contactFirstName,
+          contact_last_name: formData.contactLastName,
           contact_email: formData.contactEmail,
           contact_phone: formData.contactPhone,
           participants: formData.participants,
+          participants_details: formData.participantsDetails,
           special_requests: formData.specialRequests || null,
           total_price: totalPrice,
           status: 'pending'
@@ -132,10 +176,12 @@ export const TravelReservationForm = ({ offer }: TravelReservationFormProps) => 
       // Reset form
       setFormData({
         participants: 1,
-        contactName: '',
+        contactFirstName: '',
+        contactLastName: '',
         contactEmail: '',
         contactPhone: '',
-        specialRequests: ''
+        specialRequests: '',
+        participantsDetails: [{ firstName: '', lastName: '' }]
       });
 
     } catch (error) {
@@ -209,16 +255,51 @@ export const TravelReservationForm = ({ offer }: TravelReservationFormProps) => 
 
           {/* Contact Information */}
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="contactName">Nom complet *</Label>
-              <Input
-                id="contactName"
-                type="text"
-                value={formData.contactName}
-                onChange={(e) => setFormData(prev => ({ ...prev, contactName: e.target.value }))}
-                placeholder="Votre nom et prénom"
-                required
-              />
+            <div className="p-3 bg-blue-50 rounded-lg">
+              <Label className="text-base font-semibold text-blue-900">Personne de contact (Vous)</Label>
+              <p className="text-sm text-blue-700 mb-3">
+                Ces informations seront utilisées pour toute communication concernant la réservation
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-2">
+                  <Label htmlFor="contactFirstName">Prénom *</Label>
+                  <Input
+                    id="contactFirstName"
+                    type="text"
+                    value={formData.contactFirstName}
+                    onChange={(e) => {
+                      setFormData(prev => ({ ...prev, contactFirstName: e.target.value }));
+                      // Sync with first participant
+                      const newDetails = [...formData.participantsDetails];
+                      if (newDetails[0]) {
+                        newDetails[0] = { ...newDetails[0], firstName: e.target.value };
+                        setFormData(prev => ({ ...prev, participantsDetails: newDetails }));
+                      }
+                    }}
+                    placeholder="Prénom"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contactLastName">Nom *</Label>
+                  <Input
+                    id="contactLastName"
+                    type="text"
+                    value={formData.contactLastName}
+                    onChange={(e) => {
+                      setFormData(prev => ({ ...prev, contactLastName: e.target.value }));
+                      // Sync with first participant
+                      const newDetails = [...formData.participantsDetails];
+                      if (newDetails[0]) {
+                        newDetails[0] = { ...newDetails[0], lastName: e.target.value };
+                        setFormData(prev => ({ ...prev, participantsDetails: newDetails }));
+                      }
+                    }}
+                    placeholder="Nom"
+                    required
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -254,6 +335,58 @@ export const TravelReservationForm = ({ offer }: TravelReservationFormProps) => 
                 placeholder="Régime alimentaire, accessibilité, etc."
                 rows={3}
               />
+            </div>
+          </div>
+
+          {/* Participants Information */}
+          <div className="space-y-4">
+            <div className="border-t pt-4">
+              <Label className="text-base font-semibold">Informations des participants</Label>
+              <p className="text-sm text-gray-600 mb-4">
+                Veuillez renseigner le nom et prénom de tous les participants
+              </p>
+              
+              {formData.participantsDetails.map((participant, index) => (
+                <div key={index} className="space-y-2 p-3 bg-gray-50 rounded-lg">
+                  <Label className="text-sm font-medium">
+                    Participant {index + 1} {index === 0 ? '(Vous - personne de contact)' : ''}
+                  </Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Input
+                      type="text"
+                      value={participant.firstName}
+                      onChange={(e) => {
+                        const newDetails = [...formData.participantsDetails];
+                        newDetails[index] = { ...newDetails[index], firstName: e.target.value };
+                        setFormData(prev => ({ ...prev, participantsDetails: newDetails }));
+                        
+                        // Auto-fill contact info for first participant
+                        if (index === 0) {
+                          setFormData(prev => ({ ...prev, contactFirstName: e.target.value }));
+                        }
+                      }}
+                      placeholder="Prénom"
+                      required
+                    />
+                    <Input
+                      type="text"
+                      value={participant.lastName}
+                      onChange={(e) => {
+                        const newDetails = [...formData.participantsDetails];
+                        newDetails[index] = { ...newDetails[index], lastName: e.target.value };
+                        setFormData(prev => ({ ...prev, participantsDetails: newDetails }));
+                        
+                        // Auto-fill contact info for first participant
+                        if (index === 0) {
+                          setFormData(prev => ({ ...prev, contactLastName: e.target.value }));
+                        }
+                      }}
+                      placeholder="Nom"
+                      required
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
