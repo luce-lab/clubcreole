@@ -1927,11 +1927,14 @@ export type Database = {
       travel_reservations: {
         Row: {
           contact_email: string
+          contact_first_name: string | null
+          contact_last_name: string | null
           contact_name: string
           contact_phone: string
           created_at: string
           id: string
           participants: number
+          participants_details: Json | null
           reservation_date: string
           special_requests: string | null
           status: string
@@ -1942,11 +1945,14 @@ export type Database = {
         }
         Insert: {
           contact_email: string
+          contact_first_name?: string | null
+          contact_last_name?: string | null
           contact_name: string
           contact_phone: string
           created_at?: string
           id?: string
           participants?: number
+          participants_details?: Json | null
           reservation_date?: string
           special_requests?: string | null
           status?: string
@@ -1957,11 +1963,14 @@ export type Database = {
         }
         Update: {
           contact_email?: string
+          contact_first_name?: string | null
+          contact_last_name?: string | null
           contact_name?: string
           contact_phone?: string
           created_at?: string
           id?: string
           participants?: number
+          participants_details?: Json | null
           reservation_date?: string
           special_requests?: string | null
           status?: string

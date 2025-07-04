@@ -11,11 +11,15 @@ import { AccommodationLoading } from "@/components/accommodation/AccommodationLo
 import { AccommodationError } from "@/components/accommodation/AccommodationError";
 import { AccommodationEmptyState } from "@/components/accommodation/AccommodationEmptyState";
 import { useInfiniteAccommodations } from "@/hooks/useInfiniteAccommodations";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const AccommodationActivity = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [priceFilter, setPriceFilter] = useState<string>("");
+  
+  // Debounce la recherche pour éviter trop d'appels API
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const {
     accommodations,
@@ -28,7 +32,7 @@ const AccommodationActivity = () => {
   } = useInfiniteAccommodations({
     initialLimit: 12,
     threshold: 200,
-    searchQuery: searchTerm,
+    searchQuery: debouncedSearchTerm,
     priceFilter: priceFilter
   });
 
