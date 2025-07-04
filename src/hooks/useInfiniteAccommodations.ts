@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { fetchAccommodationsPaginated, AccommodationPaginationResult } from '@/services/accommodationService';
 import { Accommodation } from '@/components/accommodation/AccommodationTypes';
+import { useDebounce } from './useDebounce';
 
 interface UseInfiniteAccommodationsProps {
   initialLimit?: number;
@@ -35,30 +36,13 @@ export const useInfiniteAccommodations = ({
   const [offset, setOffset] = useState(0);
   
   const loadingRef = useRef(false);
-  const searchQueryRef = useRef(searchQuery);
-  const priceFilterRef = useRef(priceFilter);
-
-  // Fonction pour appliquer le filtre de prix côté client
-  const applyPriceFilter = useCallback((accommodations: Accommodation[]): Accommodation[] => {
-    if (!priceFilterRef.current) return accommodations;
-    
-    return accommodations.filter(accommodation => {
-      const price = accommodation.price;
-      switch (priceFilterRef.current) {
-        case 'low':
-          return price < 80;
-        case 'medium':
-          return price >= 80 && price < 100;
-        case 'high':
-          return price >= 100;
-        default:
-          return true;
-      }
-    });
-  }, []);
+  
+  // Utiliser le debounce pour la recherche (300ms de délai)
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  const debouncedPriceFilter = useDebounce(priceFilter, 300);
 
   // Fonction pour charger les données
-  const loadData = useCallback(async (currentOffset: number, isReset = false) => {
+  const loadData = useCallback(async (currentOffset: number, isReset = false, searchQuery?: string, priceFilter?: string) => {
     if (loadingRef.current) return;
     
     loadingRef.current = true;
@@ -74,19 +58,17 @@ export const useInfiniteAccommodations = ({
       const result: AccommodationPaginationResult = await fetchAccommodationsPaginated(
         currentOffset,
         initialLimit,
-        searchQueryRef.current
+        searchQuery ?? debouncedSearchQuery,
+        priceFilter ?? debouncedPriceFilter
       );
 
-      // Appliquer le filtre de prix côté client
-      const filteredAccommodations = applyPriceFilter(result.accommodations);
-
       if (isReset) {
-        setAccommodations(filteredAccommodations);
+        setAccommodations(result.accommodations);
       } else {
         setAccommodations(prev => {
           // Éviter les doublons en filtrant les hébergements déjà présents
           const existingIds = new Set(prev.map(a => a.id));
-          const newAccommodations = filteredAccommodations.filter(a => !existingIds.has(a.id));
+          const newAccommodations = result.accommodations.filter(a => !existingIds.has(a.id));
           return [...prev, ...newAccommodations];
         });
       }
@@ -103,7 +85,7 @@ export const useInfiniteAccommodations = ({
       setIsLoadingMore(false);
       loadingRef.current = false;
     }
-  }, [initialLimit, applyPriceFilter]);
+  }, [initialLimit, debouncedSearchQuery, debouncedPriceFilter]);
 
   // Fonction pour charger plus de données
   const loadMore = useCallback(() => {
@@ -120,12 +102,15 @@ export const useInfiniteAccommodations = ({
     loadData(0, true);
   }, [loadData]);
 
-  // Effet pour la recherche et les filtres
+  // Effet pour la recherche et les filtres (utilise les valeurs debouncées)
   useEffect(() => {
-    searchQueryRef.current = searchQuery;
-    priceFilterRef.current = priceFilter;
-    reset();
-  }, [searchQuery, priceFilter, reset]);
+    // Reset et rechargement avec les nouvelles valeurs debouncées
+    setAccommodations([]);
+    setOffset(0);
+    setHasMore(true);
+    setError(null);
+    loadData(0, true);
+  }, [debouncedSearchQuery, debouncedPriceFilter, loadData]);
 
   // Effet pour le scroll infini
   useEffect(() => {

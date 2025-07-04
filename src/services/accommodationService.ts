@@ -8,8 +8,10 @@ type RawAmenity = {
   available: boolean;
 };
 
+type RawAmenitiesInput = RawAmenity[] | { [key: string]: boolean } | null | undefined;
+
 // Fonction utilitaire pour transformer et valider les amenities
-const transformAmenities = (rawAmenities: any): Amenity[] => {
+const transformAmenities = (rawAmenities: RawAmenitiesInput): Amenity[] => {
   console.log("Transformation des amenities:", rawAmenities);
   
   if (!rawAmenities) {
@@ -204,7 +206,8 @@ export interface AccommodationPaginationResult {
 export const fetchAccommodationsPaginated = async (
   offset: number = 0,
   limit: number = 12,
-  searchQuery?: string
+  searchQuery?: string,
+  priceFilter?: string
 ): Promise<AccommodationPaginationResult> => {
   try {
     // D'abord essayer de récupérer depuis la base de données
@@ -216,6 +219,21 @@ export const fetchAccommodationsPaginated = async (
     if (searchQuery && searchQuery.trim() !== '') {
       const searchTerm = `%${searchQuery.trim()}%`;
       query = query.or(`name.ilike.${searchTerm},type.ilike.${searchTerm},location.ilike.${searchTerm}`);
+    }
+
+    // Appliquer le filtre de prix si présent
+    if (priceFilter) {
+      switch (priceFilter) {
+        case 'low':
+          query = query.lt('price', 80);
+          break;
+        case 'medium':
+          query = query.gte('price', 80).lt('price', 100);
+          break;
+        case 'high':
+          query = query.gte('price', 100);
+          break;
+      }
     }
 
     // Appliquer le tri pondéré et la pagination
@@ -323,6 +341,23 @@ export const fetchAccommodationsPaginated = async (
       );
     }
 
+    // Appliquer le filtre de prix sur les données mock
+    if (priceFilter) {
+      filteredData = filteredData.filter(accommodation => {
+        const price = accommodation.price;
+        switch (priceFilter) {
+          case 'low':
+            return price < 80;
+          case 'medium':
+            return price >= 80 && price < 100;
+          case 'high':
+            return price >= 100;
+          default:
+            return true;
+        }
+      });
+    }
+
     // Appliquer la pagination
     const paginatedData = filteredData.slice(offset, offset + limit);
     const totalCount = filteredData.length;
@@ -356,10 +391,10 @@ export async function createAccommodation(accommodationData: Omit<Accommodation,
     max_guests: accommodationData.max_guests,
     rooms: accommodationData.rooms,
     bathrooms: accommodationData.bathrooms,
-    gallery_images: accommodationData.gallery_images || [] as any,
-    features: accommodationData.features || [] as any,
-    amenities: accommodationData.amenities || [] as any,
-    rules: accommodationData.rules || [] as any,
+    gallery_images: accommodationData.gallery_images || [],
+    features: accommodationData.features || [],
+    amenities: accommodationData.amenities || [],
+    rules: accommodationData.rules || [],
     discount: accommodationData.discount || null,
     weight: accommodationData.weight || 1
   };
@@ -404,26 +439,12 @@ export async function updateAccommodation(id: number, accommodationData: Partial
   console.log("Données reçues:", accommodationData);
   
   // Convert the accommodation data to match database schema with proper Json types
-  const dbData: any = {};
+  const dbData: Partial<Accommodation> = { ...accommodationData };
   
-  // Traitement simple et direct de tous les champs
-  Object.keys(accommodationData).forEach(key => {
-    const value = accommodationData[key as keyof Accommodation];
-    
-    if (key === 'discount') {
-      // Gestion spéciale pour discount : null si undefined ou vide, sinon la valeur
-      dbData.discount = (value === undefined || value === null || value === '') ? null : Number(value);
-      console.log(`Champ discount: ${value} -> ${dbData.discount}`);
-    } else if (key === 'gallery_images' || key === 'features' || key === 'amenities' || key === 'rules') {
-      // Champs JSON
-      dbData[key] = value as any;
-      console.log(`Champ JSON ${key}:`, value);
-    } else if (value !== undefined) {
-      // Autres champs standards
-      dbData[key] = value;
-      console.log(`Champ ${key}:`, value);
-    }
-  });
+  // Gestion spéciale pour discount : null si undefined ou vide, sinon la valeur
+  if (accommodationData.discount !== undefined) {
+    dbData.discount = (accommodationData.discount === null || accommodationData.discount === '') ? null : Number(accommodationData.discount);
+  }
 
   console.log("Données finales à envoyer:", dbData);
 
