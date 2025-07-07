@@ -179,6 +179,7 @@ export const fetchRestaurantsPaginated = async (
     const normalizedSearchQuery = normalizeString(searchQuery.trim());
     const filteredData = allData.filter(item => 
       normalizeString(item.name).includes(normalizedSearchQuery) ||
+      normalizeString(item.description).includes(normalizedSearchQuery) ||
       normalizeString(item.type).includes(normalizedSearchQuery) ||
       normalizeString(item.location).includes(normalizedSearchQuery) ||
       normalizeString(item.offer).includes(normalizedSearchQuery)
