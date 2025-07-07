@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Loisir } from "@/components/loisirs/types";
 import { validateAndFormatDate } from "./dateUtils.ts";
+import { normalizeString } from "@/lib/textUtils";
 
 /**
  * Mise à jour d'une activité de loisir
@@ -153,17 +154,43 @@ export const fetchLoisirsPaginated = async (
       .from('loisirs')
       .select('*', { count: 'exact' });
 
-    // Appliquer la recherche si présente
-    if (searchQuery && searchQuery.trim() !== '') {
-      const searchTerm = `%${searchQuery.trim()}%`;
-      query = query.or(`title.ilike.${searchTerm},description.ilike.${searchTerm},location.ilike.${searchTerm}`);
+    // Si pas de recherche, récupérer toutes les données
+    if (!searchQuery || searchQuery.trim() === '') {
+      // Appliquer le tri et la pagination
+      const { data, error, count } = await query
+        .order('start_date', { ascending: true })
+        .order('id', { ascending: false })
+        .range(offset, offset + limit - 1);
+
+      if (error) {
+        console.error('Erreur lors du chargement paginé des loisirs:', error);
+        throw error;
+      }
+
+      // Transformer les données
+      const formattedData = data ? data.map(item => ({
+        ...item,
+        gallery_images: Array.isArray(item.gallery_images) 
+          ? item.gallery_images 
+          : []
+      })) as Loisir[] : [];
+
+      const totalCount = count || 0;
+      const hasMore = offset + limit < totalCount;
+      const nextOffset = offset + limit;
+
+      return {
+        loisirs: formattedData,
+        totalCount,
+        hasMore,
+        nextOffset
+      };
     }
 
-    // Appliquer le tri et la pagination
-    const { data, error, count } = await query
+    // Si recherche, récupérer plus de données pour filtrer côté client
+    const { data, error } = await query
       .order('start_date', { ascending: true })
-      .order('id', { ascending: false })
-      .range(offset, offset + limit - 1);
+      .order('id', { ascending: false });
 
     if (error) {
       console.error('Erreur lors du chargement paginé des loisirs:', error);
@@ -171,19 +198,29 @@ export const fetchLoisirsPaginated = async (
     }
 
     // Transformer les données
-    const formattedData = data ? data.map(item => ({
+    const allData = data ? data.map(item => ({
       ...item,
       gallery_images: Array.isArray(item.gallery_images) 
         ? item.gallery_images 
         : []
     })) as Loisir[] : [];
 
-    const totalCount = count || 0;
+    // Filtrer côté client avec normalisation des accents
+    const normalizedSearchQuery = normalizeString(searchQuery.trim());
+    const filteredData = allData.filter(item => 
+      normalizeString(item.title).includes(normalizedSearchQuery) ||
+      normalizeString(item.description).includes(normalizedSearchQuery) ||
+      normalizeString(item.location).includes(normalizedSearchQuery)
+    );
+
+    // Appliquer la pagination sur les données filtrées
+    const paginatedData = filteredData.slice(offset, offset + limit);
+    const totalCount = filteredData.length;
     const hasMore = offset + limit < totalCount;
     const nextOffset = offset + limit;
 
     return {
-      loisirs: formattedData,
+      loisirs: paginatedData,
       totalCount,
       hasMore,
       nextOffset

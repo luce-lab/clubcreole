@@ -1,7 +1,8 @@
-
+import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from "@/integrations/supabase/client";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { Restaurant } from "@/components/restaurant/types";
+import { normalizeString } from "@/lib/textUtils";
 
 export interface RestaurantReservation {
   id?: string;
@@ -41,11 +42,11 @@ export const createRestaurantReservation = async (reservation: Omit<RestaurantRe
     let emailMessage = "";
     
     try {
-      const response = await fetch("https://psryoyugyimibjhwhvlh.supabase.co/functions/v1/restaurant-confirmation", {
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/restaurant-confirmation`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzcnlveXVneWltaWJqaHdodmxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM4NTM2NDMsImV4cCI6MjA0OTQyOTY0M30.HqVFT7alWrZtjf1cHxeAeqpsWMjVEnnXfVtwesYga-0`,
+          Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({
           name: reservation.name,
@@ -131,34 +132,66 @@ export const fetchRestaurantsPaginated = async (
   searchQuery?: string
 ): Promise<RestaurantPaginationResult> => {
   try {
-    let query = supabase
+    const query = supabase
       .from('restaurants')
       .select('*', { count: 'exact' });
 
-    // Appliquer la recherche si présente
-    if (searchQuery && searchQuery.trim() !== '') {
-      const searchTerm = `%${searchQuery.trim()}%`;
-      query = query.or(`name.ilike.${searchTerm},type.ilike.${searchTerm},location.ilike.${searchTerm},offer.ilike.${searchTerm}`);
+    // Si pas de recherche, récupérer toutes les données
+    if (!searchQuery || searchQuery.trim() === '') {
+      // Appliquer le tri pondéré et la pagination
+      const { data, error, count } = await query
+        .order('poids', { ascending: false })
+        .order('rating', { ascending: false })
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1);
+
+      if (error) {
+        console.error('Erreur lors du chargement paginé des restaurants:', error);
+        throw error;
+      }
+
+      const totalCount = count || 0;
+      const hasMore = offset + limit < totalCount;
+      const nextOffset = offset + limit;
+
+      return {
+        restaurants: data || [],
+        totalCount,
+        hasMore,
+        nextOffset
+      };
     }
 
-    // Appliquer le tri pondéré et la pagination
-    const { data, error, count } = await query
+    // Si recherche, récupérer plus de données pour filtrer côté client
+    const { data, error } = await query
       .order('poids', { ascending: false })
       .order('rating', { ascending: false })
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
+      .order('created_at', { ascending: false });
 
     if (error) {
       console.error('Erreur lors du chargement paginé des restaurants:', error);
       throw error;
     }
 
-    const totalCount = count || 0;
+    const allData = data || [];
+
+    // Filtrer côté client avec normalisation des accents
+    const normalizedSearchQuery = normalizeString(searchQuery.trim());
+    const filteredData = allData.filter(item => 
+      normalizeString(item.name).includes(normalizedSearchQuery) ||
+      normalizeString(item.type).includes(normalizedSearchQuery) ||
+      normalizeString(item.location).includes(normalizedSearchQuery) ||
+      normalizeString(item.offer).includes(normalizedSearchQuery)
+    );
+
+    // Appliquer la pagination sur les données filtrées
+    const paginatedData = filteredData.slice(offset, offset + limit);
+    const totalCount = filteredData.length;
     const hasMore = offset + limit < totalCount;
     const nextOffset = offset + limit;
 
     return {
-      restaurants: data || [],
+      restaurants: paginatedData,
       totalCount,
       hasMore,
       nextOffset

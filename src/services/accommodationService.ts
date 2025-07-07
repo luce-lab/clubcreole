@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Accommodation, Amenity } from "@/components/accommodation/AccommodationTypes";
 
@@ -95,7 +94,10 @@ export async function fetchAccommodations(): Promise<Accommodation[]> {
       const formattedData = data.map(item => {
         console.log("Données brutes de l'hébergement:", item.id, item.amenities);
         
-        const typedAmenities = transformAmenities(item.amenities);
+        const amenitiesRaw = typeof item.amenities === "string"
+          ? JSON.parse(item.amenities)
+          : item.amenities;
+        const typedAmenities = transformAmenities(amenitiesRaw);
         console.log("Amenities transformées:", typedAmenities);
         
         return {
@@ -137,7 +139,10 @@ export async function fetchAccommodationsWeightedRandom(): Promise<Accommodation
     // Si nous avons des données de la base, les transformer et appliquer un tri pondéré côté client
     if (data && data.length > 0) {
       const formattedData = data.map(item => {
-        const typedAmenities = transformAmenities(item.amenities);
+        const amenitiesRaw = typeof item.amenities === "string"
+          ? JSON.parse(item.amenities)
+          : item.amenities;
+        const typedAmenities = transformAmenities(amenitiesRaw);
         
         return {
           ...item,
@@ -247,7 +252,10 @@ export const fetchAccommodationsPaginated = async (
     if (!error && data && data.length > 0) {
       // Transformer les données
       const formattedData = data.map(item => {
-        const typedAmenities = transformAmenities(item.amenities);
+        const amenitiesRaw = typeof item.amenities === "string"
+          ? JSON.parse(item.amenities)
+          : item.amenities;
+        const typedAmenities = transformAmenities(amenitiesRaw);
         
         return {
           ...item,
@@ -420,7 +428,10 @@ export async function createAccommodation(accommodationData: Omit<Accommodation,
   const insertedData = data[0];
 
   // Transform the data with proper typing
-  const typedAmenities = transformAmenities(insertedData.amenities);
+  const amenitiesRaw = typeof insertedData.amenities === "string"
+    ? JSON.parse(insertedData.amenities)
+    : insertedData.amenities;
+  const typedAmenities = transformAmenities(amenitiesRaw);
   
   return {
     ...insertedData,
@@ -480,7 +491,10 @@ export async function updateAccommodation(id: number, accommodationData: Partial
   }
 
   // Transform the data with proper typing
-  const typedAmenities = transformAmenities(updatedData.amenities);
+  const amenitiesRaw = typeof updatedData.amenities === "string"
+    ? JSON.parse(updatedData.amenities)
+    : updatedData.amenities;
+  const typedAmenities = transformAmenities(amenitiesRaw);
   
   const result = {
     ...updatedData,

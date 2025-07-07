@@ -1,6 +1,7 @@
 
 import { useState, useMemo } from "react";
 import { Restaurant } from "@/components/restaurant/types";
+import { matchesIgnoreAccents } from "@/lib/textUtils";
 
 export const useRestaurantsSearch = (restaurants: Restaurant[]) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -10,15 +11,15 @@ export const useRestaurantsSearch = (restaurants: Restaurant[]) => {
       return restaurants;
     }
 
-    const query = searchQuery.toLowerCase();
+    const query = searchQuery.trim();
     
     return restaurants.filter((restaurant) => {
       return (
-        restaurant.name.toLowerCase().includes(query) ||
-        restaurant.description.toLowerCase().includes(query) ||
-        restaurant.location.toLowerCase().includes(query) ||
-        restaurant.type.toLowerCase().includes(query) ||
-        restaurant.offer.toLowerCase().includes(query)
+        matchesIgnoreAccents(query, restaurant.name) ||
+        matchesIgnoreAccents(query, restaurant.description) ||
+        matchesIgnoreAccents(query, restaurant.location) ||
+        matchesIgnoreAccents(query, restaurant.type) ||
+        matchesIgnoreAccents(query, restaurant.offer)
       );
     });
   }, [restaurants, searchQuery]);

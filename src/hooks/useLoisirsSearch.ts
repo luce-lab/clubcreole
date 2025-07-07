@@ -1,6 +1,7 @@
 
 import { useState, useMemo } from "react";
 import { Loisir } from "@/components/loisirs/types";
+import { matchesIgnoreAccents } from "@/lib/textUtils";
 
 export const useLoisirsSearch = (loisirs: Loisir[]) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -10,13 +11,13 @@ export const useLoisirsSearch = (loisirs: Loisir[]) => {
       return loisirs;
     }
 
-    const query = searchQuery.toLowerCase();
+    const query = searchQuery.trim();
     
     return loisirs.filter((loisir) => {
       return (
-        loisir.title.toLowerCase().includes(query) ||
-        loisir.description.toLowerCase().includes(query) ||
-        loisir.location.toLowerCase().includes(query)
+        matchesIgnoreAccents(query, loisir.title) ||
+        matchesIgnoreAccents(query, loisir.description) ||
+        matchesIgnoreAccents(query, loisir.location)
       );
     });
   }, [loisirs, searchQuery]);
