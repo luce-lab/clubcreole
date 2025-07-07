@@ -107,7 +107,7 @@ export function Newsletter({ onSuccess, variant }: NewsletterProps) {
                       placeholder="votre@email.com"
                       {...field}
                       disabled={isSubmitting}
-                      className="flex-1"
+                      className="flex-1 text-black" 
                     />
                     <Button 
                       type="submit" 

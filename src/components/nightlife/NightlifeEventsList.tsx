@@ -1,26 +1,13 @@
 
-import { useState, useEffect } from "react";
-import { getNightlifeEvents, NightEvent } from "./NightlifeTypes";
+import { NightEvent } from "./NightlifeTypes";
 import NightlifeCard from "./NightlifeCard";
 
-const NightlifeEventsList = () => {
-  const [events, setEvents] = useState<NightEvent[]>([]);
-  const [loading, setLoading] = useState(true);
+interface NightlifeEventsListProps {
+  events: NightEvent[];
+  loading: boolean;
+}
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const eventsData = await getNightlifeEvents();
-        setEvents(eventsData);
-      } catch (error) {
-        console.error('Error loading nightlife events:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvents();
-  }, []);
+const NightlifeEventsList = ({ events, loading }: NightlifeEventsListProps) => {
 
   if (loading) {
     return (
