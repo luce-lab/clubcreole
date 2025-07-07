@@ -1,6 +1,7 @@
 
 import { useState, useMemo } from "react";
 import { Concert } from "@/components/concert/ConcertTypes";
+import { matchesIgnoreAccents } from "@/lib/textUtils";
 
 export const useConcertsSearch = (concerts: Concert[]) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -10,16 +11,16 @@ export const useConcertsSearch = (concerts: Concert[]) => {
       return concerts;
     }
 
-    const query = searchQuery.toLowerCase();
+    const query = searchQuery.trim();
     
     return concerts.filter((concert) => {
       return (
-        concert.name.toLowerCase().includes(query) ||
-        concert.artist.toLowerCase().includes(query) ||
-        concert.genre.toLowerCase().includes(query) ||
-        concert.location.toLowerCase().includes(query) ||
-        concert.offer.toLowerCase().includes(query) ||
-        concert.description.toLowerCase().includes(query)
+        matchesIgnoreAccents(query, concert.name) ||
+        matchesIgnoreAccents(query, concert.artist) ||
+        matchesIgnoreAccents(query, concert.genre) ||
+        matchesIgnoreAccents(query, concert.location) ||
+        matchesIgnoreAccents(query, concert.offer) ||
+        matchesIgnoreAccents(query, concert.description)
       );
     });
   }, [concerts, searchQuery]);

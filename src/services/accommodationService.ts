@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Accommodation, Amenity } from "@/components/accommodation/AccommodationTypes";
+import { normalizeString } from "@/lib/textUtils";
 
 // Définir un type pour les données brutes d'aménités
 type RawAmenity = {
@@ -220,10 +221,125 @@ export const fetchAccommodationsPaginated = async (
       .from('accommodations')
       .select('*', { count: 'exact' });
 
-    // Appliquer la recherche si présente
-    if (searchQuery && searchQuery.trim() !== '') {
-      const searchTerm = `%${searchQuery.trim()}%`;
-      query = query.or(`name.ilike.${searchTerm},type.ilike.${searchTerm},location.ilike.${searchTerm}`);
+    // Si pas de recherche, récupérer toutes les données avec pagination
+    if (!searchQuery || searchQuery.trim() === '') {
+      // Appliquer le filtre de prix si présent
+      if (priceFilter) {
+        switch (priceFilter) {
+          case 'low':
+            query = query.lt('price', 80);
+            break;
+          case 'medium':
+            query = query.gte('price', 80).lt('price', 100);
+            break;
+          case 'high':
+            query = query.gte('price', 100);
+            break;
+        }
+      }
+
+      // Appliquer le tri pondéré et la pagination
+      const { data, error, count } = await query
+        .order('weight', { ascending: false })
+        .order('rating', { ascending: false })
+        .order('id', { ascending: false })
+        .range(offset, offset + limit - 1);
+
+      // Si la requête réussit et qu'on a des données
+      if (!error && data && data.length > 0) {
+        // Transformer les données
+        const formattedData = data.map(item => {
+          const amenitiesRaw = typeof item.amenities === "string"
+            ? JSON.parse(item.amenities)
+            : item.amenities;
+          const typedAmenities = transformAmenities(amenitiesRaw);
+          
+          return {
+            ...item,
+            gallery_images: item.gallery_images as string[],
+            features: item.features as string[],
+            amenities: typedAmenities,
+            rules: item.rules as string[],
+            discount: item.discount || undefined,
+            weight: item.weight || 1
+          };
+        });
+
+        const totalCount = count || 0;
+        const hasMore = offset + limit < totalCount;
+        const nextOffset = offset + limit;
+
+        return {
+          accommodations: formattedData,
+          totalCount,
+          hasMore,
+          nextOffset
+        };
+      }
+    } else {
+      // Si recherche, récupérer toutes les données pour filtrer côté client
+      let dataQuery = query.order('weight', { ascending: false })
+        .order('rating', { ascending: false })
+        .order('id', { ascending: false });
+
+      // Appliquer le filtre de prix si présent
+      if (priceFilter) {
+        switch (priceFilter) {
+          case 'low':
+            dataQuery = dataQuery.lt('price', 80);
+            break;
+          case 'medium':
+            dataQuery = dataQuery.gte('price', 80).lt('price', 100);
+            break;
+          case 'high':
+            dataQuery = dataQuery.gte('price', 100);
+            break;
+        }
+      }
+
+      const { data, error } = await dataQuery;
+
+      if (!error && data && data.length > 0) {
+        // Transformer les données
+        const allData = data.map(item => {
+          const amenitiesRaw = typeof item.amenities === "string"
+            ? JSON.parse(item.amenities)
+            : item.amenities;
+          const typedAmenities = transformAmenities(amenitiesRaw);
+          
+          return {
+            ...item,
+            gallery_images: item.gallery_images as string[],
+            features: item.features as string[],
+            amenities: typedAmenities,
+            rules: item.rules as string[],
+            discount: item.discount || undefined,
+            weight: item.weight || 1
+          };
+        });
+
+        // Filtrer côté client avec normalisation des accents
+        const normalizedSearchQuery = normalizeString(searchQuery.trim());
+        const filteredData = allData.filter(item => 
+          normalizeString(item.name).includes(normalizedSearchQuery) ||
+          normalizeString(item.type).includes(normalizedSearchQuery) ||
+          normalizeString(item.location).includes(normalizedSearchQuery) ||
+          normalizeString(item.description).includes(normalizedSearchQuery)
+        );
+
+        // Appliquer la pagination sur les données filtrées
+        const paginatedData = filteredData.slice(offset, offset + limit);
+        const totalCount = filteredData.length;
+        const hasMore = offset + limit < totalCount;
+        const nextOffset = offset + limit;
+
+        return {
+          accommodations: paginatedData,
+          totalCount,
+          hasMore,
+          nextOffset
+        };
+      }
     }
 
     // Appliquer le filtre de prix si présent
@@ -338,14 +454,15 @@ export const fetchAccommodationsPaginated = async (
       }
     ];
 
-    // Appliquer la recherche sur les données mock
+    // Appliquer la recherche sur les données mock avec normalisation des accents
     let filteredData = mockData;
     if (searchQuery && searchQuery.trim() !== '') {
-      const searchLower = searchQuery.toLowerCase();
+      const normalizedSearchQuery = normalizeString(searchQuery.trim());
       filteredData = mockData.filter(item => 
-        item.name.toLowerCase().includes(searchLower) ||
-        item.location.toLowerCase().includes(searchLower) ||
-        item.type.toLowerCase().includes(searchLower)
+        normalizeString(item.name).includes(normalizedSearchQuery) ||
+        normalizeString(item.location).includes(normalizedSearchQuery) ||
+        normalizeString(item.type).includes(normalizedSearchQuery) ||
+        normalizeString(item.description).includes(normalizedSearchQuery)
       );
     }
 

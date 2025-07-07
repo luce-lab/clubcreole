@@ -15,6 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ShoppingBag, Plus, Search, Edit, Trash2, CheckCircle, XCircle, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { matchesIgnoreAccents } from "@/lib/textUtils";
 
 interface Partner {
   id: number; // Changed from string to number
@@ -75,11 +76,11 @@ const PartnersManagement = () => {
       filtered = filtered.filter(partner => partner.status === activeTab);
     }
 
-    // Filtrer par terme de recherche
+    // Filtrer par terme de recherche avec gestion des accents
     if (searchTerm) {
       filtered = filtered.filter(partner =>
-        partner.business_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        partner.business_type.toLowerCase().includes(searchTerm.toLowerCase())
+        matchesIgnoreAccents(searchTerm, partner.business_name) ||
+        matchesIgnoreAccents(searchTerm, partner.business_type)
       );
     }
 

@@ -6,6 +6,7 @@ import VoyanceEmptyState from "./VoyanceEmptyState";
 import VoyanceLoader from "./VoyanceLoader";
 import VoyanceError from "./VoyanceError";
 import type { VoyanceMedium } from "./types";
+import { matchesIgnoreAccents } from "@/lib/textUtils";
 
 interface VoyanceMediumsListProps {
   searchTerm: string;
@@ -32,13 +33,13 @@ const VoyanceMediumsList = ({ searchTerm }: VoyanceMediumsListProps) => {
     },
   });
 
-  // Filtrer les médiums selon le terme de recherche
+  // Filtrer les médiums selon le terme de recherche avec gestion des accents
   const filteredMediums = mediums?.filter(medium => 
-    medium.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    matchesIgnoreAccents(searchTerm, medium.name) ||
     medium.specialties.some(specialty => 
-      specialty.toLowerCase().includes(searchTerm.toLowerCase())
+      matchesIgnoreAccents(searchTerm, specialty)
     ) ||
-    medium.description.toLowerCase().includes(searchTerm.toLowerCase())
+    matchesIgnoreAccents(searchTerm, medium.description)
   ) || [];
 
   if (isLoading) return <VoyanceLoader />;

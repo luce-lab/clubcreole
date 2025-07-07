@@ -8,6 +8,7 @@ import {
   CarModelForDisplay 
 } from "@/components/car-rental/CarRentalTypes";
 import * as LucideIcons from "lucide-react";
+import { normalizeString, matchesIgnoreAccents } from "@/lib/textUtils";
 
 // Fonction utilitaire pour mapper les icônes
 const getIconFromName = (iconName: string) => {
@@ -428,3 +429,20 @@ export async function createCarRentalReservation(reservation: Omit<CarRentalRese
 
   return data;
 }
+
+// TODO: Fonctions de recherche futures avec gestion des accents
+// Utiliser normalizeString() pour la recherche côté serveur
+// Utiliser matchesIgnoreAccents() pour la recherche côté client
+// Exemple:
+// export async function searchCarRentals(searchQuery: string): Promise<CarRental[]> {
+//   if (!searchQuery.trim()) return await fetchCarRentals();
+//   
+//   const normalizedSearch = normalizeString(searchQuery.trim());
+//   // Implémentation avec filtrage côté client pour gérer les accents
+//   const allCars = await fetchCarRentals();
+//   return allCars.filter(car => 
+//     normalizeString(car.name).includes(normalizedSearch) ||
+//     normalizeString(car.model).includes(normalizedSearch) ||
+//     normalizeString(car.location).includes(normalizedSearch)
+//   );
+// }
