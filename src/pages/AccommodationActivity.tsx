@@ -12,6 +12,8 @@ import { AccommodationError } from "@/components/accommodation/AccommodationErro
 import { AccommodationEmptyState } from "@/components/accommodation/AccommodationEmptyState";
 import { useInfiniteAccommodations } from "@/hooks/useInfiniteAccommodations";
 import { useDebounce } from "@/hooks/useDebounce";
+import SEO from "@/components/SEO";
+import { generateBaseURL } from "@/utils/seoHelpers";
 
 const AccommodationActivity = () => {
   const navigate = useNavigate();
@@ -48,6 +50,15 @@ const AccommodationActivity = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <SEO
+        title="Hébergements en Guadeloupe - Hôtels, Villas et Bungalows | Club Créole"
+        description="Trouvez et réservez votre hébergement idéal en Guadeloupe. Hôtels, villas, bungalows avec vue mer. Réservation en ligne simple et sécurisée."
+        keywords="hébergements Guadeloupe, hôtels Guadeloupe, villas Guadeloupe, bungalows, réservation hébergement, vue mer"
+        canonical={`${generateBaseURL()}/hebergements`}
+        ogTitle="Hébergements en Guadeloupe - Réservation en ligne"
+        ogDescription="Trouvez et réservez votre hébergement idéal en Guadeloupe avec Club Créole."
+        ogImage={`${generateBaseURL()}/og-image.png`}
+      />
       <div className="mb-6">
         <Button 
           variant="outline" 
