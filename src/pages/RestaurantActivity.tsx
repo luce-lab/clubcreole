@@ -6,6 +6,8 @@ import RestaurantsSearchBar from "@/components/restaurant/RestaurantsSearchBar";
 import RestaurantsEmptyState from "@/components/restaurant/RestaurantsEmptyState";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { useState } from "react";
+import SEO from "@/components/SEO";
+import { generateBaseURL } from "@/utils/seoHelpers";
 
 const RestaurantActivity = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -46,6 +48,15 @@ const RestaurantActivity = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <SEO
+        title="Restaurants en Guadeloupe - Réservation en ligne | Club Créole"
+        description="Découvrez et réservez dans les meilleurs restaurants de Guadeloupe. Cuisine créole, française et internationale. Réservation simple et rapide avec Club Créole."
+        keywords="restaurants Guadeloupe, réservation restaurant, cuisine créole, restaurants Pointe-à-Pitre, restaurants Saint-François"
+        canonical={`${generateBaseURL()}/restauration`}
+        ogTitle="Restaurants en Guadeloupe - Réservation en ligne"
+        ogDescription="Découvrez et réservez dans les meilleurs restaurants de Guadeloupe avec Club Créole."
+        ogImage={`${generateBaseURL()}/og-image.png`}
+      />
       <RestaurantHeader />
       
       <RestaurantsSearchBar 
