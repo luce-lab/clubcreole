@@ -509,10 +509,10 @@ export async function createAccommodation(accommodationData: Omit<Accommodation,
     max_guests: accommodationData.max_guests,
     rooms: accommodationData.rooms,
     bathrooms: accommodationData.bathrooms,
-    gallery_images: accommodationData.gallery_images || [],
-    features: accommodationData.features || [],
-    amenities: accommodationData.amenities || [],
-    rules: accommodationData.rules || [],
+    gallery_images: JSON.parse(JSON.stringify(accommodationData.gallery_images || [])),
+    features: JSON.parse(JSON.stringify(accommodationData.features || [])),
+    amenities: JSON.parse(JSON.stringify(accommodationData.amenities || [])),
+    rules: JSON.parse(JSON.stringify(accommodationData.rules || [])),
     discount: accommodationData.discount || null,
     weight: accommodationData.weight || 1
   };
@@ -554,12 +554,33 @@ export async function createAccommodation(accommodationData: Omit<Accommodation,
 
 export async function updateAccommodation(id: number, accommodationData: Partial<Accommodation>): Promise<Accommodation> {
   
-  // Convert the accommodation data to match database schema with proper Json types
-  const dbData: Partial<Accommodation> = { ...accommodationData };
+  // Create a properly typed object for database update
+  const dbData: any = {};
+  
+  // Copy non-array fields directly
+  Object.keys(accommodationData).forEach(key => {
+    if (!['gallery_images', 'features', 'amenities', 'rules'].includes(key)) {
+      (dbData as any)[key] = (accommodationData as any)[key];
+    }
+  });
   
   // Gestion spéciale pour discount : null si undefined ou vide, sinon la valeur
   if (accommodationData.discount !== undefined) {
-    dbData.discount = (accommodationData.discount === null || accommodationData.discount === '') ? null : Number(accommodationData.discount);
+    dbData.discount = (accommodationData.discount === null || accommodationData.discount === 0) ? null : Number(accommodationData.discount);
+  }
+
+  // Convert arrays to proper JSON format for database
+  if (accommodationData.gallery_images) {
+    dbData.gallery_images = JSON.parse(JSON.stringify(accommodationData.gallery_images));
+  }
+  if (accommodationData.features) {
+    dbData.features = JSON.parse(JSON.stringify(accommodationData.features));
+  }
+  if (accommodationData.amenities) {
+    dbData.amenities = JSON.parse(JSON.stringify(accommodationData.amenities));
+  }
+  if (accommodationData.rules) {
+    dbData.rules = JSON.parse(JSON.stringify(accommodationData.rules));
   }
 
 
