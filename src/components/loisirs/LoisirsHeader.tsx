@@ -19,7 +19,7 @@ const LoisirsHeader = () => {
       </div>
       
       <h1 className="text-3xl md:text-4xl font-bold text-center text-creole-blue mb-8">
-        Nos Activités de Loisirs
+        Nos Activités de loisirs
       </h1>
       
       <p className="text-lg text-center mb-12 max-w-3xl mx-auto">
