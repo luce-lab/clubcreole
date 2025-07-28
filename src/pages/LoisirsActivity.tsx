@@ -37,7 +37,7 @@ const LoisirsActivity = () => {
   const handleUpdateLoisir = (updatedLoisir: Loisir) => {
     // Cette fonction pourrait être étendue pour mettre à jour les données localement
     // Pour l'instant, on peut simplement faire un reset pour recharger les données
-    console.log("Loisir mis à jour:", updatedLoisir);
+    // console.log("Loisir mis à jour:", updatedLoisir);
     // Optionnel: reset() pour recharger toutes les données
   };
 

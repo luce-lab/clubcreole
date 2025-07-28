@@ -21,10 +21,10 @@ type RawAmenity = {
 
 // Fonction utilitaire pour transformer et valider les amenities
 const transformAmenities = (rawAmenities: any): Amenity[] => {
-  console.log("🔧 Transformation des amenities dans AccommodationDetail:", rawAmenities);
+  // console.log("🔧 Transformation des amenities dans AccommodationDetail:", rawAmenities);
   
   if (!rawAmenities) {
-    console.log("❌ Aucune amenity fournie");
+    // console.log("❌ Aucune amenity fournie");
     return [];
   }
 
@@ -38,7 +38,7 @@ const transformAmenities = (rawAmenities: any): Amenity[] => {
       }))
       .filter(amenity => amenity.name.trim() !== "");
     
-    console.log("✅ Amenities transformées (array):", result);
+    // console.log("✅ Amenities transformées (array):", result);
     return result;
   }
 
@@ -49,7 +49,7 @@ const transformAmenities = (rawAmenities: any): Amenity[] => {
         name: key,
         available: Boolean(value)
       }));
-      console.log("✅ Amenities transformées (object):", result);
+      // console.log("✅ Amenities transformées (object):", result);
       return result;
     } catch (error) {
       console.error("❌ Erreur lors de la transformation des amenities:", error);
@@ -57,7 +57,7 @@ const transformAmenities = (rawAmenities: any): Amenity[] => {
     }
   }
 
-  console.log("⚠️ Format d'amenities non reconnu:", typeof rawAmenities);
+  // console.log("⚠️ Format d'amenities non reconnu:", typeof rawAmenities);
   return [];
 };
 
@@ -75,7 +75,7 @@ const AccommodationDetail = () => {
         setLoading(true);
         const accommodationId = parseInt(id || "0");
         
-        console.log("🔍 Récupération de l'hébergement ID:", accommodationId);
+        // console.log("🔍 Récupération de l'hébergement ID:", accommodationId);
         
         const { data, error } = await supabase
           .from("accommodations")
@@ -85,8 +85,8 @@ const AccommodationDetail = () => {
         
         if (error) throw error;
         
-        console.log("📋 Données brutes récupérées:", data);
-        console.log("🛠️ Amenities brutes:", data.amenities);
+        // console.log("📋 Données brutes récupérées:", data);
+        // console.log("🛠️ Amenities brutes:", data.amenities);
         
         // Transformer les données JSON de la base avec un typage explicite
         const typedAmenities = transformAmenities(data.amenities);
@@ -99,8 +99,8 @@ const AccommodationDetail = () => {
           rules: data.rules as string[]
         };
         
-        console.log("✅ Données formatées finales:", formattedData);
-        console.log("🏷️ Amenities finales:", formattedData.amenities);
+        // console.log("✅ Données formatées finales:", formattedData);
+        // console.log("🏷️ Amenities finales:", formattedData.amenities);
         
         setAccommodation(formattedData);
       } catch (err) {

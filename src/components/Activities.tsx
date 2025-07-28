@@ -30,8 +30,6 @@ export const Activities = () => {
       try {
         // Récupérer seulement les activités actives
         const data = await getActivities();
-        console.log('Activités actives récupérées:', data);
-        console.log('Nombre d\'activités actives:', data.length);
         
         setActivities(data);
       } catch (err) {
@@ -74,7 +72,6 @@ export const Activities = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
           {activities.map((activity) => {
             const IconComponent = iconMap[activity.icon_name];
-            console.log(`Activité: ${activity.name}, Icône: ${activity.icon_name}, Composant trouvé: ${!!IconComponent}, Active: ${activity.is_active}`);
             
             if (!IconComponent) {
               console.warn(`Icône non trouvée pour l'activité: ${activity.name} (${activity.icon_name})`);

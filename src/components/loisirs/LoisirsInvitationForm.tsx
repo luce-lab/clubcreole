@@ -59,7 +59,6 @@ const LoisirsInvitationForm = ({ loisirTitle, onClose }: LoisirsInvitationFormPr
       // Simuler un appel API
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      console.log("Demande de notification enregistrée:", { name, email, loisirTitle });
       
       toast({
         title: "Demande enregistrée !",

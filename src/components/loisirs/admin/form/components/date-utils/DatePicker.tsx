@@ -42,7 +42,7 @@ export const DatePicker = ({
       setDateObj(date);
       // Format as ISO string (YYYY-MM-DD)
       const formattedDate = format(date, 'yyyy-MM-dd');
-      console.log(`New ${label} selected:`, formattedDate);
+      // console.log(`New ${label} selected:`, formattedDate);
       onChange(formattedDate);
       setHasError(false);
       setErrorMessage(undefined);

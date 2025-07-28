@@ -25,12 +25,12 @@ export const UsersList = ({
   useEffect(() => {
     const loadUsers = async () => {
       try {
-        console.log("Chargement des utilisateurs...");
+        // console.log("Chargement des utilisateurs...");
         setIsLoading(true);
         setError(null);
         
         const usersData = await fetchUsers();
-        console.log("Données récupérées:", usersData);
+        // console.log("Données récupérées:", usersData);
         setUsers(usersData);
         
         toast({

@@ -37,7 +37,7 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
     setIsSubmitting(true);
 
     try {
-      console.log("Formulaire soumis avec:", formData);
+      // // console.log("Formulaire soumis avec:", formData);
       
       // Conversion des URLs des images de la galerie en tableau
       const galleryImages = formData.galleryImages
@@ -56,13 +56,13 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
         gallery_images: galleryImages
       };
 
-      console.log("Données à envoyer à l'API:", updatedData);
+      // // console.log("Données à envoyer à l'API:", updatedData);
 
       try {
-        console.log("Appel à updateLoisir avec:", loisir.id, updatedData);
+        // // console.log("Appel à updateLoisir avec:", loisir.id, updatedData);
         const result = await updateLoisir(loisir.id, updatedData);
         
-        console.log("Résultat brut de updateLoisir:", result);
+        // // console.log("Résultat brut de updateLoisir:", result);
         
         // Vérifier explicitement que nous avons un résultat valide
         if (!result || typeof result !== 'object' || !('id' in result)) {
@@ -70,7 +70,7 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
           throw new Error("Données de mise à jour invalides");
         }
         
-        console.log("Résultat de la mise à jour (EditLoisirDialog):", result);
+        // console.log("Résultat de la mise à jour (EditLoisirDialog):", result);
 
         toast({
           title: "Activité modifiée",
@@ -79,13 +79,13 @@ export const EditLoisirDialog = ({ open, onOpenChange, loisir, onSuccess }: Edit
 
         if (onSuccess && typeof onSuccess === 'function') {
           try {
-            console.log("Appel de onSuccess avec:", result);
+            // console.log("Appel de onSuccess avec:", result);
             onSuccess(result);
           } catch (callbackError) {
             console.error("Erreur lors de la callback onSuccess:", callbackError);
           }
         } else {
-          console.log("Pas de callback onSuccess ou pas une fonction");
+          // console.log("Pas de callback onSuccess ou pas une fonction");
         }
 
         onOpenChange(false);

@@ -41,7 +41,7 @@ const TravelDetail = () => {
   const { data: travelOffer, isLoading, error } = useQuery({
     queryKey: ['travel-offer', id],
     queryFn: async () => {
-      console.log(`Récupération de l'offre de voyage ${id}...`);
+      // console.log(`Récupération de l'offre de voyage ${id}...`);
       const { data, error } = await supabase
         .from('travel_offers')
         .select(`
@@ -61,7 +61,7 @@ const TravelDetail = () => {
         throw error;
       }
 
-      console.log('Offre de voyage récupérée:', data);
+      // console.log('Offre de voyage récupérée:', data);
       
       // Transform the data to match our interface
       const transformedData: TravelOffer = {

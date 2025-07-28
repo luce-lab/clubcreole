@@ -15,7 +15,7 @@ const UserDetailsPage = () => {
   
   const handleEdit = () => {
     // Cette fonction sera implémentée selon vos besoins
-    console.log("Edit user", id);
+    // console.log("Edit user", id);
   };
 
   const handleBack = () => {

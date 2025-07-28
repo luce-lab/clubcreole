@@ -24,13 +24,13 @@ export const useUserEdit = ({ userId, onClose }: UseUserEditProps) => {
     autoRenew: true
   });
 
-  useEffect(() => {
-    // Dans une application réelle, on chargerait les données depuis une API ici
-    if (userId) {
-      // Simulated API call
-      console.log(`Fetching user data for ID: ${userId}`);
-    }
-  }, [userId]);
+  // useEffect(() => {
+  //   // Dans une application réelle, on chargerait les données depuis une API ici
+  //   if (userId) {
+  //     // Simulated API call
+  //     // // console.log(`Fetching user data for ID: ${userId}`);
+  //   }
+  // }, [userId]);
 
   const handleChange = (field: string, value: any) => {
     setUserData(prev => ({ ...prev, [field]: value }));

@@ -190,7 +190,6 @@ const mockReviews: ClientReview[] = [
  */
 export async function getCarRentals(): Promise<CarRental[]> {
   try {
-    console.log("Récupération des entreprises de location depuis la table partners...");
     
     const { data: partners, error } = await supabase
       .from("partners")
@@ -203,10 +202,8 @@ export async function getCarRentals(): Promise<CarRental[]> {
       return mockCarRentals;
     }
 
-    console.log("Partners récupérés:", partners);
 
     if (!partners || partners.length === 0) {
-      console.log("Aucun partenaire de location de voitures trouvé, utilisation des données d'exemple");
       return mockCarRentals;
     }
 
@@ -226,7 +223,6 @@ export async function getCarRentals(): Promise<CarRental[]> {
       models: []
     }));
 
-    console.log("CarRentals transformés:", carRentals);
     return carRentals;
 
   } catch (error) {

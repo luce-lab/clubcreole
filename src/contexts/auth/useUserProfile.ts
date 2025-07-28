@@ -5,7 +5,7 @@ import { User } from '@supabase/supabase-js';
 
 export const fetchUserProfile = async (user: User): Promise<UserWithRole> => {
   try {
-    console.log('Fetching user profile for:', user.email);
+    // console.log('Fetching user profile for:', user.email);
     
     // Get profile data with the new RLS policies
     const { data: profileData, error: profileError } = await supabase
@@ -28,7 +28,7 @@ export const fetchUserProfile = async (user: User): Promise<UserWithRole> => {
     
     // Handle case where profile doesn't exist yet
     if (!profileData) {
-      console.log('Profile not found, this might be a new user');
+      // console.log('Profile not found, this might be a new user');
       return {
         ...user,
         role: null,
@@ -40,7 +40,7 @@ export const fetchUserProfile = async (user: User): Promise<UserWithRole> => {
     // Ensure the role is properly typed as UserRole
     const role = profileData.role as UserRole;
     
-    console.log('Profile data retrieved successfully:', profileData);
+    // console.log('Profile data retrieved successfully:', profileData);
     
     return {
       ...user,

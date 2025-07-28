@@ -7,7 +7,7 @@ interface RestaurantDetailErrorProps {
 }
 
 const RestaurantDetailError = ({ error }: RestaurantDetailErrorProps) => {
-  console.log("Rendering error state with:", error);
+  // console.log("Rendering error state with:", error);
   
   return (
     <div className="container mx-auto px-4 py-8">

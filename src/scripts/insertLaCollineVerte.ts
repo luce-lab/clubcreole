@@ -40,9 +40,9 @@ const laCollineVerteData: Omit<Accommodation, 'id'> = {
 
 async function insertHotel() {
   try {
-    console.log('Insertion de La Colline Verte dans la base de données...');
+    // console.log('Insertion de La Colline Verte dans la base de données...');
     const newAccommodation = await createAccommodation(laCollineVerteData);
-    console.log('La Colline Verte insérée avec succès:', newAccommodation);
+    // console.log('La Colline Verte insérée avec succès:', newAccommodation);
   } catch (error) {
     console.error('Erreur lors de l\'insertion de La Colline Verte:', error);
   }

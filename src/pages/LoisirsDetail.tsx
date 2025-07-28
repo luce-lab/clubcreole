@@ -34,7 +34,6 @@ const LoisirsDetail = () => {
         }
 
         const loisirData = await getLoisirById(parsedId);
-        console.log("Données de l'activité chargées:", loisirData);
         setLoisir(loisirData);
       } catch (err) {
         console.error("Erreur lors du chargement de l'activité:", err);

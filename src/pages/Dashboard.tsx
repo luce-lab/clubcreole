@@ -23,10 +23,10 @@ const Dashboard = () => {
   // Le rôle est dans les métadonnées de l'utilisateur
   const userRole = user.user_metadata?.role || 'client';
 
-  console.log('User email:', user.email);
-  console.log('User role from metadata:', user.user_metadata?.role);
+  // console.log('User email:', user.email);
+  // console.log('User role from metadata:', user.user_metadata?.role);
 
-  console.log('Final user role:', userRole);
+  // console.log('Final user role:', userRole);
 
   return (
     <DashboardLayout>

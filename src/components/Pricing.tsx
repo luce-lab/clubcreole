@@ -54,7 +54,7 @@ export const Pricing = () => {
   const handleSubscription = (priceType: string | null) => {
     if (!priceType) {
       // Plan gratuit - pas besoin d'action particulière
-      console.log("Plan gratuit sélectionné");
+      // // console.log("Plan gratuit sélectionné");
       return;
     }
     

@@ -12,7 +12,7 @@ export const createInscription = async (
   phone: string
 ): Promise<{ success: boolean; error?: string; inscription?: Inscription }> => {
   try {
-    console.log("Début de l'inscription pour:", loisirId, name, email, phone);
+    // console.log("Début de l'inscription pour:", loisirId, name, email, phone);
     
     // 1. Récupérer les détails de l'activité pour l'email
     const { data: loisirData, error: loisirError } = await supabase
@@ -30,7 +30,7 @@ export const createInscription = async (
       throw new Error("Activité non trouvée");
     }
 
-    console.log("Données du loisir récupérées:", loisirData);
+    // console.log("Données du loisir récupérées:", loisirData);
     
     const loisir = loisirData as Loisir;
     
@@ -44,7 +44,7 @@ export const createInscription = async (
     // Utilisation du timestamp actuel pour inscription_date
     const inscriptionDate = new Date().toISOString();
     
-    console.log("Insertion de l'inscription dans la base de données");
+    // console.log("Insertion de l'inscription dans la base de données");
     
     const { data, error } = await supabase
       .from('loisirs_inscriptions')
@@ -65,7 +65,7 @@ export const createInscription = async (
       throw error;
     }
 
-    console.log("Inscription réussie, données:", data);
+    // console.log("Inscription réussie, données:", data);
     const inscriptionData = data && data.length > 0 ? data[0] : null;
     
     if (!inscriptionData) {
@@ -74,7 +74,7 @@ export const createInscription = async (
     }
 
     // 3. Mettre à jour le compteur de participants
-    console.log("Mise à jour du compteur de participants");
+    // console.log("Mise à jour du compteur de participants");
     const { error: updateError } = await supabase
       .from('loisirs')
       .update({ current_participants: loisir.current_participants + 1 })
@@ -87,7 +87,7 @@ export const createInscription = async (
 
     // 4. Envoyer l'email de confirmation
     try {
-      console.log("Tentative d'envoi de l'e-mail de confirmation");
+      // console.log("Tentative d'envoi de l'e-mail de confirmation");
       
       // URL complète de la fonction
       const functionUrl = 'https://psryoyugyimibjhwhvlh.supabase.co/functions/v1/send-confirmation';
@@ -95,7 +95,7 @@ export const createInscription = async (
       // Formater les dates pour l'email - utiliser formatDisplayDate pour une meilleure présentation
       const formattedDate = formatDisplayDate(loisir.start_date);
       
-      console.log("Date formatée pour l'email:", formattedDate);
+      // console.log("Date formatée pour l'email:", formattedDate);
       
       // Ajouter des en-têtes et un timeout plus long
       const response = await fetch(functionUrl, {
@@ -125,7 +125,7 @@ export const createInscription = async (
       }
 
       const result = await response.json();
-      console.log("Email confirmation result:", result);
+      // console.log("Email confirmation result:", result);
 
       // Si l'email a été envoyé avec succès, marquer confirmation_sent comme true
       if (result.success && inscriptionData) {
@@ -140,7 +140,7 @@ export const createInscription = async (
       console.warn("L'inscription est validée mais l'email n'a pas pu être envoyé");
     }
 
-    console.log("Inscription complétée avec succès");
+    // console.log("Inscription complétée avec succès");
     
     return { 
       success: true, 

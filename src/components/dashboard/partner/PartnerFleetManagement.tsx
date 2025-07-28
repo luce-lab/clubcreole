@@ -87,7 +87,7 @@ export const PartnerFleetManagement = () => {
             key={company.id}
             company={company}
             onManageFleet={handleManageFleet}
-            onViewDetails={(id) => console.log("View details", id)}
+            onViewDetails={(id) => {/* console.log("View details", id) */}}
           />
         ))}
       </div>

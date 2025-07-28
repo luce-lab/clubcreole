@@ -31,7 +31,7 @@ export const TravelOffersList = () => {
   const { data: travelOffers, isLoading, error } = useQuery({
     queryKey: ['travel-offers'],
     queryFn: async () => {
-      console.log('Récupération des offres de voyage...');
+      // console.log('Récupération des offres de voyage...');
       const { data, error } = await supabase
         .from('travel_offers')
         .select('*')
@@ -43,7 +43,7 @@ export const TravelOffersList = () => {
         throw error;
       }
 
-      console.log(`${data?.length || 0} offres de voyage récupérées`);
+      // console.log(`${data?.length || 0} offres de voyage récupérées`);
       return data as TravelOffer[];
     },
   });

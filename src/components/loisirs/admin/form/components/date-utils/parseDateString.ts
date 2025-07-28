@@ -15,7 +15,7 @@ export const parseDateString = (dateString: string): {
       return { date: undefined, isValid: false };
     }
     
-    console.log("Parsing date string:", dateString);
+    // console.log("Parsing date string:", dateString);
     
     // Try as ISO date first
     let date = parseISO(dateString);
@@ -40,7 +40,7 @@ export const parseDateString = (dateString: string): {
     
     // Check if the date is now valid
     if (isValid(date)) {
-      console.log("Date parsed successfully:", date);
+      // console.log("Date parsed successfully:", date);
       return { date, isValid: true };
     }
     

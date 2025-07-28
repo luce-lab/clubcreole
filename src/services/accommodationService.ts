@@ -12,10 +12,8 @@ type RawAmenitiesInput = RawAmenity[] | { [key: string]: boolean } | null | unde
 
 // Fonction utilitaire pour transformer et valider les amenities
 const transformAmenities = (rawAmenities: RawAmenitiesInput): Amenity[] => {
-  console.log("Transformation des amenities:", rawAmenities);
   
   if (!rawAmenities) {
-    console.log("Aucune amenity fournie");
     return [];
   }
 
@@ -43,7 +41,6 @@ const transformAmenities = (rawAmenities: RawAmenitiesInput): Amenity[] => {
     }
   }
 
-  console.log("Format d'amenities non reconnu:", typeof rawAmenities);
   return [];
 };
 
@@ -93,13 +90,11 @@ export async function fetchAccommodations(): Promise<Accommodation[]> {
     // Si nous avons des données de la base, les transformer
     if (data && data.length > 0) {
       const formattedData = data.map(item => {
-        console.log("Données brutes de l'hébergement:", item.id, item.amenities);
         
         const amenitiesRaw = typeof item.amenities === "string"
           ? JSON.parse(item.amenities)
           : item.amenities;
         const typedAmenities = transformAmenities(amenitiesRaw);
-        console.log("Amenities transformées:", typedAmenities);
         
         return {
           ...item,
@@ -397,7 +392,6 @@ export const fetchAccommodationsPaginated = async (
     }
 
     // Si pas de données en base ou erreur, utiliser les données mock
-    console.log('Utilisation des données mock pour les hébergements');
     
     // Créer plus de données mock pour tester la pagination
     const mockData = [
@@ -502,7 +496,6 @@ export const fetchAccommodationsPaginated = async (
 };
 
 export async function createAccommodation(accommodationData: Omit<Accommodation, 'id'>): Promise<Accommodation> {
-  console.log("Tentative de création d'hébergement:", accommodationData);
   
   // Convert the accommodation data to match database schema with proper Json types
   const dbData = {
@@ -524,14 +517,12 @@ export async function createAccommodation(accommodationData: Omit<Accommodation,
     weight: accommodationData.weight || 1
   };
 
-  console.log("Données envoyées à la base:", dbData);
 
   const { data, error } = await supabase
     .from("accommodations")
     .insert(dbData)
     .select("*");
   
-  console.log("Réponse de Supabase:", { data, error });
   
   if (error) {
     console.error("Erreur lors de l'insertion:", error);
@@ -562,9 +553,6 @@ export async function createAccommodation(accommodationData: Omit<Accommodation,
 }
 
 export async function updateAccommodation(id: number, accommodationData: Partial<Accommodation>): Promise<Accommodation> {
-  console.log("=== DÉBUT MISE À JOUR ===");
-  console.log("ID à mettre à jour:", id);
-  console.log("Données reçues:", accommodationData);
   
   // Convert the accommodation data to match database schema with proper Json types
   const dbData: Partial<Accommodation> = { ...accommodationData };
@@ -574,7 +562,6 @@ export async function updateAccommodation(id: number, accommodationData: Partial
     dbData.discount = (accommodationData.discount === null || accommodationData.discount === '') ? null : Number(accommodationData.discount);
   }
 
-  console.log("Données finales à envoyer:", dbData);
 
   // Effectuer la mise à jour
   const { error: updateError } = await supabase
@@ -587,7 +574,6 @@ export async function updateAccommodation(id: number, accommodationData: Partial
     throw updateError;
   }
 
-  console.log("✅ Mise à jour réussie, récupération des données...");
 
   // Récupérer l'hébergement mis à jour dans une requête séparée
   const { data: updatedData, error: fetchError } = await supabase
@@ -596,7 +582,6 @@ export async function updateAccommodation(id: number, accommodationData: Partial
     .eq("id", id)
     .single();
   
-  console.log("Données récupérées après mise à jour:", updatedData);
   
   if (fetchError) {
     console.error("❌ Erreur lors de la récupération après mise à jour:", fetchError);
@@ -623,12 +608,10 @@ export async function updateAccommodation(id: number, accommodationData: Partial
     weight: updatedData.weight || 1
   };
 
-  console.log("=== RÉSULTAT FINAL ===", result);
   return result;
 }
 
 export async function deleteAccommodation(id: number): Promise<void> {
-  console.log("Tentative de suppression d'hébergement:", id);
   
   const { error } = await supabase
     .from("accommodations")
@@ -640,5 +623,4 @@ export async function deleteAccommodation(id: number): Promise<void> {
     throw error;
   }
   
-  console.log("Hébergement supprimé avec succès");
 }

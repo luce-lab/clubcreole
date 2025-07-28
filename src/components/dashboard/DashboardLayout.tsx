@@ -27,8 +27,8 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const userRole = user?.user_metadata?.role || user?.role || 'client';
   const finalUserRole = user?.email === 'admin@clubcreole.com' ? 'admin' : userRole;
 
-  console.log('DashboardLayout - User email:', user?.email);
-  console.log('DashboardLayout - Final user role:', finalUserRole);
+  // // console.log('DashboardLayout - User email:', user?.email);
+  // // console.log('DashboardLayout - Final user role:', finalUserRole);
 
   // Rediriger vers la page de login si non authentifié
   useEffect(() => {

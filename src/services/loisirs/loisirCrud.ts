@@ -21,8 +21,6 @@ export const updateLoisir = async (
   }
 ): Promise<Loisir> => {
   try {
-    console.log("Mise à jour de l'activité:", loisirId);
-    console.log("Données reçues:", updatedData);
     
     // Valider et formater les dates avant de les envoyer à la base de données
     const formattedData = {
@@ -31,7 +29,6 @@ export const updateLoisir = async (
       end_date: validateAndFormatDate(updatedData.end_date)
     };
 
-    console.log("Données formatées avant envoi à Supabase:", formattedData);
 
     // Première tentative : utilisation de update().select() pour récupérer directement les données mises à jour
     const { data, error } = await supabase
@@ -47,7 +44,6 @@ export const updateLoisir = async (
     }
     
     if (!data) {
-      console.log("Aucune donnée n'a été retournée par la mise à jour. Récupération séparée...");
       
       // Si la mise à jour a réussi mais n'a pas renvoyé de données, les récupérer explicitement
       const { data: fetchedData, error: fetchError } = await supabase
@@ -65,7 +61,6 @@ export const updateLoisir = async (
         throw new Error("L'activité n'a pas pu être trouvée après la mise à jour");
       }
       
-      console.log("Données récupérées séparément après mise à jour:", fetchedData);
       
       // Conversion du champ gallery_images
       const result = {
@@ -75,11 +70,9 @@ export const updateLoisir = async (
           : []
       } as Loisir;
       
-      console.log("Loisir mis à jour (récupéré séparément):", result);
       return result;
     }
     
-    console.log("Données retournées directement par Supabase:", data);
     
     // Conversion du champ gallery_images
     const result = {
@@ -89,7 +82,6 @@ export const updateLoisir = async (
         : []
     } as Loisir;
     
-    console.log("Loisir mis à jour (formatté pour le frontend):", result);
     return result;
   } catch (error) {
     console.error("Erreur lors de la mise à jour de l'activité:", error);
@@ -102,8 +94,7 @@ export const updateLoisir = async (
  */
 export const getLoisirById = async (id: number): Promise<Loisir> => {
   try {
-    console.log("Récupération du loisir par ID:", id);
-    
+      
     const { data, error } = await supabase
       .from('loisirs')
       .select('*')
@@ -120,7 +111,6 @@ export const getLoisirById = async (id: number): Promise<Loisir> => {
       throw new Error("Activité non trouvée");
     }
     
-    console.log("Loisir récupéré avec succès:", data);
     
     // Conversion du champ gallery_images de Json à string[]
     const result = {

@@ -23,7 +23,7 @@ export const useAuthActions = () => {
         return { success: false, message: 'Aucun utilisateur trouvé' };
       }
       
-      console.log("Connexion réussie pour:", data.user.email);
+      // console.log("Connexion réussie pour:", data.user.email);
       return { success: true, message: 'Connexion réussie' };
     } catch (error: any) {
       console.error("Exception lors de la connexion:", error);
@@ -33,7 +33,7 @@ export const useAuthActions = () => {
 
   const signUp = async (email: string, password: string): Promise<{ success: boolean, message: string }> => {
     try {
-      console.log("Début de l'inscription pour:", email);
+      // console.log("Début de l'inscription pour:", email);
       
       // Clean up auth state first
       cleanupAuthState();
@@ -56,7 +56,7 @@ export const useAuthActions = () => {
 
       // Vérification des données de l'utilisateur
       if (data?.user) {
-        console.log("Utilisateur créé avec succès:", data.user);
+        // console.log("Utilisateur créé avec succès:", data.user);
         
         // Vérification de la création du profil
         const { data: profileData, error: profileError } = await supabase
@@ -68,7 +68,7 @@ export const useAuthActions = () => {
         if (profileError) {
           console.warn("Profil non trouvé après inscription, cela peut être normal si le trigger n'a pas encore été exécuté:", profileError);
         } else {
-          console.log("Profil créé avec succès:", profileData);
+          // console.log("Profil créé avec succès:", profileData);
         }
         
         return { success: true, message: 'Inscription réussie' };
@@ -84,7 +84,7 @@ export const useAuthActions = () => {
 
   const signOut = async () => {
     try {
-      console.log("Tentative de déconnexion...");
+      // console.log("Tentative de déconnexion...");
       
       // Clean up auth state first
       cleanupAuthState();
@@ -92,7 +92,7 @@ export const useAuthActions = () => {
       // Attempt sign out
       await supabase.auth.signOut();
       
-      console.log("Déconnexion réussie, redirection...");
+      // console.log("Déconnexion réussie, redirection...");
       
       // Force page reload
       window.location.href = '/';

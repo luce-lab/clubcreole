@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import RestaurantHeader from "@/components/restaurant/RestaurantHeader";
 
 const RestaurantDetailSkeleton = () => {
-  console.log("Rendering skeleton loading state");
+  // console.log("Rendering skeleton loading state");
   
   return (
     <div className="container mx-auto px-4 py-8">

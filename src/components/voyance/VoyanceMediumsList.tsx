@@ -16,7 +16,6 @@ const VoyanceMediumsList = ({ searchTerm }: VoyanceMediumsListProps) => {
   const { data: mediums, isLoading, error } = useQuery({
     queryKey: ['voyance-mediums'],
     queryFn: async () => {
-      console.log('Récupération des médiums...');
       const { data, error } = await supabase
         .from('voyance_mediums')
         .select('*')
@@ -28,7 +27,6 @@ const VoyanceMediumsList = ({ searchTerm }: VoyanceMediumsListProps) => {
         throw error;
       }
 
-      console.log(`${data?.length || 0} médiums récupérés`);
       return data as VoyanceMedium[];
     },
   });

@@ -165,7 +165,6 @@ export const TravelReservationForm = ({ offer }: TravelReservationFormProps) => 
         throw error;
       }
 
-      console.log('Réservation créée avec succès:', data);
       
       // Si la requête réussit, on affiche un message de succès avec toast
       toast({

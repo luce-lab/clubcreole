@@ -43,7 +43,6 @@ export const Advantages = () => {
   const { data: bonsPlans, isLoading, error } = useQuery({
     queryKey: ['bons-plans'],
     queryFn: async () => {
-      console.log('Récupération des bons plans...');
       const { data, error } = await supabase
         .from('bons_plans')
         .select('*')
@@ -55,17 +54,15 @@ export const Advantages = () => {
         throw error;
       }
 
-      console.log(`${data?.length || 0} bons plans récupérés`);
+      // console.log(`${data?.length || 0} bons plans récupérés`);
       return data as BonPlan[];
     },
   });
 
   const handleBonPlanClick = (bonPlan: BonPlan) => {
     if (bonPlan.url) {
-      console.log(`Navigation vers: ${bonPlan.url}`);
       navigate(bonPlan.url);
     } else {
-      console.log(`Aucune URL définie pour: ${bonPlan.title}`);
     }
   };
 

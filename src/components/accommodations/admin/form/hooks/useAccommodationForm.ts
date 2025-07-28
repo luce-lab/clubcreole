@@ -35,9 +35,6 @@ export const useAccommodationForm = ({ accommodation, onSuccess }: UseAccommodat
     e.preventDefault();
     setIsSubmitting(true);
 
-    console.log("=== SOUMISSION FORMULAIRE ===");
-    console.log("Mode:", accommodation ? "modification" : "création");
-    console.log("Données du formulaire:", formData);
 
     try {
       // Nettoyer les données avant l'envoi
@@ -47,17 +44,15 @@ export const useAccommodationForm = ({ accommodation, onSuccess }: UseAccommodat
         discount: formData.discount === undefined || formData.discount === null ? undefined : Number(formData.discount)
       };
 
-      console.log("Données nettoyées:", cleanedData);
+     
 
       if (accommodation) {
-        console.log("Mise à jour de l'hébergement ID:", accommodation.id);
         await updateAccommodation(accommodation.id, cleanedData);
         toast({
           title: "Hébergement modifié",
           description: "L'hébergement a été modifié avec succès",
         });
       } else {
-        console.log("Création d'un nouvel hébergement");
         await createAccommodation(cleanedData);
         toast({
           title: "Hébergement créé",
@@ -78,12 +73,10 @@ export const useAccommodationForm = ({ accommodation, onSuccess }: UseAccommodat
   };
 
   const handleInputChange = (field: string, value: any) => {
-    console.log(`Changement champ ${field}:`, value);
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleDiscountChange = (value: string) => {
-    console.log("Changement discount:", value);
     // Convertir en nombre ou undefined si vide
     const numValue = value === "" ? undefined : parseInt(value);
     setFormData(prev => ({ ...prev, discount: numValue }));

@@ -28,7 +28,7 @@ export interface CreateDivingReservationData {
 export async function createDivingReservation(
   reservationData: CreateDivingReservationData
 ): Promise<DivingReservation> {
-  console.log("Création d'une réservation de plongée:", reservationData);
+  // console.log("Création d'une réservation de plongée:", reservationData);
 
   const { data, error } = await supabase
     .from("diving_reservations")
@@ -41,7 +41,7 @@ export async function createDivingReservation(
     throw error;
   }
 
-  console.log("Réservation de plongée créée avec succès:", data);
+  // console.log("Réservation de plongée créée avec succès:", data);
   return data;
 }
 

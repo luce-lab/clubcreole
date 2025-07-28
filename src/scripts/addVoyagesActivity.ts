@@ -16,7 +16,7 @@ export const addVoyagesActivity = async () => {
     }
 
     if (existingActivity) {
-      console.log('L\'activité Voyages existe déjà');
+      // console.log('L\'activité Voyages existe déjà');
       return;
     }
 
@@ -37,7 +37,7 @@ export const addVoyagesActivity = async () => {
       return;
     }
 
-    console.log('Activité Voyages ajoutée avec succès:', data);
+    // console.log('Activité Voyages ajoutée avec succès:', data);
   } catch (error) {
     console.error('Erreur inattendue:', error);
   }

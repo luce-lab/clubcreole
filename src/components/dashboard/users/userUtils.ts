@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { UserFormData } from "./UserForm";
 
 export const createUser = async (userData: UserFormData) => {
-  console.log("Création d'utilisateur avec:", userData.email);
+  // // console.log("Création d'utilisateur avec:", userData.email);
   
   // Créer l'utilisateur dans Supabase Auth
   const { data: authData, error: authError } = await supabase.auth.admin.createUser({
@@ -16,7 +16,7 @@ export const createUser = async (userData: UserFormData) => {
   });
   
   if (authError) {
-    console.error("Erreur lors de la création de l'utilisateur:", authError);
+    // console.error("Erreur lors de la création de l'utilisateur:", authError);
     throw authError;
   }
   
@@ -24,7 +24,7 @@ export const createUser = async (userData: UserFormData) => {
     throw new Error("Échec de création de l'utilisateur");
   }
   
-  console.log("Utilisateur créé avec succès:", authData.user);
+  // // console.log("Utilisateur créé avec succès:", authData.user);
   
   // Le profil sera automatiquement créé par le trigger handle_new_user
   // Attendre un peu pour que le trigger s'exécute
@@ -35,7 +35,7 @@ export const createUser = async (userData: UserFormData) => {
 
 export const fetchUsers = async () => {
   try {
-    console.log("Récupération des utilisateurs...");
+    // // console.log("Récupération des utilisateurs...");
     
     // Récupérer directement depuis la table profiles
     const { data: profiles, error } = await supabase
@@ -44,16 +44,16 @@ export const fetchUsers = async () => {
       .order('created_at', { ascending: false });
     
     if (error) {
-      console.error("Erreur lors de la récupération des profils:", error);
+      // console.error("Erreur lors de la récupération des profils:", error);
       throw new Error(`Erreur lors de la récupération des utilisateurs: ${error.message}`);
     }
     
     if (!profiles || profiles.length === 0) {
-      console.log("Aucun utilisateur trouvé");
+      // // console.log("Aucun utilisateur trouvé");
       return [];
     }
     
-    console.log(`${profiles.length} utilisateurs trouvés:`, profiles);
+    // // console.log(`${profiles.length} utilisateurs trouvés:`, profiles);
     
     // Transformer les données des profils au format requis
     const formattedUsers = profiles.map(profile => {
