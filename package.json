@@ -9,7 +9,8 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "insert-data": "vite-node src/scripts/insertLaCollineVerte.ts"
+    "insert-data": "vite-node src/scripts/insertLaCollineVerte.ts",
+    "scrape-tripadvisor": "vite-node src/scripts/scrapeTripAdvisor.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -85,6 +86,7 @@
     "jsdom": "^26.0.0",
     "lovable-tagger": "^1.1.7",
     "postcss": "^8.4.47",
+    "puppeteer": "^24.26.1",
     "supabase": "^2.15.8",
     "tailwindcss": "^3.4.11",
     "typescript": "^5.5.3",
