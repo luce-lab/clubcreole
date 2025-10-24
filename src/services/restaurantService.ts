@@ -223,3 +223,23 @@ export const fetchAllRestaurants = async (): Promise<Restaurant[]> => {
     throw err;
   }
 };
+
+export const createRestaurant = async (restaurant: Omit<Restaurant, 'id' | 'created_at' | 'updated_at'>): Promise<Restaurant> => {
+  try {
+    const { data, error } = await supabase
+      .from('restaurants')
+      .insert([restaurant])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Erreur lors de la création du restaurant:', error);
+      throw error;
+    }
+
+    return data;
+  } catch (err) {
+    console.error('Erreur lors de la création du restaurant:', err);
+    throw err;
+  }
+};
