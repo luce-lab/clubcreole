@@ -1,7 +1,11 @@
 import 'dotenv/config';
-import puppeteer from 'puppeteer';
-import { createRestaurant } from '../services/restaurantService';
+import puppeteer from 'puppeteer-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import { supabase } from '../integrations/supabase/node-client';
 import { Restaurant } from '@/components/restaurant/types';
+
+// Activer le plugin stealth
+puppeteer.use(StealthPlugin());
 
 interface ScrapedRestaurant {
   name: string;
@@ -25,17 +29,49 @@ async function scrapeTripAdvisor(url: string, maxRestaurants: number = 20) {
 
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--ignore-certificate-errors',
+      '--ignore-certificate-errors-spki-list',
+      '--disable-blink-features=AutomationControlled',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--disable-gpu',
+      '--window-size=1920,1080',
+      '--disable-web-security',
+      '--disable-features=IsolateOrigins,site-per-process'
+    ]
   });
 
   try {
     const page = await browser.newPage();
 
-    // Configuration du user agent pour éviter la détection
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+    // Définir la taille de la fenêtre
+    await page.setViewport({ width: 1920, height: 1080 });
+
+    // Le plugin stealth va gérer automatiquement la plupart des configurations anti-détection
 
     console.log('📄 Chargement de la page...');
     await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
+
+    // Attendre un peu pour simuler un comportement humain
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    // Prendre une capture d'écran pour déboguer
+    await page.screenshot({ path: '/tmp/tripadvisor-page.png', fullPage: false });
+    console.log('📸 Capture d\'écran sauvegardée: /tmp/tripadvisor-page.png');
+
+    // Obtenir le titre de la page pour vérifier qu'elle s'est bien chargée
+    const pageTitle = await page.title();
+    console.log(`📄 Titre de la page: ${pageTitle}`);
+
+    // Vérifier si la page contient "Access denied" ou d'autres messages de blocage
+    const bodyText = await page.evaluate(() => document.body.innerText);
+    if (bodyText.includes('Access denied') || bodyText.includes('blocked')) {
+      console.log('⚠️  TripAdvisor bloque l\'accès au site.');
+      throw new Error('TripAdvisor bloque l\'accès - détection de bot');
+    }
 
     // Attendre que les restaurants soient chargés
     await page.waitForSelector('[data-test-target="restaurants-list"]', { timeout: 30000 }).catch(() => {
@@ -49,9 +85,16 @@ async function scrapeTripAdvisor(url: string, maxRestaurants: number = 20) {
       const results: ScrapedRestaurant[] = [];
 
       // Chercher les cartes de restaurants (plusieurs sélecteurs possibles)
-      const restaurantCards = document.querySelectorAll('[data-test-target="restaurants-list"] > div, .restaurants-list > div, div[data-automation="restaurantCard"]');
+      const restaurantCards = document.querySelectorAll('[data-test-target="restaurants-list"] > div, .restaurants-list > div, div[data-automation="restaurantCard"], div[data-test*="establishment"], div[data-test*="restaurant"]');
 
       console.log(`Trouvé ${restaurantCards.length} cartes de restaurants`);
+      console.log('Sélecteurs testés:', {
+        'test-target': document.querySelectorAll('[data-test-target="restaurants-list"] > div').length,
+        'restaurants-list': document.querySelectorAll('.restaurants-list > div').length,
+        'automation': document.querySelectorAll('div[data-automation="restaurantCard"]').length,
+        'establishment': document.querySelectorAll('div[data-test*="establishment"]').length,
+        'restaurant': document.querySelectorAll('div[data-test*="restaurant"]').length
+      });
 
       restaurantCards.forEach((card, index) => {
         if (index >= max) return;
@@ -158,6 +201,23 @@ function convertToRestaurant(scraped: ScrapedRestaurant): Omit<Restaurant, 'id' 
     specialties: [],
     poids: 0 // Poids par défaut
   };
+}
+
+/**
+ * Crée un restaurant dans la base de données (version Node.js)
+ */
+async function createRestaurant(restaurant: Omit<Restaurant, 'id' | 'created_at' | 'updated_at'>): Promise<Restaurant> {
+  const { data, error } = await supabase
+    .from('restaurants')
+    .insert([restaurant])
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
 }
 
 /**
