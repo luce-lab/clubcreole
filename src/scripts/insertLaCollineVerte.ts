@@ -1,8 +1,7 @@
 import 'dotenv/config';
-import { createAccommodation } from '../services/accommodationService';
-import { Accommodation } from '../components/accommodation/AccommodationTypes';
+import { supabaseServer } from '../integrations/supabase/serverClient';
 
-const laCollineVerteData: Omit<Accommodation, 'id'> = {
+const laCollineVerteData = {
   name: "La Colline Verte",
   type: "Bungalow",
   location: "Entre Saint-Rose et Deshaies, Guadeloupe",
@@ -35,14 +34,26 @@ const laCollineVerteData: Omit<Accommodation, 'id'> = {
   rules: [
     "Animaux non admis (à confirmer)",
     "Non fumeur (à confirmer)"
-  ]
+  ],
+  weight: 1
 };
 
 async function insertHotel() {
   try {
     console.log('Insertion de La Colline Verte dans la base de données...');
-    const newAccommodation = await createAccommodation(laCollineVerteData);
-    console.log('La Colline Verte insérée avec succès:', newAccommodation);
+    console.log('URL Supabase:', supabaseServer.supabaseUrl);
+
+    const { data, error } = await supabaseServer
+      .from("accommodations")
+      .insert(laCollineVerteData)
+      .select("*");
+
+    if (error) {
+      console.error('Erreur lors de l\'insertion:', error);
+      throw error;
+    }
+
+    console.log('La Colline Verte insérée avec succès:', data);
   } catch (error) {
     console.error('Erreur lors de l\'insertion de La Colline Verte:', error);
   }
