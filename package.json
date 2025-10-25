@@ -10,6 +10,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "insert-data": "vite-node src/scripts/insertLaCollineVerte.ts",
+    "import-data": "vite-node src/scripts/importDataFromJson.ts",
+    "import-accommodations": "vite-node src/scripts/importDataFromJson.ts accommodations data/accommodations/",
     "scrape-tripadvisor": "vite-node src/scripts/scrapeTripAdvisor.ts"
   },
   "dependencies": {
