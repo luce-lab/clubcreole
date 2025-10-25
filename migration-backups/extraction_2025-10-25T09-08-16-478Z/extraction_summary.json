@@ -1,0 +1,20 @@
+{
+  "timestamp": "2025-10-25T09:08:16.479Z",
+  "source": "https://psryoyugyimibjhwhvlh.supabase.co",
+  "tables": {
+    "profiles": 0,
+    "partners": 12,
+    "accommodations": 15,
+    "accommodation_rooms": -1,
+    "restaurants": 43,
+    "car_rentals": -1,
+    "activities": 11,
+    "leisure_activities": 1,
+    "subscriptions": 0,
+    "accommodation_bookings": -1,
+    "restaurant_reservations": 12,
+    "car_rental_bookings": -1,
+    "activity_bookings": -1,
+    "travel_reservations": 2
+  }
+}

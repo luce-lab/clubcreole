@@ -1,0 +1,181 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  supabase-db:
+    image: supabase/postgres:15.1.0.117
+    container_name: supabase-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: ${SUPABASE_DB_PASSWORD:-your-super-secret-password}
+      POSTGRES_DB: postgres
+    volumes:
+      - supabase-db-data:/var/lib/postgresql/data
+      - ./migration-backups:/migration-backups:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Supabase Studio (Admin UI)
+  supabase-studio:
+    image: supabase/studio:latest
+    container_name: supabase-studio
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      STUDIO_PG_META_URL: http://supabase-meta:8080
+      POSTGRES_PASSWORD: ${SUPABASE_DB_PASSWORD:-your-super-secret-password}
+      DEFAULT_ORGANIZATION: "Club Créole"
+      DEFAULT_PROJECT: "Club Créole Local"
+      SUPABASE_URL: http://supabase-kong:8000
+      SUPABASE_PUBLIC_URL: http://localhost:8000
+    depends_on:
+      - supabase-db
+
+  # PostgREST (REST API)
+  supabase-rest:
+    image: postgrest/postgrest:v11.2.0
+    container_name: supabase-rest
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      PGRST_DB_URI: postgres://postgres:${SUPABASE_DB_PASSWORD:-your-super-secret-password}@supabase-db:5432/postgres
+      PGRST_DB_SCHEMAS: public,storage,auth
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: ${SUPABASE_JWT_SECRET:-your-super-secret-jwt-secret-with-at-least-32-characters}
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+    depends_on:
+      - supabase-db
+
+  # GoTrue (Auth)
+  supabase-auth:
+    image: supabase/gotrue:v2.99.0
+    container_name: supabase-auth
+    restart: unless-stopped
+    ports:
+      - "9999:9999"
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: 9999
+      API_EXTERNAL_URL: ${API_EXTERNAL_URL:-http://localhost:8000}
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://postgres:${SUPABASE_DB_PASSWORD:-your-super-secret-password}@supabase-db:5432/postgres?sslmode=disable
+      GOTRUE_SITE_URL: ${SITE_URL:-http://localhost:3000}
+      GOTRUE_JWT_EXP: 3600
+      GOTRUE_JWT_SECRET: ${SUPABASE_JWT_SECRET:-your-super-secret-jwt-secret-with-at-least-32-characters}
+      GOTRUE_DISABLE_SIGNUP: "false"
+      GOTRUE_EMAIL_ENABLE: "true"
+      GOTRUE_SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      GOTRUE_SMTP_PORT: ${SMTP_PORT:-587}
+      GOTRUE_SMTP_USER: ${SMTP_USER:-}
+      GOTRUE_SMTP_PASS: ${SMTP_PASS:-}
+      GOTRUE_SMTP_ADMIN_EMAIL: ${SMTP_ADMIN_EMAIL:-admin@example.com}
+      GOTRUE_MAILER_SUBJECTS_INVITE: "You have been invited to Club Créole"
+      GOTRUE_MAILER_SUBJECTS_CONFIRMATION: "Confirm your email for Club Créole"
+      GOTRUE_MAILER_SUBJECTS_RECOVERY: "Reset your password for Club Créole"
+      GOTRUE_MAILER_SUBJECTS_MAGIC_LINK: "Your magic link for Club Créole"
+    depends_on:
+      - supabase-db
+
+  # Realtime
+  supabase-realtime:
+    image: supabase/realtime:v2.25.35
+    container_name: supabase-realtime
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      DB_HOST: supabase-db
+      DB_PORT: 5432
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASSWORD: ${SUPABASE_DB_PASSWORD:-your-super-secret-password}
+      DB_SSL: "false"
+      PORT: 4000
+      REPLICATION_MODE: RLS
+      REPLICATION_POLL_INTERVAL: 100
+      SECURE_CHANNELS: "true"
+      SLOT_NAME: supabase_realtime_rls
+      TEMPORARY_SLOT: "true"
+      JWT_SECRET: ${SUPABASE_JWT_SECRET:-your-super-secret-jwt-secret-with-at-least-32-characters}
+    depends_on:
+      - supabase-db
+
+  # Storage
+  supabase-storage:
+    image: supabase/storage-api:v0.43.11
+    container_name: supabase-storage
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      ANON_KEY: ${SUPABASE_ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0}
+      SERVICE_KEY: ${SUPABASE_SERVICE_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU}
+      POSTGREST_URL: http://supabase-rest:3000
+      PGRST_JWT_SECRET: ${SUPABASE_JWT_SECRET:-your-super-secret-jwt-secret-with-at-least-32-characters}
+      DATABASE_URL: postgres://postgres:${SUPABASE_DB_PASSWORD:-your-super-secret-password}@supabase-db:5432/postgres
+      FILE_SIZE_LIMIT: 52428800
+      STORAGE_BACKEND: file
+      FILE_STORAGE_BACKEND_PATH: /var/lib/storage
+      TENANT_ID: stub
+      REGION: local
+      GLOBAL_S3_BUCKET: stub
+    volumes:
+      - supabase-storage-data:/var/lib/storage
+    depends_on:
+      - supabase-db
+      - supabase-rest
+
+  # Kong API Gateway
+  supabase-kong:
+    image: kong:2.8.1
+    container_name: supabase-kong
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+      - "8443:8443"
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /var/lib/kong/kong.yml
+      KONG_DNS_ORDER: LAST,A,CNAME
+      KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth
+      KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
+      KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
+    volumes:
+      - ./kong.yml:/var/lib/kong/kong.yml:ro
+    depends_on:
+      - supabase-auth
+      - supabase-rest
+      - supabase-storage
+      - supabase-realtime
+
+  # Meta (Database inspector)
+  supabase-meta:
+    image: supabase/postgres-meta:v0.68.0
+    container_name: supabase-meta
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      PG_META_HOST: supabase-db
+      PG_META_PORT: 5432
+      PG_META_DB_NAME: postgres
+      PG_META_DB_USER: postgres
+      PG_META_DB_PASSWORD: ${SUPABASE_DB_PASSWORD:-your-super-secret-password}
+    depends_on:
+      - supabase-db
+
+volumes:
+  supabase-db-data:
+  supabase-storage-data:
+
+networks:
+  default:
+    name: supabase-network
+    driver: bridge

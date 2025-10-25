@@ -1,0 +1,55 @@
+[
+  {
+    "id": "ebe4276c-ab3d-49c8-9988-26c2011d544a",
+    "travel_offer_id": 3,
+    "user_id": null,
+    "contact_name": "Luce Laurent",
+    "contact_email": "laurent.luce@hotmail.com",
+    "contact_phone": "+33766334653",
+    "participants": 2,
+    "special_requests": "Je suis.végétarien",
+    "status": "pending",
+    "total_price": 5198,
+    "reservation_date": "2025-07-01T15:06:59.470072+00:00",
+    "created_at": "2025-07-01T15:06:59.470072+00:00",
+    "updated_at": "2025-07-01T18:12:48.604142+00:00",
+    "contact_first_name": "Luce",
+    "contact_last_name": "Laurent",
+    "participants_details": null
+  },
+  {
+    "id": "87c3fa76-4b19-4bd4-af8c-093df8065678",
+    "travel_offer_id": 3,
+    "user_id": "9acfe1f5-e3f6-4e21-9aa5-ea2abf5846dd",
+    "contact_name": "Laurent LUCE",
+    "contact_email": "laurent@gmail.com",
+    "contact_phone": "+33766334653",
+    "participants": 4,
+    "special_requests": null,
+    "status": "pending",
+    "total_price": 10396,
+    "reservation_date": "2025-07-01T18:15:02.578428+00:00",
+    "created_at": "2025-07-01T18:15:02.578428+00:00",
+    "updated_at": "2025-07-01T18:15:02.578428+00:00",
+    "contact_first_name": "Laurent",
+    "contact_last_name": "LUCE",
+    "participants_details": [
+      {
+        "lastName": "LUCE",
+        "firstName": "Laurent"
+      },
+      {
+        "lastName": "LUCE",
+        "firstName": "Meryl"
+      },
+      {
+        "lastName": "LUCE",
+        "firstName": "Maxime"
+      },
+      {
+        "lastName": "LUCE",
+        "firstName": "Michelyse"
+      }
+    ]
+  }
+]

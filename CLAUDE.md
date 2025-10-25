@@ -1,3 +1,22 @@
+<!-- OPENSPEC:START -->
+# OpenSpec Instructions
+
+These instructions are for AI assistants working in this project.
+
+Always open `@/openspec/AGENTS.md` when the request:
+- Mentions planning or proposals (words like proposal, spec, change, plan)
+- Introduces new capabilities, breaking changes, architecture shifts, or big performance/security work
+- Sounds ambiguous and you need the authoritative spec before coding
+
+Use `@/openspec/AGENTS.md` to learn:
+- How to create and apply change proposals
+- Spec format and conventions
+- Project structure and guidelines
+
+Keep this managed block so 'openspec update' can refresh the instructions.
+
+<!-- OPENSPEC:END -->
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
@@ -20,6 +39,13 @@ npm run insert-data  # Run database seeding scripts
 npm run test         # Run all tests
 npm run test:ui      # Run tests with UI (if available)
 npm run test:coverage # Run tests with coverage
+```
+
+### Docker Deployment
+```bash
+docker compose build        # Build the Docker image
+docker compose up -d       # Run containers in detached mode
+docker compose down        # Stop and remove containers
 ```
 
 ## Architecture Overview
@@ -91,3 +117,7 @@ src/
 - Production builds containerized with Docker
 - Deployment configured for Coolify (self-hosted PaaS)
 - Environment variables managed through Supabase and deployment platform
+
+## Task Master AI Instructions
+**Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
+@./.taskmaster/CLAUDE.md
