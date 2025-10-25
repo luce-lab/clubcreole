@@ -1,0 +1,101 @@
+[
+  {
+    "id": 2,
+    "name": "Restauration",
+    "path": "/restauration",
+    "icon_name": "Coffee",
+    "created_at": "2025-06-20T19:13:13.286776+00:00",
+    "is_active": true,
+    "rating": 0
+  },
+  {
+    "id": 1,
+    "name": "Loisirs",
+    "path": "/loisirs",
+    "icon_name": "Gamepad2",
+    "created_at": "2025-06-20T19:13:13.286776+00:00",
+    "is_active": true,
+    "rating": 0
+  },
+  {
+    "id": 15,
+    "name": "Voyages",
+    "path": "/voyages",
+    "icon_name": "Plane",
+    "created_at": "2025-06-20T20:48:39.676446+00:00",
+    "is_active": true,
+    "rating": 0
+  },
+  {
+    "id": 9,
+    "name": "Randonnée",
+    "path": "/randonnee",
+    "icon_name": "Mountain",
+    "created_at": "2025-06-20T19:13:13.286776+00:00",
+    "is_active": true,
+    "rating": 0
+  },
+  {
+    "id": 5,
+    "name": "Soirée",
+    "path": "/soiree",
+    "icon_name": "Martini",
+    "created_at": "2025-06-20T19:13:13.286776+00:00",
+    "is_active": true,
+    "rating": 0
+  },
+  {
+    "id": 10,
+    "name": "Voyance",
+    "path": "/voyance",
+    "icon_name": "Eye",
+    "created_at": "2025-06-20T19:13:13.286776+00:00",
+    "is_active": false,
+    "rating": 0
+  },
+  {
+    "id": 8,
+    "name": "Canoë Kayak",
+    "path": "/canoe",
+    "icon_name": "Ship",
+    "created_at": "2025-06-20T19:13:13.286776+00:00",
+    "is_active": true,
+    "rating": 0
+  },
+  {
+    "id": 4,
+    "name": "Concerts",
+    "path": "/concerts",
+    "icon_name": "Music",
+    "created_at": "2025-06-20T19:13:13.286776+00:00",
+    "is_active": true,
+    "rating": 0
+  },
+  {
+    "id": 3,
+    "name": "Hébergements",
+    "path": "/hebergements",
+    "icon_name": "Bed",
+    "created_at": "2025-06-20T19:13:13.286776+00:00",
+    "is_active": true,
+    "rating": 0
+  },
+  {
+    "id": 7,
+    "name": "Plongée sous marine",
+    "path": "/plongee",
+    "icon_name": "Waves",
+    "created_at": "2025-06-20T19:13:13.286776+00:00",
+    "is_active": false,
+    "rating": 0
+  },
+  {
+    "id": 6,
+    "name": "Location de Voitures",
+    "path": "/location",
+    "icon_name": "Car",
+    "created_at": "2025-06-20T19:13:13.286776+00:00",
+    "is_active": true,
+    "rating": 0
+  }
+]

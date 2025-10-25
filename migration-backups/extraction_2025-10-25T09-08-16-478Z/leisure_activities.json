@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "name": "Plongée sous marine",
+    "category": "diving",
+    "description": "Découvrez les fonds marins des Antilles lors d'une plongée sous-marine encadrée par nos moniteurs professionnels. Explorez la vie marine colorée et les récifs coralliens magnifiques.",
+    "price_per_person": 75,
+    "duration_hours": 2,
+    "min_level": "beginner",
+    "max_participants": 8,
+    "equipment_provided": true,
+    "professional_guide": true,
+    "icon_name": "waves",
+    "created_at": "2025-05-29T10:44:25.049613+00:00",
+    "updated_at": "2025-05-31T10:50:35.166275+00:00"
+  }
+]
