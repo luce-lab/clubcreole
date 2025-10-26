@@ -351,7 +351,5 @@ async function main() {
   }
 }
 
-// Exécution si script appelé directement
-if (require.main === module) {
-  main().catch(console.error);
-}
+// Exécution directe
+main().catch(console.error);
