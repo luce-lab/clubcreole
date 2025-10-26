@@ -104,6 +104,8 @@ services:
       SLOT_NAME: supabase_realtime_rls
       TEMPORARY_SLOT: "true"
       JWT_SECRET: ${SUPABASE_JWT_SECRET:-your-super-secret-jwt-secret-with-at-least-32-characters}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:-egvUJAJCzIvoUei7FAH4xXsueks8NrwhkSU+qBdyicU=}
+      APP_NAME: ${APP_NAME:-realtime}
     depends_on:
       - supabase-db
 
