@@ -1,0 +1,84 @@
+{
+  "tableName": "restaurant_reservations",
+  "columns": [
+    {
+      "name": "id",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "cb513106-49df-41f3-af15-c7571c35605a"
+    },
+    {
+      "name": "restaurant_id",
+      "type": "number",
+      "nullable": false,
+      "sampleValue": 1
+    },
+    {
+      "name": "reservation_date",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "2025-05-23"
+    },
+    {
+      "name": "reservation_time",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "12:00"
+    },
+    {
+      "name": "guests",
+      "type": "number",
+      "nullable": false,
+      "sampleValue": 6
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "Laurent"
+    },
+    {
+      "name": "email",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "cmoinster@gmail.com"
+    },
+    {
+      "name": "phone",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "0766334653"
+    },
+    {
+      "name": "notes",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "Allergie aux poulets"
+    },
+    {
+      "name": "created_at",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "2025-05-21T21:03:39.553067+00:00"
+    },
+    {
+      "name": "status",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "confirmed"
+    }
+  ],
+  "sampleRecord": {
+    "id": "cb513106-49df-41f3-af15-c7571c35605a",
+    "restaurant_id": 1,
+    "reservation_date": "2025-05-23",
+    "reservation_time": "12:00",
+    "guests": 6,
+    "name": "Laurent",
+    "email": "cmoinster@gmail.com",
+    "phone": "0766334653",
+    "notes": "Allergie aux poulets",
+    "created_at": "2025-05-21T21:03:39.553067+00:00",
+    "status": "confirmed"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "timestamp": "2025-10-26T10:34:45.320Z",
+  "source": "https://psryoyugyimibjhwhvlh.supabase.co",
+  "tables": {
+    "profiles": {
+      "recordCount": 0,
+      "hasStructure": true,
+      "columns": 0
+    },
+    "partners": {
+      "recordCount": 12,
+      "hasStructure": true,
+      "columns": 19
+    },
+    "accommodations": {
+      "recordCount": 15,
+      "hasStructure": true,
+      "columns": 18
+    },
+    "restaurants": {
+      "recordCount": 43,
+      "hasStructure": true,
+      "columns": 16
+    },
+    "leisure_activities": {
+      "recordCount": 1,
+      "hasStructure": true,
+      "columns": 13
+    },
+    "activities": {
+      "recordCount": 11,
+      "hasStructure": true,
+      "columns": 7
+    },
+    "subscriptions": {
+      "recordCount": 0,
+      "hasStructure": true,
+      "columns": 0
+    },
+    "restaurant_reservations": {
+      "recordCount": 12,
+      "hasStructure": true,
+      "columns": 11
+    },
+    "travel_reservations": {
+      "recordCount": 2,
+      "hasStructure": true,
+      "columns": 16
+    }
+  },
+  "totalRecords": 96,
+  "exportPath": "data-export/export-2025-10-26T10-34-45-320Z"
+}
