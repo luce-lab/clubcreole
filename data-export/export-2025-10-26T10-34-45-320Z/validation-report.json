@@ -1,0 +1,64 @@
+{
+  "timestamp": "2025-10-26T12:02:57.570Z",
+  "target": "https://supabase.guadajobservices.fr/",
+  "totalTables": 9,
+  "successCount": 0,
+  "errorCount": 9,
+  "isValid": false,
+  "results": {
+    "profiles": {
+      "accessible": false,
+      "count": 0,
+      "error": "permission denied for schema public",
+      "expected": 0
+    },
+    "partners": {
+      "accessible": false,
+      "count": 0,
+      "error": "permission denied for schema public",
+      "expected": 12
+    },
+    "accommodations": {
+      "accessible": false,
+      "count": 0,
+      "error": "permission denied for schema public",
+      "expected": 15
+    },
+    "restaurants": {
+      "accessible": false,
+      "count": 0,
+      "error": "permission denied for schema public",
+      "expected": 43
+    },
+    "leisure_activities": {
+      "accessible": false,
+      "count": 0,
+      "error": "permission denied for schema public",
+      "expected": 1
+    },
+    "activities": {
+      "accessible": false,
+      "count": 0,
+      "error": "permission denied for schema public",
+      "expected": 11
+    },
+    "subscriptions": {
+      "accessible": false,
+      "count": 0,
+      "error": "permission denied for schema public",
+      "expected": 0
+    },
+    "restaurant_reservations": {
+      "accessible": false,
+      "count": 0,
+      "error": "permission denied for schema public",
+      "expected": 12
+    },
+    "travel_reservations": {
+      "accessible": false,
+      "count": 0,
+      "error": "permission denied for schema public",
+      "expected": 2
+    }
+  }
+}

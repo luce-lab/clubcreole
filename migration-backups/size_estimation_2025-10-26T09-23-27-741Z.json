@@ -1,0 +1,127 @@
+{
+  "timestamp": "2025-10-26T09:23:27.741Z",
+  "source": "https://psryoyugyimibjhwhvlh.supabase.co",
+  "analysis": [
+    {
+      "name": "profiles",
+      "count": 0,
+      "estimatedSize": "0 B",
+      "complexity": "low",
+      "migrationPriority": 1
+    },
+    {
+      "name": "partners",
+      "count": 12,
+      "estimatedSize": "5.9 KB",
+      "complexity": "low",
+      "migrationPriority": 1
+    },
+    {
+      "name": "accommodations",
+      "count": 15,
+      "estimatedSize": "11.7 KB",
+      "complexity": "low",
+      "migrationPriority": 2
+    },
+    {
+      "name": "restaurants",
+      "count": 43,
+      "estimatedSize": "33.6 KB",
+      "complexity": "low",
+      "migrationPriority": 2
+    },
+    {
+      "name": "car_rentals",
+      "count": 0,
+      "estimatedSize": "0 B",
+      "complexity": "low",
+      "migrationPriority": 2
+    },
+    {
+      "name": "leisure_activities",
+      "count": 1,
+      "estimatedSize": "700 B",
+      "complexity": "low",
+      "migrationPriority": 2
+    },
+    {
+      "name": "activities",
+      "count": 11,
+      "estimatedSize": "7.5 KB",
+      "complexity": "low",
+      "migrationPriority": 2
+    },
+    {
+      "name": "accommodation_rooms",
+      "count": 0,
+      "estimatedSize": "0 B",
+      "complexity": "low",
+      "migrationPriority": 3
+    },
+    {
+      "name": "travel_packages",
+      "count": 0,
+      "estimatedSize": "0 B",
+      "complexity": "low",
+      "migrationPriority": 3
+    },
+    {
+      "name": "subscriptions",
+      "count": 0,
+      "estimatedSize": "0 B",
+      "complexity": "low",
+      "migrationPriority": 3
+    },
+    {
+      "name": "accommodation_bookings",
+      "count": 0,
+      "estimatedSize": "0 B",
+      "complexity": "medium",
+      "migrationPriority": 4
+    },
+    {
+      "name": "restaurant_reservations",
+      "count": 12,
+      "estimatedSize": "5.9 KB",
+      "complexity": "medium",
+      "migrationPriority": 4
+    },
+    {
+      "name": "car_rental_bookings",
+      "count": 0,
+      "estimatedSize": "0 B",
+      "complexity": "medium",
+      "migrationPriority": 4
+    },
+    {
+      "name": "activity_bookings",
+      "count": 0,
+      "estimatedSize": "0 B",
+      "complexity": "medium",
+      "migrationPriority": 4
+    },
+    {
+      "name": "travel_reservations",
+      "count": 2,
+      "estimatedSize": "1000 B",
+      "complexity": "medium",
+      "migrationPriority": 4
+    },
+    {
+      "name": "partner_accommodations",
+      "count": 0,
+      "estimatedSize": "0 B",
+      "complexity": "low",
+      "migrationPriority": 5
+    }
+  ],
+  "estimates": {
+    "totalTables": 16,
+    "totalRecords": 96,
+    "estimatedMinutes": 5,
+    "globalComplexity": "low",
+    "highComplexityTables": 0,
+    "mediumComplexityTables": 5,
+    "lowComplexityTables": 11
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "tableName": "activities",
+  "columns": [
+    {
+      "name": "id",
+      "type": "number",
+      "nullable": false,
+      "sampleValue": 2
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "Restauration"
+    },
+    {
+      "name": "path",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "/restauration"
+    },
+    {
+      "name": "icon_name",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "Coffee"
+    },
+    {
+      "name": "created_at",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "2025-06-20T19:13:13.286776+00:00"
+    },
+    {
+      "name": "is_active",
+      "type": "boolean",
+      "nullable": false,
+      "sampleValue": true
+    },
+    {
+      "name": "rating",
+      "type": "number",
+      "nullable": false,
+      "sampleValue": 0
+    }
+  ],
+  "sampleRecord": {
+    "id": 2,
+    "name": "Restauration",
+    "path": "/restauration",
+    "icon_name": "Coffee",
+    "created_at": "2025-06-20T19:13:13.286776+00:00",
+    "is_active": true,
+    "rating": 0
+  }
+}

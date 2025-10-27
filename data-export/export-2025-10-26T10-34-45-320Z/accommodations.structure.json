@@ -1,0 +1,237 @@
+{
+  "tableName": "accommodations",
+  "columns": [
+    {
+      "name": "id",
+      "type": "number",
+      "nullable": false,
+      "sampleValue": 3
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "Bungalow Océan de Test"
+    },
+    {
+      "name": "type",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "appartement"
+    },
+    {
+      "name": "location",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "Les Saintes"
+    },
+    {
+      "name": "price",
+      "type": "number",
+      "nullable": false,
+      "sampleValue": 95
+    },
+    {
+      "name": "rating",
+      "type": "number",
+      "nullable": false,
+      "sampleValue": 4.6
+    },
+    {
+      "name": "image",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60"
+    },
+    {
+      "name": "gallery_images",
+      "type": "object",
+      "nullable": false,
+      "sampleValue": [
+        "https://images.unsplash.com/photo-1540541338287-41700207dee6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+        "https://images.unsplash.com/photo-1540518614846-7eded433c457?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
+      ]
+    },
+    {
+      "name": "features",
+      "type": "object",
+      "nullable": false,
+      "sampleValue": [
+        "WiFi",
+        "TV",
+        "Cuisine",
+        "Vue mer",
+        "Climatisation"
+      ]
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "nullable": false,
+      "sampleValue": "Bungalow charmant offrant une expérience authentique au bord de l'océan. Idéal pour les couples en quête de tranquillité et d'intimité."
+    },
+    {
+      "name": "rooms",
+      "type": "number",
+      "nullable": false,
+      "sampleValue": 1
+    },
+    {
+      "name": "bathrooms",
+      "type": "number",
+      "nullable": false,
+      "sampleValue": 1
+    },
+    {
+      "name": "max_guests",
+      "type": "number",
+      "nullable": false,
+      "sampleValue": 2
+    },
+    {
+      "name": "amenities",
+      "type": "object",
+      "nullable": false,
+      "sampleValue": [
+        {
+          "name": "WiFi gratuit",
+          "available": true
+        },
+        {
+          "name": "Petit-déjeuner inclus",
+          "available": true
+        },
+        {
+          "name": "Piscine privée",
+          "available": true
+        },
+        {
+          "name": "Vue sur la mer",
+          "available": false
+        },
+        {
+          "name": "Service de ménage",
+          "available": true
+        },
+        {
+          "name": "Animaux acceptés",
+          "available": false
+        },
+        {
+          "name": "Parking gratuit",
+          "available": true
+        },
+        {
+          "name": "Climatisation",
+          "available": true
+        },
+        {
+          "name": "Vélos électriques",
+          "available": false
+        }
+      ]
+    },
+    {
+      "name": "rules",
+      "type": "object",
+      "nullable": false,
+      "sampleValue": [
+        "Check-in: 15h00",
+        "Check-out: 10h00",
+        "Animaux acceptés (supplément)",
+        "Caution demandée à l'arrivée"
+      ]
+    },
+    {
+      "name": "discount",
+      "type": "object",
+      "nullable": true,
+      "sampleValue": null
+    },
+    {
+      "name": "weight",
+      "type": "number",
+      "nullable": false,
+      "sampleValue": 5
+    },
+    {
+      "name": "partner_id",
+      "type": "object",
+      "nullable": true,
+      "sampleValue": null
+    }
+  ],
+  "sampleRecord": {
+    "id": 3,
+    "name": "Bungalow Océan de Test",
+    "type": "appartement",
+    "location": "Les Saintes",
+    "price": 95,
+    "rating": 4.6,
+    "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+    "gallery_images": [
+      "https://images.unsplash.com/photo-1540541338287-41700207dee6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+      "https://images.unsplash.com/photo-1540518614846-7eded433c457?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
+    ],
+    "features": [
+      "WiFi",
+      "TV",
+      "Cuisine",
+      "Vue mer",
+      "Climatisation"
+    ],
+    "description": "Bungalow charmant offrant une expérience authentique au bord de l'océan. Idéal pour les couples en quête de tranquillité et d'intimité.",
+    "rooms": 1,
+    "bathrooms": 1,
+    "max_guests": 2,
+    "amenities": [
+      {
+        "name": "WiFi gratuit",
+        "available": true
+      },
+      {
+        "name": "Petit-déjeuner inclus",
+        "available": true
+      },
+      {
+        "name": "Piscine privée",
+        "available": true
+      },
+      {
+        "name": "Vue sur la mer",
+        "available": false
+      },
+      {
+        "name": "Service de ménage",
+        "available": true
+      },
+      {
+        "name": "Animaux acceptés",
+        "available": false
+      },
+      {
+        "name": "Parking gratuit",
+        "available": true
+      },
+      {
+        "name": "Climatisation",
+        "available": true
+      },
+      {
+        "name": "Vélos électriques",
+        "available": false
+      }
+    ],
+    "rules": [
+      "Check-in: 15h00",
+      "Check-out: 10h00",
+      "Animaux acceptés (supplément)",
+      "Caution demandée à l'arrivée"
+    ],
+    "discount": null,
+    "weight": 5,
+    "partner_id": null
+  }
+}
