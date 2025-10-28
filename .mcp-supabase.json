@@ -1,0 +1,8 @@
+{
+	"mcpServers": {
+		"supabase": {
+			"type": "websocket",
+			"url": "wss://mcp.supabase.com/mcp?project_ref=psryoyugyimibjhwhvlh"
+		}
+	}
+}
