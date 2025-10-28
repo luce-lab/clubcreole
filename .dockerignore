@@ -2,6 +2,8 @@ node_modules
 .git
 *.log
 .DS_Store
+# Ignorer les fichiers npm pour éviter les conflits avec pnpm
+package-lock.json
 # Ne pas ignorer les fichiers source nécessaires au build
 # !src/
 # !public/
