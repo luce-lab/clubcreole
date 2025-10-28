@@ -3,17 +3,19 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types.ts';
 
-export const SUPABASE_URL = "http://localhost:8000";
-export const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
+export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+export const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-// const SUPABASE_URL = "https://supabase.clubcreole.fr";
-// const SUPABASE_PUBLISHABLE_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc0OTcxOTQwMCwiZXhwIjo0OTA1MzkzMDAwLCJyb2xlIjoiYW5vbiJ9.0WYDVcKmJDfC9yGCyW9GA38zfKG-_11TBqESdlB43P0";
+if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  throw new Error(
+    'Les variables d\'environnement VITE_SUPABASE_URL et VITE_SUPABASE_PUBLISHABLE_KEY doivent être définies'
+  );
+}
 
-// const SUPABASE_URL = "https://services-supabase.clubcreole.fr";
-// const SUPABASE_PUBLISHABLE_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc0OTk5MzM2MCwiZXhwIjo0OTA1NjY2OTYwLCJyb2xlIjoiYW5vbiJ9.Hm4qwoXVtNU7PSixG_rgYDPUrCkwegvleFnXjJX7I7Y";
-// motdepasse : SfKzj6KSewGZkPa3SszkMJ9JcAFp6727
-// const SUPABASE_URL = "http://localhost:54321";
-// const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
+// Configuration Supabase via variables d'environnement
+// Les valeurs sont définies dans le fichier .env :
+// - VITE_SUPABASE_URL : URL de l'instance Supabase
+// - VITE_SUPABASE_PUBLISHABLE_KEY : Clé publique pour l'authentification
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
