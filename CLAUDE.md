@@ -164,7 +164,29 @@ cd /home/ubuntu/dumps
 wget http://172.28.114.141:8888/supabase_dump_20251028_164145.sql
 ```
 
+### Importation des Données
+**Scripts d'importation disponibles:**
+- `complete_transfer_import.sh`: Transfert + importation automatisée complet
+- `import_database.sh`: Script d'importation à exécuter sur le serveur distant
+- `verify_database.sh`: Vérification post-importation
+
+**Base de données cible:**
+- Nom: `clubcreole_db`
+- Utilisateur: `postgres`
+- Port: 5432
+
+**Commande d'importation complète:**
+```bash
+./complete_transfer_import.sh
+```
+
+**Commande de vérification (sur serveur distant):**
+```bash
+./verify_database.sh
+```
+
 ### Notes
 - Le dump inclut les schémas auth, public, storage
 - Connexion SSH validée vers le serveur distant
 - Plusieurs méthodes de transfert disponibles si HTTP échoue
+- Importation PostgreSQL automatique avec création de base de données
