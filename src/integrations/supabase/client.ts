@@ -3,7 +3,21 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types.ts';
 
 export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-export const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+export const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  throw new Error(
+    'Les variables d\'environnement VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY (ou VITE_SUPABASE_PUBLISHABLE_KEY) doivent être définies'
+  );
+}
+
+// Configuration Supabase via variables d'environnement
+// Les valeurs sont définies dans le fichier .env :
+// - VITE_SUPABASE_URL : URL de l'instance Supabase
+// - VITE_SUPABASE_ANON_KEY : Clé publique pour l'authentification (ou VITE_SUPABASE_PUBLISHABLE_KEY)
+
+// Import the supabase client like this:
+// import { supabase } from "@/integrations/supabase/client";
 
 // Initialize Supabase client
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
