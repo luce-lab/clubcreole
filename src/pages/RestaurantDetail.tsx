@@ -86,6 +86,7 @@ const RestaurantDetail = () => {
           type={restaurant.type}
           rating={restaurant.rating}
           location={restaurant.location}
+          isPartner={restaurant.is_partner}
           onShowReservationForm={() => setShowReservationForm(true)}
         />
 
@@ -106,14 +107,24 @@ const RestaurantDetail = () => {
 
           <div className="md:col-span-1">
             <div className="sticky top-8">
-              <RestaurantReservationForm 
-                restaurantId={restaurant.id} 
-                restaurantName={restaurant.name}
-                restaurantLocation={restaurant.location}
-                showForm={showReservationForm}
-                onClose={() => setShowReservationForm(!showReservationForm)}
-              />
-              
+              {restaurant.is_partner ? (
+                <RestaurantReservationForm
+                  restaurantId={restaurant.id}
+                  restaurantName={restaurant.name}
+                  restaurantLocation={restaurant.location}
+                  showForm={showReservationForm}
+                  onClose={() => setShowReservationForm(!showReservationForm)}
+                />
+              ) : (
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <h3 className="font-semibold mb-2">Réservation non disponible en ligne</h3>
+                  <p className="text-sm text-gray-600">
+                    Ce restaurant n'accepte pas encore les réservations en ligne via notre plateforme.
+                    Veuillez contacter directement le restaurant pour effectuer votre réservation.
+                  </p>
+                </div>
+              )}
+
               <div className="mt-6">
                 <RestaurantSidebar offer={restaurant.offer} />
               </div>

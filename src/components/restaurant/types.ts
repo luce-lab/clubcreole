@@ -26,6 +26,7 @@ export interface Restaurant {
   price_range?: string;
   specialties?: Json | null;
   poids?: number;
+  is_partner?: boolean;
   created_at?: string;
   updated_at?: string;
 }

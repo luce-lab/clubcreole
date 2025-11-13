@@ -64,6 +64,10 @@ head -5 supabase_dump_20251028_164145.sql
 # Importation des données (peut prendre plusieurs minutes)
 echo "Début de l'importation..."
 sudo -u postgres psql -d clubcreole_db -f supabase_dump_20251028_164145.sql
+PGPASSWORD=Hwml99HOD7oj1jjgVpKEJpBdGbeFC4Bv psql -h hostname -U username -d database_name -f fichier.sql
+PGPASSWORD=Hwml99HOD7oj1jjgVpKEJpBdGbeFC4Bv pg_restore -h localhost -U postgres -d postgres --verbose --clean --no-owner supabase_dump_20251028_164145.sql
+
+PGPASSWORD=Hwml99HOD7oj1jjgVpKEJpBdGbeFC4Bv psql -h 37.59.121.40 -U postgres -d postgres -f supabase_dump_20251028_164145.sql --echo-all
 
 # Vérification du succès
 if [ $? -eq 0 ]; then

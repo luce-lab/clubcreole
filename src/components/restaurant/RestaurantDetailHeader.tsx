@@ -2,11 +2,14 @@ import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
+import { PartnerBadge } from "./PartnerBadge";
+
 interface RestaurantDetailHeaderProps {
   name: string;
   type: string;
   rating: number;
   location: string;
+  isPartner?: boolean;
   onShowReservationForm: () => void;
 }
 const RestaurantDetailHeader = ({
@@ -14,6 +17,7 @@ const RestaurantDetailHeader = ({
   type,
   rating,
   location,
+  isPartner,
   onShowReservationForm
 }: RestaurantDetailHeaderProps) => {
   return <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -23,6 +27,7 @@ const RestaurantDetailHeader = ({
           <Badge variant="outline" className="bg-white">
             {type}
           </Badge>
+          <PartnerBadge isPartner={isPartner} />
           <div className="flex items-center">
             <span className="text-yellow-500 mr-1">★</span>
             <span>{rating}</span>
@@ -31,7 +36,7 @@ const RestaurantDetailHeader = ({
           <span className="text-gray-500">{location}</span>
         </div>
       </div>
-      
+
     </div>;
 };
 export default RestaurantDetailHeader;

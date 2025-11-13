@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import LazyImage from "@/components/ui/LazyImage";
 import { Restaurant } from "./types";
+import { PartnerBadge } from "./PartnerBadge";
 
 interface RestaurantCardProps {
   restaurant: Restaurant;
@@ -54,9 +55,12 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
             <span className="ml-1 text-gray-700">{restaurant.rating}</span>
           </div>
         </div>
-        <CardDescription className="flex items-center text-sm text-gray-500">
-          <MapPin className="h-4 w-4 mr-1" /> {restaurant.location}
-        </CardDescription>
+        <div className="flex items-center gap-2">
+          <CardDescription className="flex items-center text-sm text-gray-500">
+            <MapPin className="h-4 w-4 mr-1" /> {restaurant.location}
+          </CardDescription>
+          <PartnerBadge isPartner={restaurant.is_partner} />
+        </div>
       </CardHeader>
       
       <CardContent>

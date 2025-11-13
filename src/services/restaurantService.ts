@@ -138,8 +138,9 @@ export const fetchRestaurantsPaginated = async (
 
     // Si pas de recherche, récupérer toutes les données
     if (!searchQuery || searchQuery.trim() === '') {
-      // Appliquer le tri pondéré et la pagination
+      // Appliquer le tri pondéré et la pagination (partenaires en priorité)
       const { data, error, count } = await query
+        .order('is_partner', { ascending: false, nullsFirst: false })
         .order('poids', { ascending: false })
         .order('rating', { ascending: false })
         .order('created_at', { ascending: false })
@@ -164,6 +165,7 @@ export const fetchRestaurantsPaginated = async (
 
     // Si recherche, récupérer plus de données pour filtrer côté client
     const { data, error } = await query
+      .order('is_partner', { ascending: false, nullsFirst: false })
       .order('poids', { ascending: false })
       .order('rating', { ascending: false })
       .order('created_at', { ascending: false });
@@ -208,6 +210,7 @@ export const fetchAllRestaurants = async (): Promise<Restaurant[]> => {
     const { data, error } = await supabase
       .from('restaurants')
       .select('*')
+      .order('is_partner', { ascending: false, nullsFirst: false })
       .order('poids', { ascending: false })
       .order('rating', { ascending: false })
       .order('created_at', { ascending: false });
@@ -240,6 +243,27 @@ export const createRestaurant = async (restaurant: Omit<Restaurant, 'id' | 'crea
     return data;
   } catch (err) {
     console.error('Erreur lors de la création du restaurant:', err);
+    throw err;
+  }
+};
+
+export const updateRestaurantPartnerStatus = async (restaurantId: number, isPartner: boolean): Promise<Restaurant> => {
+  try {
+    const { data, error } = await supabase
+      .from('restaurants')
+      .update({ is_partner: isPartner })
+      .eq('id', restaurantId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Erreur lors de la mise à jour du statut partenaire:', error);
+      throw error;
+    }
+
+    return data;
+  } catch (err) {
+    console.error('Erreur lors de la mise à jour du statut partenaire:', err);
     throw err;
   }
 };
