@@ -1,21 +1,24 @@
 
 import { useState, useEffect } from "react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
-import { 
-  Card, 
-  CardContent, 
+import {
+  Card,
+  CardContent,
   CardHeader,
   CardTitle,
-  CardDescription 
+  CardDescription
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ShoppingBag, Plus, Search, Edit, Trash2, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { ShoppingBag, Plus, Search, Edit, Trash2, CheckCircle, XCircle, Clock, UtensilsCrossed } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { matchesIgnoreAccents } from "@/lib/textUtils";
+import { Restaurant } from "@/components/restaurant/types";
+import { updateRestaurantPartnerStatus } from "@/services/restaurantService";
 
 interface Partner {
   id: number; // Changed from string to number
@@ -33,15 +36,24 @@ const PartnersManagement = () => {
   const [filteredPartners, setFilteredPartners] = useState<Partner[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
+  const [mainTab, setMainTab] = useState<string>("partners");
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [filteredRestaurants, setFilteredRestaurants] = useState<Restaurant[]>([]);
+  const [restaurantSearchTerm, setRestaurantSearchTerm] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
     fetchPartners();
+    fetchRestaurants();
   }, []);
 
   useEffect(() => {
     filterPartners();
   }, [partners, activeTab, searchTerm]);
+
+  useEffect(() => {
+    filterRestaurants();
+  }, [restaurants, restaurantSearchTerm]);
 
   const fetchPartners = async () => {
     try {
@@ -68,6 +80,24 @@ const PartnersManagement = () => {
     }
   };
 
+  const fetchRestaurants = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('restaurants')
+        .select('*')
+        .order('name', { ascending: true });
+
+      if (error) {
+        console.error('Erreur lors du chargement des restaurants:', error);
+        return;
+      }
+
+      setRestaurants(data || []);
+    } catch (error) {
+      console.error('Erreur:', error);
+    }
+  };
+
   const filterPartners = () => {
     let filtered = partners;
 
@@ -85,6 +115,41 @@ const PartnersManagement = () => {
     }
 
     setFilteredPartners(filtered);
+  };
+
+  const filterRestaurants = () => {
+    let filtered = restaurants;
+
+    // Filtrer par terme de recherche
+    if (restaurantSearchTerm) {
+      filtered = filtered.filter(restaurant =>
+        restaurant.name.toLowerCase().includes(restaurantSearchTerm.toLowerCase()) ||
+        restaurant.location.toLowerCase().includes(restaurantSearchTerm.toLowerCase())
+      );
+    }
+
+    setFilteredRestaurants(filtered);
+  };
+
+  const toggleRestaurantPartner = async (restaurantId: number, currentStatus: boolean) => {
+    try {
+      await updateRestaurantPartnerStatus(restaurantId, !currentStatus);
+
+      toast({
+        title: "Succès",
+        description: `Statut partenaire ${!currentStatus ? 'activé' : 'désactivé'} avec succès`,
+      });
+
+      // Recharger les données
+      fetchRestaurants();
+    } catch (error) {
+      console.error('Erreur:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le statut partenaire",
+        variant: "destructive"
+      });
+    }
   };
 
   const updatePartnerStatus = async (partnerId: number, newStatus: string) => { // Changed parameter type
@@ -179,7 +244,14 @@ const PartnersManagement = () => {
           </Button>
         </div>
 
-        <Card>
+        <Tabs defaultValue="partners" value={mainTab} onValueChange={setMainTab}>
+          <TabsList>
+            <TabsTrigger value="partners">Partenaires commerciaux</TabsTrigger>
+            <TabsTrigger value="restaurants">Restaurants</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="partners">
+            <Card>
           <CardHeader>
             <div className="flex justify-between items-center">
               <div>
@@ -221,6 +293,38 @@ const PartnersManagement = () => {
             </Tabs>
           </CardContent>
         </Card>
+          </TabsContent>
+
+          <TabsContent value="restaurants">
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle>Restaurants partenaires</CardTitle>
+                    <CardDescription>Gérez le statut partenaire des restaurants</CardDescription>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="relative w-64">
+                      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Rechercher un restaurant..."
+                        className="pl-8 w-full"
+                        value={restaurantSearchTerm}
+                        onChange={(e) => setRestaurantSearchTerm(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <RestaurantPartnerList
+                  restaurants={filteredRestaurants}
+                  onTogglePartner={toggleRestaurantPartner}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </DashboardLayout>
   );
@@ -315,6 +419,78 @@ const PartnersList = ({
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </div>
+  );
+};
+
+// Sous-composant pour la liste des restaurants
+const RestaurantPartnerList = ({
+  restaurants,
+  onTogglePartner
+}: {
+  restaurants: Restaurant[];
+  onTogglePartner: (id: number, currentStatus: boolean) => void;
+}) => {
+  return (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Nom du restaurant</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>Localisation</TableHead>
+            <TableHead>Note</TableHead>
+            <TableHead>Statut partenaire</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {restaurants.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center py-6 text-gray-500">
+                Aucun restaurant trouvé
+              </TableCell>
+            </TableRow>
+          ) : (
+            restaurants.map((restaurant) => (
+              <TableRow key={restaurant.id}>
+                <TableCell className="font-medium">
+                  <div className="flex items-center gap-2">
+                    <div className="bg-creole-green/10 p-2 rounded-md">
+                      <UtensilsCrossed className="h-4 w-4 text-creole-green" />
+                    </div>
+                    {restaurant.name}
+                  </div>
+                </TableCell>
+                <TableCell>{restaurant.type}</TableCell>
+                <TableCell>{restaurant.location}</TableCell>
+                <TableCell>
+                  <div className="flex items-center">
+                    <span className="text-yellow-500 mr-1">★</span>
+                    <span>{restaurant.rating}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={restaurant.is_partner ?? false}
+                      onCheckedChange={() => onTogglePartner(restaurant.id, restaurant.is_partner ?? false)}
+                    />
+                    <span className={`text-sm ${restaurant.is_partner ? 'text-green-600' : 'text-gray-500'}`}>
+                      {restaurant.is_partner ? 'Partenaire' : 'Non partenaire'}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button variant="ghost" size="icon">
+                    <Edit className="h-4 w-4" />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))
