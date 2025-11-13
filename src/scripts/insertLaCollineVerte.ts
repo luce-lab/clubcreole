@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { createAccommodation } from '../services/accommodationService';
+import { supabaseServer } from '../integrations/supabase/serverClient';
 
 const laCollineVerteData = {
   name: "La Colline Verte",
@@ -41,8 +41,19 @@ const laCollineVerteData = {
 async function insertHotel() {
   try {
     console.log('Insertion de La Colline Verte dans la base de données...');
-    const newAccommodation = await createAccommodation(laCollineVerteData);
-    console.log('La Colline Verte insérée avec succès:', newAccommodation);
+    console.log('URL Supabase:', supabaseServer.supabaseUrl);
+
+    const { data, error } = await supabaseServer
+      .from("accommodations")
+      .insert(laCollineVerteData)
+      .select("*");
+
+    if (error) {
+      console.error('Erreur lors de l\'insertion:', error);
+      throw error;
+    }
+
+    console.log('La Colline Verte insérée avec succès:', data);
   } catch (error) {
     console.error('Erreur lors de l\'insertion de La Colline Verte:', error);
   }
