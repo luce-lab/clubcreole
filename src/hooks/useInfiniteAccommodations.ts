@@ -8,6 +8,7 @@ interface UseInfiniteAccommodationsProps {
   threshold?: number;
   searchQuery?: string;
   priceFilter?: string;
+  partnerOnly?: boolean;
 }
 
 interface UseInfiniteAccommodationsReturn {
@@ -25,7 +26,8 @@ export const useInfiniteAccommodations = ({
   initialLimit = 12,
   threshold = 200,
   searchQuery = '',
-  priceFilter = ''
+  priceFilter = '',
+  partnerOnly = false
 }: UseInfiniteAccommodationsProps = {}): UseInfiniteAccommodationsReturn => {
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,19 +36,20 @@ export const useInfiniteAccommodations = ({
   const [hasMore, setHasMore] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [offset, setOffset] = useState(0);
-  
+
   const loadingRef = useRef(false);
-  
+
   // Utiliser le debounce pour la recherche (300ms de délai)
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const debouncedPriceFilter = useDebounce(priceFilter, 300);
+  const debouncedPartnerOnly = useDebounce(partnerOnly, 300);
 
   // Fonction pour charger les données
-  const loadData = useCallback(async (currentOffset: number, isReset = false, searchQuery?: string, priceFilter?: string) => {
+  const loadData = useCallback(async (currentOffset: number, isReset = false, searchQuery?: string, priceFilter?: string, partnerOnly?: boolean) => {
     if (loadingRef.current) return;
-    
+
     loadingRef.current = true;
-    
+
     try {
       if (isReset) {
         setLoading(true);
@@ -59,7 +62,8 @@ export const useInfiniteAccommodations = ({
         currentOffset,
         initialLimit,
         searchQuery ?? debouncedSearchQuery,
-        priceFilter ?? debouncedPriceFilter
+        priceFilter ?? debouncedPriceFilter,
+        partnerOnly ?? debouncedPartnerOnly
       );
 
       if (isReset) {
@@ -85,7 +89,7 @@ export const useInfiniteAccommodations = ({
       setIsLoadingMore(false);
       loadingRef.current = false;
     }
-  }, [initialLimit, debouncedSearchQuery, debouncedPriceFilter]);
+  }, [initialLimit, debouncedSearchQuery, debouncedPriceFilter, debouncedPartnerOnly]);
 
   // Fonction pour charger plus de données
   const loadMore = useCallback(() => {
@@ -110,7 +114,7 @@ export const useInfiniteAccommodations = ({
     setHasMore(true);
     setError(null);
     loadData(0, true);
-  }, [debouncedSearchQuery, debouncedPriceFilter, loadData]);
+  }, [debouncedSearchQuery, debouncedPriceFilter, debouncedPartnerOnly, loadData]);
 
   // Effet pour le scroll infini
   useEffect(() => {

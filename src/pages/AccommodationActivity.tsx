@@ -19,7 +19,8 @@ const AccommodationActivity = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [priceFilter, setPriceFilter] = useState<string>("");
-  
+  const [partnerOnly, setPartnerOnly] = useState(false);
+
   // Debounce la recherche pour éviter trop d'appels API
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -35,7 +36,8 @@ const AccommodationActivity = () => {
     initialLimit: 12,
     threshold: 200,
     searchQuery: debouncedSearchTerm,
-    priceFilter: priceFilter
+    priceFilter: priceFilter,
+    partnerOnly: partnerOnly
   });
 
   const hasResults = accommodations.length > 0;
@@ -82,6 +84,8 @@ const AccommodationActivity = () => {
         setSearchTerm={setSearchTerm}
         priceFilter={priceFilter}
         setPriceFilter={setPriceFilter}
+        partnerOnly={partnerOnly}
+        onPartnerFilterChange={setPartnerOnly}
       />
 
       {hasResults ? (

@@ -9,6 +9,7 @@ import { AccommodationAmenities } from "@/components/accommodation/Accommodation
 import { AccommodationRules } from "@/components/accommodation/AccommodationRules";
 import { AccommodationFAQ } from "@/components/accommodation/AccommodationFAQ";
 import { ReservationCard } from "@/components/accommodation/ReservationCard";
+import { PartnerRegistrationCard } from "@/components/accommodation/PartnerRegistrationCard";
 import { Accommodation, Amenity } from "@/components/accommodation/AccommodationTypes";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
@@ -76,7 +77,7 @@ const AccommodationDetail = () => {
         const accommodationId = parseInt(id || "0");
         
         // console.log("🔍 Récupération de l'hébergement ID:", accommodationId);
-        
+
         const { data, error } = await supabase
           .from("accommodations")
           .select("*")
@@ -96,7 +97,8 @@ const AccommodationDetail = () => {
           gallery_images: data.gallery_images as string[],
           features: data.features as string[],
           amenities: typedAmenities,
-          rules: data.rules as string[]
+          rules: data.rules as string[],
+          partner: null
         };
         
         // console.log("✅ Données formatées finales:", formattedData);
@@ -150,10 +152,11 @@ const AccommodationDetail = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow container mx-auto px-4 py-8">
-        <AccommodationHeader 
+        <AccommodationHeader
           name={accommodation.name}
           location={accommodation.location}
           rating={accommodation.rating}
+          partner={accommodation.partner}
         />
 
         <AccommodationGallery 
@@ -186,10 +189,14 @@ const AccommodationDetail = () => {
 
           {/* Colonne de réservation */}
           <div className="lg:col-span-1">
-            <ReservationCard 
-              price={accommodation.price}
-              maxGuests={accommodation.max_guests}
-            />
+            {accommodation.partner_id && accommodation.partner?.status === 'approuve' ? (
+              <ReservationCard
+                price={accommodation.price}
+                maxGuests={accommodation.max_guests}
+              />
+            ) : (
+              <PartnerRegistrationCard />
+            )}
           </div>
         </div>
       </main>

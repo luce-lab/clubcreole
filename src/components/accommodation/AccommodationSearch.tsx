@@ -1,19 +1,29 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface AccommodationSearchProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   priceFilter: string;
   setPriceFilter: (filter: string) => void;
+  partnerOnly?: boolean;
+  onPartnerFilterChange?: (checked: boolean) => void;
 }
 
+/**
+ * AccommodationSearch component with search, price filter, and partner filter
+ * Partner filter: when enabled, shows only accommodations with approved partner status
+ */
 export const AccommodationSearch = ({
   searchTerm,
   setSearchTerm,
   priceFilter,
-  setPriceFilter
+  setPriceFilter,
+  partnerOnly = false,
+  onPartnerFilterChange
 }: AccommodationSearchProps) => {
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 mb-10">
@@ -43,11 +53,24 @@ export const AccommodationSearch = ({
             <option value="high">Premium (≥ 100€)</option>
           </select>
         </div>
-        <Button 
+        {onPartnerFilterChange && (
+          <div className="flex items-center space-x-2 px-4 py-2 border rounded-md bg-background">
+            <Switch
+              id="partner-filter"
+              checked={partnerOnly}
+              onCheckedChange={onPartnerFilterChange}
+            />
+            <Label htmlFor="partner-filter" className="cursor-pointer whitespace-nowrap">
+              Partenaires uniquement
+            </Label>
+          </div>
+        )}
+        <Button
           className="bg-creole-green hover:bg-creole-green/90"
           onClick={() => {
             setSearchTerm("");
             setPriceFilter("");
+            onPartnerFilterChange && onPartnerFilterChange(false);
           }}
         >
           Réinitialiser

@@ -1,5 +1,5 @@
 
-import { Star, MapPin, Badge } from "lucide-react";
+import { Star, MapPin, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,9 +17,9 @@ export const AccommodationCard = ({ accommodation }: AccommodationCardProps) => 
   return (
     <Card className="overflow-hidden hover:shadow-xl transition-shadow">
       <div className="h-48 bg-gray-200 relative cursor-pointer" onClick={() => navigate(`/hebergements/${accommodation.id}`)}>
-        <img 
-          src={accommodation.image} 
-          alt={accommodation.name} 
+        <img
+          src={accommodation.image}
+          alt={accommodation.name}
           className="w-full h-full object-cover"
         />
         <div className="absolute top-2 right-2 bg-white rounded-full px-2 py-1 text-sm font-bold flex items-center">
@@ -30,6 +30,14 @@ export const AccommodationCard = ({ accommodation }: AccommodationCardProps) => 
           <div className="absolute top-2 left-2">
             <UIBadge variant="destructive" className="bg-red-500 text-white font-bold text-sm px-3 py-1">
               -{accommodation.discount}%
+            </UIBadge>
+          </div>
+        )}
+        {accommodation.partner && accommodation.partner.status === 'approuve' && (
+          <div className="absolute bottom-2 left-2">
+            <UIBadge className="bg-creole-green text-white font-semibold text-xs px-2 py-1 flex items-center gap-1">
+              <CheckCircle className="h-3 w-3" />
+              Partenaire
             </UIBadge>
           </div>
         )}

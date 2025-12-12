@@ -44,22 +44,39 @@ export const PartnerApplicationForm = () => {
           description: formData.description,
           address: formData.location,
           phone: formData.phone,
+          email: formData.email,
+          contact_name: formData.contact_name,
           website: formData.website,
           status: 'en_attente',
           created_at: new Date().toISOString()
         });
 
       if (error) {
-        if (error.code === '23505' && error.message.includes('partners_business_name_unique')) {
-          toast({
-            title: "Erreur d'inscription",
-            description: "Un partenaire avec ce nom d'entreprise existe déjà. Veuillez utiliser un nom différent.",
-            variant: "destructive"
-          });
+        console.error('Partner application error:', error);
+        if (error.code === '23505') {
+          if (error.message.includes('partners_business_name_unique')) {
+            toast({
+              title: "Erreur d'inscription",
+              description: "Un partenaire avec ce nom d'entreprise existe déjà. Veuillez utiliser un nom différent.",
+              variant: "destructive"
+            });
+          } else if (error.message.includes('partners_email_unique')) {
+            toast({
+              title: "Erreur d'inscription",
+              description: "Un partenaire avec cet email existe déjà. Veuillez utiliser un email différent.",
+              variant: "destructive"
+            });
+          } else {
+            toast({
+              title: "Erreur d'inscription",
+              description: "Ces informations sont déjà enregistrées. Veuillez vérifier vos données.",
+              variant: "destructive"
+            });
+          }
         } else {
           toast({
             title: "Erreur d'inscription",
-            description: "Une erreur est survenue lors de l'inscription. Veuillez réessayer.",
+            description: error.message || "Une erreur est survenue lors de l'inscription. Veuillez réessayer.",
             variant: "destructive"
           });
         }

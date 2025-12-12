@@ -84,18 +84,18 @@ export async function fetchAccommodations(): Promise<Accommodation[]> {
     const { data, error } = await supabase
       .from("accommodations")
       .select("*");
-    
+
     if (error) throw error;
 
     // Si nous avons des données de la base, les transformer
     if (data && data.length > 0) {
       const formattedData = data.map(item => {
-        
+
         const amenitiesRaw = typeof item.amenities === "string"
           ? JSON.parse(item.amenities)
           : item.amenities;
         const typedAmenities = transformAmenities(amenitiesRaw);
-        
+
         return {
           ...item,
           gallery_images: item.gallery_images as string[],
@@ -103,10 +103,11 @@ export async function fetchAccommodations(): Promise<Accommodation[]> {
           amenities: typedAmenities,
           rules: item.rules as string[],
           discount: item.discount || undefined,
-          weight: item.weight || 1
+          weight: item.weight || 1,
+          partner: null
         };
       });
-      
+
       return formattedData;
     }
     
@@ -129,7 +130,7 @@ export async function fetchAccommodationsWeightedRandom(): Promise<Accommodation
       // Plus le weight est élevé, plus l'hébergement a de chances d'apparaître en premier
       .order('weight', { ascending: false })
       .order('random()', { ascending: true });
-    
+
     if (error) throw error;
 
     // Si nous avons des données de la base, les transformer et appliquer un tri pondéré côté client
@@ -139,7 +140,7 @@ export async function fetchAccommodationsWeightedRandom(): Promise<Accommodation
           ? JSON.parse(item.amenities)
           : item.amenities;
         const typedAmenities = transformAmenities(amenitiesRaw);
-        
+
         return {
           ...item,
           gallery_images: item.gallery_images as string[],
@@ -147,7 +148,8 @@ export async function fetchAccommodationsWeightedRandom(): Promise<Accommodation
           amenities: typedAmenities,
           rules: item.rules as string[],
           discount: item.discount || undefined,
-          weight: item.weight || 1
+          weight: item.weight || 1,
+          partner: null
         };
       });
       
@@ -208,7 +210,8 @@ export const fetchAccommodationsPaginated = async (
   offset: number = 0,
   limit: number = 12,
   searchQuery?: string,
-  priceFilter?: string
+  priceFilter?: string,
+  partnerOnly?: boolean
 ): Promise<AccommodationPaginationResult> => {
   try {
     // D'abord essayer de récupérer depuis la base de données
@@ -218,6 +221,11 @@ export const fetchAccommodationsPaginated = async (
 
     // Si pas de recherche, récupérer toutes les données avec pagination
     if (!searchQuery || searchQuery.trim() === '') {
+      // Appliquer le filtre partenaire si activé
+      if (partnerOnly) {
+        query = query.not('partner_id', 'is', null);
+      }
+
       // Appliquer le filtre de prix si présent
       if (priceFilter) {
         switch (priceFilter) {
@@ -242,13 +250,13 @@ export const fetchAccommodationsPaginated = async (
 
       // Si la requête réussit et qu'on a des données
       if (!error && data && data.length > 0) {
-        // Transformer les données
-        const formattedData = data.map(item => {
+        // Transformer les données et filtrer par statut approuvé si partnerOnly
+        let formattedData = data.map(item => {
           const amenitiesRaw = typeof item.amenities === "string"
             ? JSON.parse(item.amenities)
             : item.amenities;
           const typedAmenities = transformAmenities(amenitiesRaw);
-          
+
           return {
             ...item,
             gallery_images: item.gallery_images as string[],
@@ -256,9 +264,17 @@ export const fetchAccommodationsPaginated = async (
             amenities: typedAmenities,
             rules: item.rules as string[],
             discount: item.discount || undefined,
-            weight: item.weight || 1
+            weight: item.weight || 1,
+            partner: null
           };
         });
+
+        // Filtrer par statut approuvé côté client si partnerOnly
+        if (partnerOnly) {
+          formattedData = formattedData.filter(item =>
+            item.partner && item.partner.status === 'approuve'
+          );
+        }
 
         const totalCount = count || 0;
         const hasMore = offset + limit < totalCount;
@@ -273,7 +289,14 @@ export const fetchAccommodationsPaginated = async (
       }
     } else {
       // Si recherche, récupérer toutes les données pour filtrer côté client
-      let dataQuery = query.order('weight', { ascending: false })
+      let dataQuery = query;
+
+      // Appliquer le filtre partenaire si activé
+      if (partnerOnly) {
+        dataQuery = dataQuery.not('partner_id', 'is', null);
+      }
+
+      dataQuery = dataQuery.order('weight', { ascending: false })
         .order('rating', { ascending: false })
         .order('id', { ascending: false });
 
@@ -296,12 +319,12 @@ export const fetchAccommodationsPaginated = async (
 
       if (!error && data && data.length > 0) {
         // Transformer les données
-        const allData = data.map(item => {
+        let allData = data.map(item => {
           const amenitiesRaw = typeof item.amenities === "string"
             ? JSON.parse(item.amenities)
             : item.amenities;
           const typedAmenities = transformAmenities(amenitiesRaw);
-          
+
           return {
             ...item,
             gallery_images: item.gallery_images as string[],
@@ -309,13 +332,21 @@ export const fetchAccommodationsPaginated = async (
             amenities: typedAmenities,
             rules: item.rules as string[],
             discount: item.discount || undefined,
-            weight: item.weight || 1
+            weight: item.weight || 1,
+            partner: null
           };
         });
 
+        // Filtrer par statut approuvé côté client si partnerOnly
+        if (partnerOnly) {
+          allData = allData.filter(item =>
+            item.partner && item.partner.status === 'approuve'
+          );
+        }
+
         // Filtrer côté client avec normalisation des accents
         const normalizedSearchQuery = normalizeString(searchQuery.trim());
-        const filteredData = allData.filter(item => 
+        const filteredData = allData.filter(item =>
           normalizeString(item.name).includes(normalizedSearchQuery) ||
           normalizeString(item.type).includes(normalizedSearchQuery) ||
           normalizeString(item.location).includes(normalizedSearchQuery) ||

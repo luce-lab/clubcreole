@@ -45,14 +45,7 @@ const VoyageDetail = () => {
       // console.log(`Récupération de l'offre de voyage ${id}...`);
       const { data, error } = await supabase
         .from('travel_offers')
-        .select(`
-          *,
-          partners (
-            business_name,
-            phone,
-            website
-          )
-        `)
+        .select('*')
         .eq('id', parseInt(id || '0'))
         .eq('is_active', true)
         .single();
@@ -62,17 +55,15 @@ const VoyageDetail = () => {
         throw error;
       }
 
-      // console.log('Offre de voyage récupérée:', data);
-      
       // Transform the data to match our interface
       const transformedData: TravelOffer = {
         ...data,
-        partners: Array.isArray(data.partners) && data.partners.length > 0 ? data.partners[0] : null,
+        partners: null,
         gallery_images: Array.isArray(data.gallery_images) ? data.gallery_images as string[] : [],
         inclusions: Array.isArray(data.inclusions) ? data.inclusions as string[] : [],
         exclusions: Array.isArray(data.exclusions) ? data.exclusions as string[] : []
       };
-      
+
       return transformedData;
     },
     enabled: !!id,
