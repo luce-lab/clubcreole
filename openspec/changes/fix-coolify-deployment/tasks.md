@@ -1,22 +1,19 @@
 # Implementation Tasks: Fix Coolify HTTPS Deployment
 
 ## 1. Environment Configuration Updates
-- [ ] 1.1 Update `.env.production.new` with HTTPS URLs
-  - Change `http://37.59.121.40:8000` to `https://37.59.121.40:8000` (or appropriate domain)
-  - Update all Supabase-related URLs to HTTPS
-  - Update API_EXTERNAL_URL to HTTPS
-  - Update GOTRUE_SITE_URL to HTTPS
+- [x] 1.1 Update `.env` with HTTPS URLs
+  - Changed `http://` to `https://` for VITE_SUPABASE_URL
+  - Local .env now uses HTTPS
+  - **Note**: Coolify environment variables must also be updated to use HTTPS
 
 ## 2. Supabase Client Configuration
-- [ ] 2.1 Update `src/integrations/supabase/node-client.ts`
-  - Replace hardcoded HTTP URL with environment variable
-  - Add fallback to localhost for development
-  - Ensure HTTPS support in production
+- [x] 2.1 ~~Update `src/integrations/supabase/node-client.ts`~~ (N/A - file removed)
+  - Files no longer exist in the codebase
+  - Main client.ts already uses environment variables correctly
 
-- [ ] 2.2 Update `src/integrations/supabase/serverClient.ts`
-  - Replace hardcoded HTTP URL with environment variable
-  - Add fallback to localhost for development
-  - Ensure HTTPS support in production
+- [x] 2.2 ~~Update `src/integrations/supabase/serverClient.ts`~~ (N/A - file removed)
+  - Files no longer exist in the codebase
+  - Main client.ts already uses environment variables correctly
 
 ## 3. Docker and Nginx Configuration
 - [ ] 3.1 Update `nginx.conf` for HTTPS support
@@ -25,10 +22,10 @@
   - Configure HTTP to HTTPS redirect
   - Maintain SPA routing with HTTPS
 
-- [ ] 3.2 Update `Dockerfile` for production deployment
-  - Pass environment variables for URL configuration
-  - Ensure build process uses correct URLs
-  - Support both HTTP (dev) and HTTPS (prod)
+- [x] 3.2 Update `Dockerfile` for production deployment
+  - Added ARG for VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
+  - Added ENV to pass build args to Vite build process
+  - Added comment about HTTPS requirement
 
 - [ ] 3.3 Update `docker-compose.yml`
   - Add HTTPS support for local development
