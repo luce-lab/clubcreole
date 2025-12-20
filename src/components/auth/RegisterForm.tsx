@@ -56,7 +56,7 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
       } else {
         toast({
           title: "Inscription réussie",
-          description: "Votre compte a été créé. Vous pouvez maintenant vous connecter.",
+          description: "Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.",
         });
         
         if (onSuccess) {
