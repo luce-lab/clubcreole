@@ -3,12 +3,12 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { 
-  LayoutDashboard, 
-  Users, 
-  Calendar, 
-  Settings, 
-  ChevronDown, 
+import {
+  LayoutDashboard,
+  Users,
+  Calendar,
+  Settings,
+  ChevronDown,
   ChevronRight,
   Car,
   Bed,
@@ -16,7 +16,8 @@ import {
   UserCheck,
   Gift,
   Waves,
-  Truck
+  Truck,
+  Crown
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
@@ -74,6 +75,11 @@ export function DashboardSidebar() {
           title: "Plongées",
           icon: Waves,
           path: "/diving-management",
+        },
+        {
+          title: "Abonnements",
+          icon: Crown,
+          path: "/subscriptions-management",
         }
       ]
     },

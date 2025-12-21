@@ -15,14 +15,15 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Users, 
-  ShoppingBag, 
-  Activity, 
-  CreditCard, 
+import {
+  Users,
+  ShoppingBag,
+  Activity,
+  CreditCard,
   Calendar,
   Palmtree,
-  Building
+  Building,
+  Crown
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UsersList } from "./UsersList";
@@ -138,7 +139,7 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
       </div>
 
       {/* Section des liens de gestion rapides */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 hover:shadow-md transition-all">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium text-blue-800">Gestion des Loisirs</CardTitle>
@@ -147,8 +148,8 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
             <p className="mb-4 text-blue-700">
               Créez, modifiez ou supprimez des activités de loisirs et gérez les inscriptions
             </p>
-            <Button 
-              onClick={() => navigate("/loisirs-management")} 
+            <Button
+              onClick={() => navigate("/loisirs-management")}
               className="bg-creole-green hover:bg-creole-green/90"
             >
               <Palmtree className="mr-2 h-4 w-4" />
@@ -165,8 +166,8 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
             <p className="mb-4 text-blue-700">
               Créez, modifiez ou supprimez des hébergements et gérez leurs disponibilités
             </p>
-            <Button 
-              onClick={() => navigate("/accommodations-management")} 
+            <Button
+              onClick={() => navigate("/accommodations-management")}
               className="bg-blue-600 hover:bg-blue-700"
             >
               <Building className="mr-2 h-4 w-4" />
@@ -174,7 +175,7 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
             </Button>
           </CardContent>
         </Card>
-        
+
         <Card className="bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200 hover:shadow-md transition-all">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium text-purple-800">Gestion des Utilisateurs</CardTitle>
@@ -183,12 +184,30 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
             <p className="mb-4 text-purple-700">
               Consultez les informations des utilisateurs, modifiez leurs profils et leurs rôles
             </p>
-            <Button 
-              onClick={() => navigate("/users")} 
+            <Button
+              onClick={() => navigate("/users")}
               className="bg-purple-600 hover:bg-purple-700"
             >
               <Users className="mr-2 h-4 w-4" />
               Gérer les utilisateurs
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-r from-amber-50 to-amber-100 border-amber-200 hover:shadow-md transition-all">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg font-medium text-amber-800">Gestion des Abonnements</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-4 text-amber-700">
+              Gérez les abonnements Stripe, suivez les paiements et analysez les performances
+            </p>
+            <Button
+              onClick={() => navigate("/subscriptions-management")}
+              className="bg-amber-600 hover:bg-amber-700"
+            >
+              <Crown className="mr-2 h-4 w-4" />
+              Gérer les abonnements
             </Button>
           </CardContent>
         </Card>

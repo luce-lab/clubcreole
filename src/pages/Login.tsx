@@ -10,6 +10,7 @@ import { LoginForm } from "@/components/auth/LoginForm";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { AuthLoadingState } from "@/components/auth/AuthLoadingState";
 import { AdminDevTools } from "@/components/auth/AdminDevTools";
+import { SignUpData } from "@/contexts/auth/types";
 
 const Login = () => {
   const location = useLocation();
@@ -63,9 +64,9 @@ const Login = () => {
     // Redirection will be handled by the useEffect
   };
 
-  const handleRegisterSuccess = (registeredEmail: string) => {
+  const handleRegisterSuccess = (signUpData: SignUpData) => {
     setActiveTab("login");
-    setEmail(registeredEmail);
+    setEmail(signUpData.email);
   };
 
   // Show loading state when auth is being checked

@@ -1,0 +1,329 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Migration de la base de données pour ajouter le champ phone",
+        "description": "Créer une migration Supabase pour ajouter le champ phone à la table profiles avec validation",
+        "details": "Analyse de la base de données existante montre que la table profiles contient déjà les champs first_name et last_name (lignes 1276-1278 dans types.ts), mais le champ phone est manquant. Créer une migration SQL avec:\n1. ALTER TABLE profiles ADD COLUMN phone VARCHAR(20) UNIQUE\n2. Contrainte de validation pour format international: CHECK (phone ~ '^\\\\+?[1-9]\\\\d{1,14}$')\n3. Index pour performance sur les recherches par téléphone\n4. Mise à jour des types TypeScript pour inclure le champ phone nullable",
+        "testStrategy": "Tester la migration en environnement de développement, vérifier que les requêtes d'insertion avec mauvais format sont rejetées, valider que les utilisateurs existants ont des valeurs NULL",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Analyser la structure de la base de données existante",
+            "description": "Explorer les fichiers de migration Supabase et types TypeScript pour comprendre la structure actuelle de la table profiles",
+            "dependencies": [],
+            "details": "Utiliser Glob pour trouver les fichiers de migration Supabase (*.sql), examiner le fichier types.ts pour les interfaces profiles existantes, et identifier les contraintes déjà en place sur la table profiles",
+            "status": "pending",
+            "testStrategy": "Vérifier que les migrations existantes s'appliquent correctement et que les types TypeScript reflètent la structure actuelle"
+          },
+          {
+            "id": 2,
+            "title": "Créer la migration SQL pour le champ phone",
+            "description": "Générer un fichier de migration Supabase ajoutant le champ phone avec contraintes et index",
+            "dependencies": [
+              1
+            ],
+            "details": "Créer une migration avec ALTER TABLE profiles ADD COLUMN phone VARCHAR(20) UNIQUE, contrainte CHECK pour format international (regex), création d'index sur le champ phone pour optimiser les requêtes",
+            "status": "pending",
+            "testStrategy": "Tester la migration en environnement de développement, valider les contraintes avec des données de test, vérifier l'unicité et le format des numéros"
+          },
+          {
+            "id": 3,
+            "title": "Mettre à jour les types TypeScript pour inclure le champ phone",
+            "description": "Modifier les interfaces profiles dans types.ts pour ajouter le champ phone nullable",
+            "dependencies": [
+              2
+            ],
+            "details": "Ajouter phone?: string dans les interfaces Row, Insert, Update de profiles, créer des types utilitaires pour la validation du format de téléphone international, s'assurer que les exports sont cohérents",
+            "status": "pending",
+            "testStrategy": "Compiler le projet pour vérifier l'absence d'erreurs TypeScript, tester les nouvelles interfaces avec des exemples de données"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Mise à jour des types TypeScript pour les profils utilisateur",
+        "description": "Mettre à jour les interfaces et types pour inclure les nouvelles informations personnelles",
+        "details": "Mettre à jour src/integrations/supabase/types.ts pour ajouter le champ phone dans l'interface profiles (Row, Insert, Update). Créer des types dédiés pour les formulaires d'inscription avec:\n- RegisterFormData: email, password, confirmPassword, firstName, lastName, phone\n- ValidationRules: patterns regex pour noms (lettres espaces accents) et téléphone international\n- ProfileUpdateData: champs optionnels pour modification post-inscription",
+        "testStrategy": "Vérifier la compilation TypeScript, valider que les nouvelles interfaces sont correctement exportées et utilisées dans le projet",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Analyser les types Supabase existants",
+            "description": "Explorer le fichier src/integrations/supabase/types.ts pour comprendre l'interface profiles actuelle et identifier les modifications nécessaires",
+            "dependencies": [],
+            "details": "Utiliser l'outil Read pour examiner le contenu du fichier types.ts, analyser la structure de l'interface profiles (Row, Insert, Update) existante, identifier les champs first_name et last_name déjà présents, et comprendre les conventions de typage utilisées dans le projet pour les interfaces Supabase",
+            "status": "pending",
+            "testStrategy": "Vérifier que le fichier types.ts est lu correctement et que la structure actuelle est comprise avant de procéder aux modifications"
+          },
+          {
+            "id": 2,
+            "title": "Mettre à jour l'interface profiles avec le champ phone",
+            "description": "Ajouter le champ phone aux interfaces Row, Insert et Update dans le fichier de types Supabase en respectant les conventions existantes",
+            "dependencies": [
+              1
+            ],
+            "details": "Utiliser l'outil Edit pour modifier src/integrations/supabase/types.ts en ajoutant le champ phone?: string à toutes les variantes de l'interface profiles, en s'assurant que la convention nullable (?) est cohérente avec les autres champs optionnels de l'interface",
+            "status": "pending",
+            "testStrategy": "Compiler le projet pour vérifier qu'il n'y a pas d'erreurs TypeScript suite à l'ajout du nouveau champ phone dans les interfaces Supabase"
+          },
+          {
+            "id": 3,
+            "title": "Créer les types dédiés pour les formulaires",
+            "description": "Développer les interfaces RegisterFormData, ValidationRules et ProfileUpdateData dans un nouveau fichier de types dédié aux formulaires",
+            "dependencies": [
+              2
+            ],
+            "details": "Créer src/types/auth.ts avec RegisterFormData (email, password, confirmPassword, firstName, lastName, phone), ValidationRules avec patterns regex pour noms et téléphone, et ProfileUpdateData avec champs optionnels pour les modifications post-inscription, en suivant les patterns de typage du projet",
+            "status": "pending",
+            "testStrategy": "Vérifier la compilation TypeScript, valider l'export correct des nouvelles interfaces, et tester leur utilisation dans les composants de formulaire existants"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Implémentation de la validation des numéros de téléphone",
+        "description": "Développer une bibliothèque de validation pour les formats internationaux de téléphone",
+        "details": "Créer src/utils/phoneValidation.ts avec:\n1. Fonction validateInternationalPhone(phone: string): boolean utilisant regex E.164\n2. Fonction formatPhoneNumber(phone: string): string pour normalisation\n3. Country code detection depuis le premier digits\n4. Fonction generatePhonePlaceholder(countryCode?: string): string\n5. Interface PhoneValidationResult { isValid: boolean; formatted?: string; error?: string }\nIntégrer libphonenumber-js si nécessaire pour validation avancée",
+        "testStrategy": "Tests unitaires avec différents formats internationaux (+33, +1, +44, etc.), cas limites (nuls, vides, formats invalides), validation de la normalisation",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Analyser les dépendances existantes et créer la structure de base",
+            "description": "Explorer le codebase pour identifier les dépendances existantes de validation et créer le fichier phoneValidation.ts",
+            "dependencies": [],
+            "details": "Examiner package.json pour les dépendances de validation existantes (react-hook-form, zod), analyser les patterns de validation dans le codebase actuel, et créer src/utils/phoneValidation.ts avec l'interface PhoneValidationResult de base",
+            "status": "pending",
+            "testStrategy": "Vérifier que le fichier est créé et exporte correctement l'interface, confirmer la compatibilité avec les dépendances existantes"
+          },
+          {
+            "id": 2,
+            "title": "Installer libphonenumber-js et implémenter la validation de base",
+            "description": "Ajouter la dépendance libphonenumber-js et implémenter les fonctions de validation principales",
+            "dependencies": [
+              1
+            ],
+            "details": "Installer libphonenumber-js via npm, implémenter validateInternationalPhone() utilisant parsePhoneNumber de la librairie, créer formatPhoneNumber() pour normalisation E.164, et développer country code detection basique",
+            "status": "pending",
+            "testStrategy": "Tester avec différents formats internationaux (+33, +1, +44), valider les cas limites (null, vide, invalide), vérifier la compilation TypeScript"
+          },
+          {
+            "id": 3,
+            "title": "Implémenter la détection avancée et les placeholders",
+            "description": "Compléter avec generatePhonePlaceholder() et améliorer la détection de code pays avec messages d'erreur",
+            "dependencies": [
+              2
+            ],
+            "details": "Implémenter generatePhonePlaceholder(countryCode?: string) utilisant les métadonnées de libphonenumber-js, améliorer la détection de code pays depuis les premiers digits, ajouter des messages d'erreur spécifiques aux pays dans PhoneValidationResult, et optimiser la performance",
+            "status": "pending",
+            "testStrategy": "Tests unitaires couvrants 20+ pays, validation des placeholders spécifiques, benchmark de performance, tests d'intégration avec le composant RegisterForm futur"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Refonte du composant RegisterForm avec nouveaux champs",
+        "description": "Modifier RegisterForm.tsx pour collecter prénom, nom et téléphone avec validation",
+        "details": "Étendre RegisterForm.tsx avec:\n1. États additionnels: firstName, lastName, phone\n2. Champs Input avec Label appropriés et placeholders internationaux\n3. Validation en temps réel avec react-hook-form et zod\n4. Messages d'erreur spécifiques pour chaque champ\n5. Composant PhoneInput avec sélecteur de pays si nécessaire\n6. Accessibilité améliorée avec aria-labels\n7. Validation frontend avant soumission backend",
+        "testStrategy": "Tests visuels sur desktop/mobile, validation des messages d'erreur, test du flux d'inscription complet, vérification de l'accessibilité clavier",
+        "priority": "high",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Analyser le RegisterForm existant",
+            "description": "Explorer le composant RegisterForm.tsx actuel pour comprendre sa structure, validation et dépendances",
+            "dependencies": [],
+            "details": "Localiser RegisterForm.tsx dans le codebase, examiner l'implémentation actuelle avec react-hook-form, identifier les schémas de validation existants, comprendre le flux de soumission vers Supabase, analyser les dépendances UI et les composants de formulaire utilisés (shadcn/ui)",
+            "status": "pending",
+            "testStrategy": "Vérifier que le formulaire actuel fonctionne correctement, identifier les points d'extension pour les nouveaux champs"
+          },
+          {
+            "id": 2,
+            "title": "Étendre le schéma de validation et les états",
+            "description": "Ajouter firstName, lastName et phone au schéma Zod et aux états du formulaire",
+            "dependencies": [
+              1
+            ],
+            "details": "Modifier le schéma de validation existant pour inclure les nouveaux champs: firstName (min 2 caractères), lastName (min 2 caractères), phone (format international avec regex). Mettre à jour les types TypeScript pour le formulaire. Ajouter les états react-hook-form pour les nouveaux champs avec initialValues appropriés",
+            "status": "pending",
+            "testStrategy": "Tester la validation en temps réel pour chaque champ, vérifier les messages d'erreur personnalisés"
+          },
+          {
+            "id": 3,
+            "title": "Implémenter les champs de formulaire et la soumission",
+            "description": "Ajouter les champs Input avec validation, accessibilité et adapter la fonction de soumission",
+            "dependencies": [
+              2
+            ],
+            "details": "Créer les composants Input pour prénom, nom et téléphone avec Label et placeholders internationaux. Implémenter PhoneInput si nécessaire avec sélecteur de pays. Ajouter aria-labels pour l'accessibilité. Adapter handleSubmit pour inclure les nouveaux champs dans l'appel API. Maintenir la compatibilité avec le flux existant",
+            "status": "pending",
+            "testStrategy": "Tests visuels desktop/mobile, validation clavier, test complet du flux d'inscription, vérification des données envoyées au backend"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Mise à jour du flux d'authentification backend",
+        "description": "Adapter authActions.ts pour gérer les informations personnelles lors de l'inscription",
+        "details": "Modifier la fonction signUp dans authActions.ts pour:\n1. Accepter les paramètres additionnels: firstName, lastName, phone\n2. Valider les données côté serveur avant création\n3. Créer/mettre à jour le profil utilisateur avec toutes les informations\n4. Gérer les erreurs spécifiques (doublon téléphone, format invalide)\n5. Maintenir la compatibilité avec l'inscription existante (rétrocompatibilité)\n6. Transaction atomique Supabase: auth + profile creation",
+        "testStrategy": "Tests d'inscription avec données valides/invalides, simulation d'échecs de base de données, vérification de la cohérence des données, test de la rétrocompatibilité",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Analyser authActions.ts existant et structure de base de données",
+            "description": "Examiner le fichier authActions.ts actuel et la structure de la base de données pour comprendre l'implémentation existante",
+            "dependencies": [],
+            "details": "Utiliser les outils d'analyse pour localiser authActions.ts, comprendre la fonction signUp actuelle, identifier les tables users/profiles existantes, vérifier les champs first_name et last_name présents, et planifier l'ajout du champ phone",
+            "status": "pending",
+            "testStrategy": "Validation que l'analyse couvre tous les fichiers nécessaires et que la structure actuelle est bien comprise"
+          },
+          {
+            "id": 2,
+            "title": "Créer la migration Supabase pour ajouter le champ phone",
+            "description": "Développer et exécuter une migration de base de données pour ajouter le champ phone à la table users avec validation appropriée",
+            "dependencies": [
+              1
+            ],
+            "details": "Créer un fichier de migration Supabase dans supabase/migrations/, définir le champ phone avec contrainte UNIQUE, format E.164, et nullable pour rétrocompatibilité, exécuter la migration en test d'abord",
+            "status": "pending",
+            "testStrategy": "Tester la migration sur environnement de développement, vérifier que le champ est correctement ajouté avec les contraintes, valider la rétrocompatibilité"
+          },
+          {
+            "id": 3,
+            "title": "Implémenter la fonction signUp améliorée dans authActions.ts",
+            "description": "Développer la nouvelle version de signUp avec gestion des informations personnelles, validation, et transaction atomique Supabase",
+            "dependencies": [
+              2
+            ],
+            "details": "Modifier authActions.ts pour accepter firstName, lastName, phone en optionnels, implémenter la validation serveur, créer la transaction Supabase (auth.createUser + profile update), gérer les erreurs spécifiques, et maintenir la compatibilité avec l'API existante",
+            "status": "pending",
+            "testStrategy": "Tests unitaires pour les cas valides/invalides, simulation d'échecs de transaction, vérification de la cohérence des données, test de rétrocompatibilité avec appel sans nouveaux paramètres"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Mise à jour des composants d'affichage des profils",
+        "description": "Modifier les composants UI pour afficher les nouvelles informations personnelles",
+        "details": "Identifier et mettre à jour tous les composants affichant les informations utilisateur:\n1. DashboardHeader et profils admin\n2. Components d'affichage des réservations (restaurant, voyance, etc.)\n3. Interfaces de gestion des partenaires\n4. Tableaux d'utilisateurs dans le dashboard admin\n5. Ajouter fallbacks élégants pour données manquantes (utilisateurs existants)\n6. Formater l'affichage des numéros de téléphone (+33 X XX XX XX XX)",
+        "testStrategy": "Vérifier l'affichage avec profils complets et partiels, tester la mise en page responsive, valider les fallbacks pour données manquantes",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Analyser les composants d'affichage existants",
+            "description": "Examiner tous les composants UI qui affichent les informations utilisateur pour comprendre leur structure actuelle et identifier ceux nécessitant des mises à jour",
+            "dependencies": [],
+            "details": "Utiliser Glob et Grep pour trouver les composants DashboardHeader, profils admin, réservations, et interfaces partenaires. Analyser leur structure pour comprendre comment les informations utilisateur sont actuellement affichées et quelles modifications sont nécessaires",
+            "status": "pending",
+            "testStrategy": "Vérifier que tous les composants identifiés sont correctement analysés et que leur dépendance aux types utilisateur est bien comprise"
+          },
+          {
+            "id": 2,
+            "title": "Mettre à jour les composants principaux de profil",
+            "description": "Modifier DashboardHeader, profils admin et tableaux d'utilisateurs pour afficher prénom, nom et téléphone avec formatting approprié",
+            "dependencies": [
+              1
+            ],
+            "details": "Mettre à jour les composants identifiés dans la tâche 1 pour utiliser les nouveaux champs first_name, last_name et phone. Ajouter le formatting des numéros de téléphone en format (+33 X XX XX XX XX) et implémenter les fallbacks pour données manquantes",
+            "status": "pending",
+            "testStrategy": "Tester l'affichage avec des profils complets et partiels, vérifier le formatting des numéros de téléphone et valider les fallbacks sur tous les composants mis à jour"
+          },
+          {
+            "id": 3,
+            "title": "Mettre à jour les composants de réservation et partenaires",
+            "description": "Adapter les composants d'affichage des réservations et interfaces de gestion des partenaires pour afficher les nouvelles informations utilisateur",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Identifier et modifier tous les composants liés aux réservations (restaurant, voyance, etc.) et aux partenaires pour intégrer l'affichage du prénom, nom et téléphone. S'assurer que la mise en page responsive est préservée avec les nouveaux champs",
+            "status": "pending",
+            "testStrategy": "Valider l'affichage sur mobile et desktop, vérifier que les informations sont correctement formatées dans les listes de réservations et interfaces partenaires"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Tests d'intégration et déploiement",
+        "description": "Tests complets du nouveau flux d'inscription et validation de la production",
+        "details": "Exécuter une batterie de tests complète:\n1. Tests E2E du flux inscription complet\n2. Validation W3C et accessibilité (WCAG 2.1 AA)\n3. Tests de performance (Time to Interactive < 3s)\n4. Tests de sécurité (XSS, injection SQL dans les champs)\n5. Tests mobile sur iOS/Android\n6. Migration des utilisateurs existants (requêtes de mise à jour en lot)\n7. Documentation technique et README mis à jour\n8. Monitoring et alertes configurées pour erreurs d'inscription",
+        "testStrategy": "Suite de tests automatisés avec Vitest/Testing Library, tests manuels sur navigateurs réels, validation du monitoring, check-list de déploiement avec rollback plan",
+        "priority": "high",
+        "dependencies": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Analyser l'état actuel des tests et préparer l'environnement",
+            "description": "Examiner la configuration de test existante, identifier les outils disponibles et préparer l'environnement pour les tests E2E",
+            "dependencies": [],
+            "details": "Analyser les fichiers de configuration de test (vite.config.ts, package.json pour les dépendances de test), vérifier si Playwright ou Cypress est configuré, examiner les tests existants dans src/tests/ ou __tests__/, identifier les composants d'inscription à tester, et préparer les fixtures de données pour les tests",
+            "status": "pending",
+            "testStrategy": "Validation de la configuration de test, exécution des tests existants pour s'assurer qu'ils passent, vérification que les browsers de test sont correctement installés"
+          },
+          {
+            "id": 2,
+            "title": "Développer les tests E2E pour le flux d'inscription complet",
+            "description": "Créer des tests de bout en bout pour valider le parcours utilisateur complet d'inscription avec informations personnelles",
+            "dependencies": [
+              1
+            ],
+            "details": "Écrire des tests E2E couvrant: visite de la page d'inscription, remplissage du formulaire (email, mot de passe, prénom, nom, téléphone), validation en temps réel des champs, soumission réussie, redirection post-inscription, vérification du profil créé dans la base de données, et scénarios d'erreur (champs invalides, email déjà utilisé, format téléphone incorrect)",
+            "status": "pending",
+            "testStrategy": "Tests automatisés avec Playwright/Cypress sur multiples browsers (Chrome, Firefox, Safari), assertions sur les éléments UI et les états de la base de données, tests de régression après chaque modification"
+          },
+          {
+            "id": 3,
+            "title": "Exécuter la validation complète et configurer le monitoring de production",
+            "description": "Effectuer tous les tests de qualité et mettre en place le monitoring pour le flux d'inscription en production",
+            "dependencies": [
+              2
+            ],
+            "details": "Exécuter la suite complète de tests: validation W3C et accessibilité WCAG 2.1 AA (avec axe-devtools), tests de performance (Lighthouse, Time to Interactive < 3s), tests de sécurité (XSS, injection SQL), tests mobiles sur iOS/Android, tests de charge avec Artillery, configurer le monitoring Supabase pour les erreurs d'inscription, et créer la documentation de déploiement avec plan de rollback",
+            "status": "pending",
+            "testStrategy": "Validation automatisée avec CI/CD, tests manuels sur devices réels, monitoring des métriques en production, simulation de montée en charge, validation des alertes et des rapports d'erreurs"
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2025-12-21T02:10:06.662Z",
+      "updated": "2025-12-21T02:10:06.662Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

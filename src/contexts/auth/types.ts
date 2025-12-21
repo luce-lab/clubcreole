@@ -7,6 +7,17 @@ export interface UserWithRole extends User {
   role?: UserRole;
   name?: string;
   company_id?: string; // Changed from number to string to match UUID type from database
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+}
+
+export interface SignUpData {
+  email: string;
+  password: string;
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
 }
 
 export interface AuthContextType {
@@ -15,6 +26,6 @@ export interface AuthContextType {
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<{ success: boolean, message: string }>;
   signOut: () => Promise<void>;
-  signUp: (email: string, password: string) => Promise<{ success: boolean, message: string }>;
+  signUp: (data: SignUpData) => Promise<{ success: boolean, message: string }>;
   createAdminUser: (email: string, password: string, name?: string) => Promise<{ success: boolean, message: string }>;
 }

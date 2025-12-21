@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
@@ -12,17 +12,30 @@ export function useSubscriptionForm(onSuccess?: () => void) {
   const { user } = useAuth();
   const { createCheckout } = useSubscription();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const form = useForm<SubscriptionFormValues>({
     resolver: zodResolver(subscriptionFormSchema),
     defaultValues: {
-      nom: "",
-      prenom: "",
+      nom: user?.last_name || "",
+      prenom: user?.first_name || "",
       email: user?.email || "",
-      telephone: "",
+      telephone: user?.phone || "",
       abonnement: "Gratuit"
     }
   });
+
+  // Réinitialiser le formulaire quand les données utilisateur changent
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        nom: user.last_name || "",
+        prenom: user.first_name || "",
+        email: user.email || "",
+        telephone: user.phone || "",
+        abonnement: form.getValues("abonnement")
+      });
+    }
+  }, [user, form]);
 
   async function onSubmit(values: SubscriptionFormValues) {
     setIsSubmitting(true);

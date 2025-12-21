@@ -1,5 +1,6 @@
 
 import { supabase, cleanupAuthState } from '@/integrations/supabase/client';
+import { SignUpData } from './types';
 
 export const useAuthActions = () => {
   const signIn = async (email: string, password: string): Promise<{ success: boolean, message: string }> => {
@@ -31,20 +32,25 @@ export const useAuthActions = () => {
     }
   };
 
-  const signUp = async (email: string, password: string): Promise<{ success: boolean, message: string }> => {
+  const signUp = async (signUpData: SignUpData): Promise<{ success: boolean, message: string }> => {
     try {
+      const { email, password, first_name, last_name, phone } = signUpData;
+
       // console.log("Début de l'inscription pour:", email);
-      
+
       // Clean up auth state first
       cleanupAuthState();
-      
-      // Tentative d'inscription
+
+      // Tentative d'inscription avec les champs supplémentaires
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             email: email,
+            first_name: first_name || null,
+            last_name: last_name || null,
+            phone: phone || null,
           }
         }
       });
