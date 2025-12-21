@@ -57,6 +57,13 @@ export function Newsletter({ onSuccess, variant }: NewsletterProps) {
             description: "Cette adresse email est déjà inscrite à notre newsletter.",
             variant: "default",
           });
+        } else if (error.code === 'PGRST116' || error.message?.includes('404')) {
+          // Table doesn't exist or 404 error
+          toast({
+            title: "Service temporairement indisponible",
+            description: "Le service de newsletter est en maintenance. Veuillez réessayer plus tard.",
+            variant: "destructive",
+          });
         } else {
           throw error;
         }

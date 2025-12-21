@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newsletter UI Test - Club Créole</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #2E8B57 0%, #3CB371 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .test-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #2E8B57;
+            margin-top: 0;
+        }
+        .newsletter-form {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #2E8B57;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background: #236B44;
+        }
+        button:disabled {
+            background: #9CA3AF;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 6px;
+            display: none;
+            font-weight: 500;
+        }
+        .success {
+            background: #D1FAE5;
+            border: 1px solid #10B981;
+            color: #065F46;
+        }
+        .error {
+            background: #FEE2E2;
+            border: 1px solid #EF4444;
+            color: #991B1B;
+        }
+        .info {
+            background: #DBEAFE;
+            border: 1px solid #3B82F6;
+            color: #1E40AF;
+        }
+        .test-cases {
+            display: grid;
+            gap: 12px;
+        }
+        .test-button {
+            background: #3B82F6;
+            padding: 8px 16px;
+            font-size: 14px;
+            margin: 4px 0;
+        }
+        .test-button:hover {
+            background: #2563EB;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .status-pass {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        .status-fail {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="test-section">
+            <h1>🧪 Newsletter Form Test</h1>
+
+            <h2>Manual Test Form</h2>
+            <form id="newsletterForm" class="newsletter-form">
+                <div class="form-group">
+                    <label for="email">Adresse email:</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        placeholder="votre@email.com"
+                    />
+                </div>
+                <button type="submit" id="subscribeBtn">
+                    S'abonner à la newsletter
+                </button>
+                <div id="result" class="result"></div>
+            </form>
+
+            <h2>Automated Test Cases</h2>
+            <div class="test-cases">
+                <button class="test-button" onclick="runTest('new')">
+                    Test: New Email ✅
+                </button>
+                <button class="test-button" onclick="runTest('duplicate')">
+                    Test: Duplicate Email ⚠️
+                </button>
+                <button class="test-button" onclick="runTest('invalid')">
+                    Test: Invalid Email ❌
+                </button>
+                <button class="test-button" onclick="runTest('empty')">
+                    Test: Empty Email ❌
+                </button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h1>📊 Test Results</h1>
+            <div id="testResults">
+                <h2>Test Status</h2>
+                <div id="statusList">
+                    <p>Click test buttons to see results...</p>
+                </div>
+
+                <h2>API Configuration</h2>
+                <div style="background: #f9fafb; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 12px;">
+                    <strong>URL:</strong> https://mybase.clubcreole.fr/rest/v1/newsletter_subscriptions<br>
+                    <strong>Method:</strong> POST<br>
+                    <strong>Auth:</strong> Anon Key<br>
+                    <strong>Validation:</strong> Client + Server
+                </div>
+
+                <h2>Expected Behavior</h2>
+                <ul>
+                    <li>✅ Valid new email → Success message</li>
+                    <li>⚠️ Duplicate email → "Already subscribed" message</li>
+                    <li>❌ Invalid email → Form validation error</li>
+                    <li>❌ Empty email → Form validation error</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration matching the website
+        const SUPABASE_URL = 'https://mybase.clubcreole.fr';
+        const SUPABASE_ANON_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc2NTQ1NTg0MCwiZXhwIjo0OTIxMTI5NDQwLCJyb2xlIjoiYW5vbiJ9.9EV9qQ5zUttYzhN6hZwi4rlZvKoq02RzE-OJVI_pIbE';
+
+        let testResults = {};
+
+        // Main form submission
+        document.getElementById('newsletterForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            await testSubscription(email, 'manual');
+        });
+
+        // Automated test functions
+        async function runTest(testType) {
+            let testEmail;
+            switch(testType) {
+                case 'new':
+                    testEmail = `test-${Date.now()}@example.com`;
+                    break;
+                case 'duplicate':
+                    testEmail = 'test-duplicate@example.com';
+                    break;
+                case 'invalid':
+                    testEmail = 'invalid-email-format';
+                    break;
+                case 'empty':
+                    testEmail = '';
+                    break;
+            }
+            await testSubscription(testEmail, testType);
+        }
+
+        async function testSubscription(email, testType) {
+            const resultDiv = document.getElementById('result');
+            const submitBtn = document.getElementById('subscribeBtn');
+            const statusList = document.getElementById('statusList');
+
+            // Loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Inscription en cours...';
+            resultDiv.style.display = 'none';
+
+            try {
+                console.log(`Testing ${testType}: ${email}`);
+
+                // Client-side validation (browser handles this automatically for required/email type)
+                if (!email || email === '') {
+                    throw new Error('L\'adresse email est requise');
+                }
+
+                if (!email.includes('@') || !email.includes('.')) {
+                    throw new Error('Veuillez entrer une adresse email valide');
+                }
+
+                // API call (exact same as website)
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/newsletter_subscriptions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showResult('success', `✅ Inscription réussie pour ${email}!`);
+                    updateTestStatus(testType, true, 'Subscription successful');
+                } else {
+                    if (response.status === 409 && data.code === '23505') {
+                        showResult('info', `ℹ️ L'email ${email} est déjà inscrit.`);
+                        updateTestStatus(testType, true, 'Duplicate handled correctly');
+                    } else {
+                        throw new Error(data.message || `HTTP ${response.status}`);
+                    }
+                }
+
+            } catch (error) {
+                showResult('error', `❌ Erreur: ${error.message}`);
+                updateTestStatus(testType, false, error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'S\'abonner à la newsletter';
+                resultDiv.style.display = 'block';
+            }
+        }
+
+        function showResult(type, message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = `result ${type}`;
+            resultDiv.textContent = message;
+            resultDiv.style.display = 'block';
+        }
+
+        function updateTestStatus(testType, passed, message) {
+            testResults[testType] = { passed, message };
+            updateStatusDisplay();
+        }
+
+        function updateStatusDisplay() {
+            const statusList = document.getElementById('statusList');
+            let html = '';
+
+            for (const [testType, result] of Object.entries(testResults)) {
+                const statusClass = result.passed ? 'status-pass' : 'status-fail';
+                const statusText = result.passed ? 'PASS' : 'FAIL';
+                html += `
+                    <div style="margin: 8px 0; padding: 8px; background: #f9fafb; border-radius: 4px;">
+                        <strong>${testType.toUpperCase()}:</strong>
+                        <span class="status ${statusClass}">${statusText}</span>
+                        <br><small>${result.message}</small>
+                    </div>
+                `;
+            }
+
+            if (html === '') {
+                html = '<p>No tests run yet...</p>';
+            }
+
+            statusList.innerHTML = html;
+        }
+
+        // Initialize
+        console.log('Newsletter UI Test loaded - Ready for testing!');
+    </script>
+</body>
+</html>

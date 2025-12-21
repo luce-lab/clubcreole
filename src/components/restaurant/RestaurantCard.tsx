@@ -76,13 +76,32 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
       <CardFooter>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button 
+            <Button
               className="w-full bg-creole-green hover:bg-creole-green/90"
               onClick={handleViewDetails}
             >
               Voir les détails
             </Button>
           </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{restaurant.name}</DialogTitle>
+              <DialogDescription>
+                Détails du restaurant {restaurant.name}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <p>{restaurant.description}</p>
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                <span>{restaurant.location}</span>
+              </div>
+              <div className="flex items-center text-creole-green font-medium">
+                <Tag className="h-4 w-4 mr-2" />
+                <span>{restaurant.offer}</span>
+              </div>
+            </div>
+          </DialogContent>
         </Dialog>
       </CardFooter>
     </Card>
