@@ -24,8 +24,9 @@ C'est que Coolify utilise la **détection automatique** et choisit Deno au lieu 
 ### 2. Variables d'environnement requises :
 
 ```env
-VITE_SUPABASE_URL=https://psryoyugyimibjhwhvlh.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzcnlveXVneWltaWJqaHdodmxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM4NTM2NDMsImV4cCI6MjA0OTQyOTY0M30.HqVFT7alWrZtjf1cHxeAeqpsWMjVEnnXfVtwesYga-0
+# Instance Supabase auto-hébergée (mybase.clubcreole.fr)
+VITE_SUPABASE_URL=https://mybase.clubcreole.fr
+VITE_SUPABASE_ANON_KEY=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc2NTQ1NTg0MCwiZXhwIjo0OTIxMTI5NDQwLCJyb2xlIjoiYW5vbiJ9.9EV9qQ5zUttYzhN6hZwi4rlZvKoq02RzE-OJVI_pIbE
 NODE_ENV=production
 ```
 
