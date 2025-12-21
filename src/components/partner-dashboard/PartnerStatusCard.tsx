@@ -2,11 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Clock, XCircle, Building2 } from "lucide-react";
 
 interface Partner {
-  id: number;
+  id: string;
   business_name: string;
-  status: string;
-  created_at: string;
-  business_type: string;
+  status: string | null;
+  created_at: string | null;
+  business_type: string | null;
 }
 
 interface PartnerStatusCardProps {
@@ -70,12 +70,14 @@ export const PartnerStatusCard = ({ partner, isLoading }: PartnerStatusCardProps
     }
   };
 
-  const statusConfig = getStatusConfig(partner.status);
-  const formattedDate = new Date(partner.created_at).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  });
+  const statusConfig = getStatusConfig(partner.status || 'en_attente');
+  const formattedDate = partner.created_at
+    ? new Date(partner.created_at).toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      })
+    : 'Date non disponible';
 
   const getBusinessTypeLabel = (type: string) => {
     const types: { [key: string]: string } = {
@@ -99,7 +101,7 @@ export const PartnerStatusCard = ({ partner, isLoading }: PartnerStatusCardProps
             </div>
             <div>
               <CardTitle className="text-xl">{partner.business_name}</CardTitle>
-              <p className="text-sm text-gray-600">{getBusinessTypeLabel(partner.business_type)}</p>
+              <p className="text-sm text-gray-600">{getBusinessTypeLabel(partner.business_type || 'other')}</p>
             </div>
           </div>
           {statusConfig.icon}

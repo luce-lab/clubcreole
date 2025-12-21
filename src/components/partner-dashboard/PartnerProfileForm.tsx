@@ -9,18 +9,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Save, Lock } from "lucide-react";
 
 interface Partner {
-  id: number;
+  id: string;
   business_name: string;
-  business_type: string;
+  business_type: string | null;
   description: string | null;
   address: string | null;
   phone: string | null;
-  email: string | null;
-  contact_name: string | null;
+  email: string;
+  contact_name: string;
   website: string | null;
   siret: string | null;
   opening_hours: string | null;
-  status: string;
+  status: string | null;
 }
 
 interface PartnerProfileFormProps {

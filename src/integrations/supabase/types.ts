@@ -1124,24 +1124,28 @@ export type Database = {
         Row: {
           address: string | null
           business_name: string
-          business_type: string
-          contact_name: string | null
-          created_at: string
+          business_type: string | null
+          contact_name: string
+          created_at: string | null
           description: string | null
-          email: string | null
+          email: string
           gallery_images: Json | null
           icon_name: string | null
-          id: number
+          id: string
           image: string | null
+          is_active: boolean | null
           location: string | null
+          logo_storage_path: string | null
+          logo_url: string | null
           offer: string | null
           opening_hours: string | null
           phone: string | null
           rating: number | null
           siret: string | null
-          status: string
+          status: string | null
+          total_reviews: number | null
           type: string | null
-          updated_at: string
+          updated_at: string | null
           user_id: string | null
           website: string | null
           weight: number | null
@@ -1149,24 +1153,28 @@ export type Database = {
         Insert: {
           address?: string | null
           business_name: string
-          business_type: string
-          contact_name?: string | null
-          created_at?: string
+          business_type?: string | null
+          contact_name: string
+          created_at?: string | null
           description?: string | null
-          email?: string | null
+          email: string
           gallery_images?: Json | null
           icon_name?: string | null
-          id?: number
+          id?: string
           image?: string | null
+          is_active?: boolean | null
           location?: string | null
+          logo_storage_path?: string | null
+          logo_url?: string | null
           offer?: string | null
           opening_hours?: string | null
           phone?: string | null
           rating?: number | null
           siret?: string | null
-          status?: string
+          status?: string | null
+          total_reviews?: number | null
           type?: string | null
-          updated_at?: string
+          updated_at?: string | null
           user_id?: string | null
           website?: string | null
           weight?: number | null
@@ -1174,24 +1182,28 @@ export type Database = {
         Update: {
           address?: string | null
           business_name?: string
-          business_type?: string
-          contact_name?: string | null
-          created_at?: string
+          business_type?: string | null
+          contact_name?: string
+          created_at?: string | null
           description?: string | null
-          email?: string | null
+          email?: string
           gallery_images?: Json | null
           icon_name?: string | null
-          id?: number
+          id?: string
           image?: string | null
+          is_active?: boolean | null
           location?: string | null
+          logo_storage_path?: string | null
+          logo_url?: string | null
           offer?: string | null
           opening_hours?: string | null
           phone?: string | null
           rating?: number | null
           siret?: string | null
-          status?: string
+          status?: string | null
+          total_reviews?: number | null
           type?: string | null
-          updated_at?: string
+          updated_at?: string | null
           user_id?: string | null
           website?: string | null
           weight?: number | null
