@@ -52,11 +52,11 @@
 ## 8. Navigation et Integration
 - [x] 8.1 Modifier le Header pour afficher "Espace Partenaire" pour les partenaires connectes
 - [x] 8.2 Differecier les boutons selon le role (partner vs admin/client)
-- [ ] 8.3 Ajouter lien vers `/devenir-partenaire` dans le footer
+- [x] 8.3 Ajouter lien vers `/devenir-partenaire` dans le footer
 
 ## 9. Deploiement
-- [ ] 9.1 Deployer la migration database (20251221000001_enhance_partner_registration.sql)
-- [ ] 9.2 Deployer le frontend mis a jour
+- [x] 9.1 Deployer la migration database (20251221000001_enhance_partner_registration.sql)
+- [x] 9.2 Deployer le frontend mis a jour (git push to main)
 - [ ] 9.3 Verifier le fonctionnement en production
 - [ ] 9.4 Monitorer les erreurs
 

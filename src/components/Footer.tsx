@@ -1,5 +1,6 @@
 
 import { Mail, Phone, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Newsletter } from "./Newsletter";
 
 export const Footer = () => {
@@ -25,9 +26,21 @@ export const Footer = () => {
             </div>
           </div>
           <div>
-            <h3 className="text-xl font-bold mb-4">Vous n'êtes pas seul !</h3>
-            <p className="text-gray-400">
-              Le Club Créole est là pour vous accompagner dans vos loisirs et votre vie quotidienne aux Antilles.
+            <h3 className="text-xl font-bold mb-4">Liens utiles</h3>
+            <ul className="space-y-2 text-gray-400">
+              <li>
+                <Link to="/devenir-partenaire" className="hover:text-white transition-colors">
+                  Devenir partenaire
+                </Link>
+              </li>
+              <li>
+                <Link to="/offers" className="hover:text-white transition-colors">
+                  Nos offres
+                </Link>
+              </li>
+            </ul>
+            <p className="text-gray-400 mt-4 text-sm">
+              Le Club Créole vous accompagne dans vos loisirs aux Antilles.
             </p>
           </div>
           <div>
