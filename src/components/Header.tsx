@@ -1,7 +1,7 @@
 
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "./ui/dialog";
 import { Newsletter } from "./Newsletter";
 import { useState } from "react";
 import { useAuth } from "@/contexts/auth";
@@ -61,6 +61,12 @@ export const Header = () => {
                 </button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Newsletter Club Créole</DialogTitle>
+                  <DialogDescription>
+                    Abonnez-vous pour recevoir nos dernières offres et actualités.
+                  </DialogDescription>
+                </DialogHeader>
                 <Newsletter onSuccess={() => setIsDialogOpen(false)} />
               </DialogContent>
             </Dialog>
@@ -68,9 +74,15 @@ export const Header = () => {
           <div className="flex gap-2">
             {user ? (
               <>
-                <Button variant="default" className="bg-creole-green hover:bg-creole-green/90" onClick={() => navigate("/dashboard")}>
-                  Tableau de bord
-                </Button>
+                {user.role === 'partner' ? (
+                  <Button variant="default" className="bg-creole-green hover:bg-creole-green/90" onClick={() => navigate("/partner-dashboard")}>
+                    Espace Partenaire
+                  </Button>
+                ) : (
+                  <Button variant="default" className="bg-creole-green hover:bg-creole-green/90" onClick={() => navigate("/dashboard")}>
+                    Tableau de bord
+                  </Button>
+                )}
                 <Button variant="outline" onClick={handleLogout}>
                   Déconnexion
                 </Button>

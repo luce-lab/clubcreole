@@ -32,6 +32,7 @@ import Clients from "./pages/Clients";
 import LoisirsManagement from "./pages/LoisirsManagement";
 import CarRentalManagement from "./pages/CarRentalManagement";
 import DevenirPartenaire from "./pages/DevenirPartenaire";
+import PartnerDashboard from "./pages/PartnerDashboard";
 import Exposants from "./pages/Exposants";
 import SubscriptionsManagement from "./pages/SubscriptionsManagement";
 
@@ -63,6 +64,7 @@ function App() {
           <Route path="/offers/:id" element={<OfferDetail />} />
           <Route path="/partners" element={<PartnersManagement />} />
           <Route path="/devenir-partenaire" element={<DevenirPartenaire />} />
+          <Route path="/partner-dashboard" element={<PartnerDashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />

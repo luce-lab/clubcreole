@@ -1125,16 +1125,20 @@ export type Database = {
           address: string | null
           business_name: string
           business_type: string
+          contact_name: string | null
           created_at: string
           description: string | null
+          email: string | null
           gallery_images: Json | null
           icon_name: string | null
           id: number
           image: string | null
           location: string | null
           offer: string | null
+          opening_hours: string | null
           phone: string | null
           rating: number | null
+          siret: string | null
           status: string
           type: string | null
           updated_at: string
@@ -1146,16 +1150,20 @@ export type Database = {
           address?: string | null
           business_name: string
           business_type: string
+          contact_name?: string | null
           created_at?: string
           description?: string | null
+          email?: string | null
           gallery_images?: Json | null
           icon_name?: string | null
           id?: number
           image?: string | null
           location?: string | null
           offer?: string | null
+          opening_hours?: string | null
           phone?: string | null
           rating?: number | null
+          siret?: string | null
           status?: string
           type?: string | null
           updated_at?: string
@@ -1167,16 +1175,20 @@ export type Database = {
           address?: string | null
           business_name?: string
           business_type?: string
+          contact_name?: string | null
           created_at?: string
           description?: string | null
+          email?: string | null
           gallery_images?: Json | null
           icon_name?: string | null
           id?: number
           image?: string | null
           location?: string | null
           offer?: string | null
+          opening_hours?: string | null
           phone?: string | null
           rating?: number | null
+          siret?: string | null
           status?: string
           type?: string | null
           updated_at?: string
