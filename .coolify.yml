@@ -1,0 +1,26 @@
+# Configuration Coolify pour Club Créole
+# https://coolify.io/docs/knowledge-base/docker/compose
+
+services:
+  - name: clubcreole-app
+    type: dockerfile
+    build:
+      dockerfile: Dockerfile
+      context: .
+      args:
+        - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+        - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+    ports:
+      - container: 80
+        public: 3000
+    environment:
+      - NODE_ENV=production
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+    resources:
+      limits:
+        cpus: '0.5'
+        memory: 512M
+      reservations:
+        cpus: '0.25'
+        memory: 256M
