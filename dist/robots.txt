@@ -1,0 +1,30 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://clubcreole.fr/sitemap.xml
+
+# Pages importantes
+Allow: /
+Allow: /restauration
+Allow: /hebergements
+Allow: /loisirs
+Allow: /concerts
+Allow: /soiree
+Allow: /location
+Allow: /voyages
+Allow: /plongee
+Allow: /canoe
+Allow: /randonnee
+Allow: /voyance
+
+# Bloquer les pages d'administration
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /users
+Disallow: /accommodations-management
+Disallow: /clients
+Disallow: /loisirs-management
+Disallow: /car-rental-management
+Disallow: /partners
