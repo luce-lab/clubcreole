@@ -66,19 +66,13 @@ export const useSubscription = () => {
       if (stripeError) throw stripeError;
 
       // Then fetch the complete subscriber data from database
+      // Note: Some columns may not exist in production - using only base columns
       const { data: subscriberData, error: dbError } = await supabase
         .from('subscribers')
         .select(`
           subscribed,
           subscription_tier,
-          subscription_end,
-          subscription_status,
-          cancel_at_period_end,
-          last_invoice_amount,
-          last_invoice_date,
-          trial_end,
-          payment_method,
-          stripe_subscription_id
+          subscription_end
         `)
         .eq('email', user.email)
         .maybeSingle();
@@ -88,17 +82,18 @@ export const useSubscription = () => {
       }
 
       // Merge Stripe data with database data
+      // Note: Many fields come from Stripe edge function, not database
       setSubscriptionData({
         subscribed: stripeData?.subscribed ?? subscriberData?.subscribed ?? false,
         subscription_tier: stripeData?.subscription_tier ?? subscriberData?.subscription_tier ?? null,
         subscription_end: stripeData?.subscription_end ?? subscriberData?.subscription_end ?? null,
-        subscription_status: subscriberData?.subscription_status ?? (stripeData?.subscribed ? 'active' : null),
-        cancel_at_period_end: subscriberData?.cancel_at_period_end ?? false,
-        last_invoice_amount: subscriberData?.last_invoice_amount ?? null,
-        last_invoice_date: subscriberData?.last_invoice_date ?? null,
-        trial_end: subscriberData?.trial_end ?? null,
-        payment_method: subscriberData?.payment_method ?? null,
-        stripe_subscription_id: subscriberData?.stripe_subscription_id ?? null,
+        subscription_status: stripeData?.subscribed ? 'active' : null,
+        cancel_at_period_end: false,
+        last_invoice_amount: null,
+        last_invoice_date: null,
+        trial_end: null,
+        payment_method: null,
+        stripe_subscription_id: null,
       });
 
     } catch (err) {
@@ -122,7 +117,7 @@ export const useSubscription = () => {
     try {
       const { data, error } = await supabase
         .from('purchases')
-        .select('id, amount, currency, purchase_date, stripe_invoice_id, metadata')
+        .select('id, amount, currency, purchase_date, metadata')
         .eq('status', 'failed')
         .order('purchase_date', { ascending: false })
         .limit(5);
@@ -134,7 +129,7 @@ export const useSubscription = () => {
         amount: p.amount,
         currency: p.currency,
         purchase_date: p.purchase_date,
-        stripe_invoice_id: p.stripe_invoice_id,
+        stripe_invoice_id: null,
         attempt_count: (p.metadata as any)?.attempt_count,
         next_retry_date: (p.metadata as any)?.next_retry,
       }));

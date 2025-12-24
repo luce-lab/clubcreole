@@ -10,7 +10,7 @@ export const fetchUserProfile = async (user: User): Promise<UserWithRole> => {
     // Get profile data with the new RLS policies
     const { data: profileData, error: profileError } = await supabase
       .from('profiles')
-      .select('role, first_name, last_name, phone, company_id')
+      .select('role, first_name, last_name, company_id')
       .eq('id', user.id)
       .maybeSingle(); // Use maybeSingle instead of single to handle missing profiles
 
@@ -48,10 +48,9 @@ export const fetchUserProfile = async (user: User): Promise<UserWithRole> => {
       name: profileData.first_name
         ? `${profileData.first_name} ${profileData.last_name || ''}`.trim()
         : user.email || 'Utilisateur',
-      company_id: profileData.company_id ? profileData.companyId.toString() : undefined,
+      company_id: profileData.company_id ? profileData.company_id.toString() : undefined,
       first_name: profileData.first_name || undefined,
-      last_name: profileData.last_name || undefined,
-      phone: profileData.phone || undefined
+      last_name: profileData.last_name || undefined
     };
   } catch (err) {
     console.error('Error in profile fetch:', err);
