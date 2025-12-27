@@ -30,8 +30,9 @@ export const Pricing = () => {
     }
 
     if (!user) {
-      // Plans payants - rediriger vers la connexion si pas connecté
-      window.location.href = '/login';
+      // Plans payants - rediriger vers la connexion avec retour vers la section abonnements
+      const redirectUrl = encodeURIComponent('/?scrollTo=pricing');
+      window.location.href = `/login?redirect=${redirectUrl}`;
       return;
     }
     createCheckout(priceType);

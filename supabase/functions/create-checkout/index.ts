@@ -45,19 +45,19 @@ serve(async (req) => {
       logStep("Found existing customer", { customerId });
     }
 
-    // Define price configurations
+    // Define price configurations - Annual subscriptions
     const priceConfigs = {
-      "passionnе": {
-        unit_amount: 1500, // 15€
-        interval: "month",
-        interval_count: 2, // Tous les 2 mois
-        product_name: "Abonnement Passionné"
+      "passionne": {
+        unit_amount: 1500, // 15€/an
+        interval: "year",
+        interval_count: 1,
+        product_name: "Abonnement Passionné (Annuel)"
       },
       "expert": {
-        unit_amount: 8999, // 89.99€
-        interval: "month",
+        unit_amount: 9000, // 90€/an
+        interval: "year",
         interval_count: 1,
-        product_name: "Abonnement Expert"
+        product_name: "Abonnement Expert (Annuel)"
       }
     };
 
@@ -75,8 +75,8 @@ serve(async (req) => {
             currency: "eur",
             product_data: { name: config.product_name },
             unit_amount: config.unit_amount,
-            recurring: { 
-              interval: config.interval as "month",
+            recurring: {
+              interval: config.interval as "month" | "year",
               interval_count: config.interval_count
             },
           },

@@ -1,4 +1,6 @@
 
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { PromoCarousel } from "@/components/promo";
@@ -12,6 +14,26 @@ import SEO from "@/components/SEO";
 import { generateOrganizationSchema, generateBaseURL } from "@/utils/seoHelpers";
 
 const Index = () => {
+  const location = useLocation();
+
+  // Handle scrollTo parameter after login redirect
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const scrollTo = searchParams.get('scrollTo');
+
+    if (scrollTo) {
+      // Small delay to ensure the page is fully rendered
+      setTimeout(() => {
+        const element = document.getElementById(scrollTo);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+        // Clean up URL by removing the query parameter
+        window.history.replaceState({}, '', '/');
+      }, 100);
+    }
+  }, [location.search]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <SEO
