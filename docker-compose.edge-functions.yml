@@ -27,8 +27,8 @@ services:
       # Runtime configuration
       DENO_PERMISSIONS: --allow-all
     volumes:
-      # Mount functions from the Flutter project
-      - ../014-paiement-abonnement/supabase/functions:/home/deno/functions:ro
+      # Mount functions from the current project
+      - ./supabase/functions:/home/deno/functions:ro
     command:
       - start
       - --main-service
