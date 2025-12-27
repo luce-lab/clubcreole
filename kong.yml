@@ -84,14 +84,27 @@ services:
         config:
           hide_credentials: true
 
+  # Edge Functions
+  - name: functions-v1
+    url: http://supabase-edge-functions:8000
+    routes:
+      - name: functions-v1-all
+        strip_path: true
+        paths:
+          - /functions/v1
+    plugins:
+      - name: cors
+
 consumers:
   - username: anon
     keyauth_credentials:
-      - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
-        
+      # Club Créole production anon key
+      - key: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc2NjU5NjkyMCwiZXhwIjo0OTIyMjcwNTIwLCJyb2xlIjoiYW5vbiJ9.SgFAzeTTaFs3j7rtTkdmhDOAO8DNwoMzuhcMo7MrETw
+
   - username: service_role
     keyauth_credentials:
-      - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+      # Club Créole production service_role key
+      - key: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc2NjU5NjkyMCwiZXhwIjo0OTIyMjcwNTIwLCJyb2xlIjoic2VydmljZV9yb2xlIn0.eRcB-IhJz95QqepTHHy0nFdaJ4Azdrd8uf4VQPFJz7k
 
 acls:
   - consumer: anon

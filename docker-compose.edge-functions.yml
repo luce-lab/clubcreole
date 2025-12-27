@@ -1,0 +1,44 @@
+version: '3.8'
+
+# Edge Functions service for Supabase self-hosted
+# Deploy with: docker compose -f docker-compose.supabase.yml -f docker-compose.edge-functions.yml up -d
+
+services:
+  # Supabase Edge Runtime (Deno-based)
+  supabase-edge-functions:
+    image: supabase/edge-runtime:v1.67.4
+    container_name: supabase-edge-functions
+    restart: unless-stopped
+    ports:
+      - "8082:8000"
+    environment:
+      # Supabase configuration
+      SUPABASE_URL: ${SUPABASE_URL:-http://supabase-kong:8000}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE}
+
+      # Stripe configuration (required for payment functions)
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+
+      # JWT for function authentication
+      JWT_SECRET: ${SUPABASE_JWT_SECRET:-your-super-secret-jwt-secret-with-at-least-32-characters}
+
+      # Runtime configuration
+      DENO_PERMISSIONS: --allow-all
+    volumes:
+      # Mount functions from the Flutter project
+      - ../014-paiement-abonnement/supabase/functions:/home/deno/functions:ro
+    command:
+      - start
+      - --main-service
+      - /home/deno/functions
+    depends_on:
+      - supabase-kong
+    networks:
+      - default
+
+networks:
+  default:
+    name: supabase-network
+    external: true
