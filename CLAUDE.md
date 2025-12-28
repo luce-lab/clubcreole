@@ -122,71 +122,20 @@ src/
 **Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
 @./.taskmaster/CLAUDE.md
 
-## Supabase Database Dump & Transfer Plan
+## Supabase Database Migration
 
-### Dump Successfully Created
-- **Fichier**: `supabase_dump_20251028_164145.sql` (10,310 octets)
-- **Méthode**: pg_dump via conteneurs Docker Supabase locaux
-- **Contenu**: Données complètes de la base PostgreSQL 15.1
+### Available Scripts
+- `complete_transfer_import.sh`: Complete automated transfer + import
+- `import_database.sh`: Import script to run on remote server
+- `verify_database.sh`: Post-import verification
 
-### Scripts de Transfert Disponibles
-1. **HTTP Transfer Method** (recommandée):
-   - Serveur HTTP local: `http://172.28.114.141:8888`
-   - Exécuter: `./transfert_instructions_complet.sh`
-   - Fichiers dans: `transfer_files/`
-
-2. **Base64 Manual Transfer**:
-   - Fichier encodé: `supabase_dump_encoded.txt`
-   - Instructions: `./manual_transfer_instructions.sh`
-
-3. **Alternative Scripts**:
-   - `scp_transfer.sh`, `sftp_transfer.py`, `simple_transfer.py`
-
-### Serveur Cible Configuration
-- **Adresse**: 37.59.121.40
-- **Utilisateur**: ubuntu
-- **Mot de passe**: Catilo
-- **Destination**: `/home/ubuntu/dumps/`
-
-### MCP Supabase Configuration
-- **Project Ref**: psryoyugyimibjhwhvlh
-- **Config File**: `.mcp-supabase.json`
-- **WebSocket URL**: `wss://mcp.supabase.com/mcp?project_ref=psryoyugyimibjhwhvlh`
-
-### Commandes Rapides
-```bash
-# Démarrer le transfert HTTP
-python3 -m http.server 8888 --directory transfer_files
-
-# Sur le serveur distant
-mkdir -p /home/ubuntu/dumps
-cd /home/ubuntu/dumps
-wget http://172.28.114.141:8888/supabase_dump_20251028_164145.sql
-```
-
-### Importation des Données
-**Scripts d'importation disponibles:**
-- `complete_transfer_import.sh`: Transfert + importation automatisée complet
-- `import_database.sh`: Script d'importation à exécuter sur le serveur distant
-- `verify_database.sh`: Vérification post-importation
-
-**Base de données cible:**
-- Nom: `clubcreole_db`
-- Utilisateur: `postgres`
-- Port: 5432
-
-**Commande d'importation complète:**
-```bash
-./complete_transfer_import.sh
-```
-
-**Commande de vérification (sur serveur distant):**
-```bash
-./verify_database.sh
-```
+### Configuration
+Server and database credentials should be stored securely:
+- Use environment variables for sensitive configuration
+- See `.env.example` files for required variables
+- Never commit credentials to the repository
 
 ### Notes
-- Le dump inclut les schémas auth, public, storage
-- Connexion SSH validée vers le serveur distant
-- Plusieurs méthodes de transfert disponibles si HTTP échoue
-- Importation PostgreSQL automatique avec création de base de données
+- Database dump includes auth, public, and storage schemas
+- Multiple transfer methods available if needed
+- Automatic PostgreSQL import with database creation

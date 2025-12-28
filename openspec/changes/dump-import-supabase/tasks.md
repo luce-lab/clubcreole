@@ -5,7 +5,7 @@
 - [ ] 1.1 Vérifier les prérequis (pg_dump, psql installés)
 - [ ] 1.2 Récupérer le mot de passe de la base source Supabase cloud
 - [ ] 1.3 Tester la connectivité à l'instance source
-- [ ] 1.4 Tester la connectivité à l'instance cible (37.59.121.40)
+- [ ] 1.4 Tester la connectivité à l'instance cible ($TARGET_SERVER_HOST)
 - [ ] 1.5 Estimer la taille du dump (`pg_database_size`)
 
 ## Phase 2: Dump de la base source
@@ -26,7 +26,7 @@
 
 ## Phase 3: Import vers instance cible
 
-- [ ] 3.1 Se connecter au serveur cible (ubuntu@37.59.121.40)
+- [ ] 3.1 Se connecter au serveur cible ($TARGET_SERVER_USER@$TARGET_SERVER_HOST)
 - [ ] 3.2 Transférer le fichier dump vers le serveur
 - [ ] 3.3 Préparer l'instance Supabase cible (vérifier qu'elle est vierge ou nettoyer)
 - [ ] 3.4 Exécuter l'import:

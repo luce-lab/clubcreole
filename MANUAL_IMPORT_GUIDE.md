@@ -1,19 +1,24 @@
 # Guide d'Importation Manuelle Supabase vers Serveur Distant
 
 ## 🎯 Objectif
-Importer les données Supabase exportées vers l'instance PostgreSQL auto-hébergée sur le serveur 37.59.121.40
+Importer les données Supabase exportées vers l'instance PostgreSQL auto-hébergée.
 
 ## 📋 Prérequis
-- Accès SSH au serveur 37.59.121.40 (ubuntu/Catilo)
+- Accès SSH au serveur distant (configure via environment variables)
 - Droits sudo pour l'installation de PostgreSQL
 - Le dump SQL encodé en base64 (préparé localement)
+
+## Configuration Requise
+Définir les variables d'environnement suivantes:
+- `TARGET_SERVER_HOST`: IP du serveur distant
+- `TARGET_SERVER_USER`: Nom d'utilisateur SSH
+- `TARGET_SERVER_PASSWORD`: Mot de passe SSH (ou utiliser des clés SSH)
 
 ## 🚀 Instructions Détaillées
 
 ### 1. Connexion au serveur distant
 ```bash
-ssh ubuntu@37.59.121.40
-# Mot de passe: Catilo
+ssh $TARGET_SERVER_USER@$TARGET_SERVER_HOST
 ```
 
 ### 2. Installation PostgreSQL (si nécessaire)
@@ -64,10 +69,9 @@ head -5 supabase_dump_20251028_164145.sql
 # Importation des données (peut prendre plusieurs minutes)
 echo "Début de l'importation..."
 sudo -u postgres psql -d clubcreole_db -f supabase_dump_20251028_164145.sql
-PGPASSWORD=Hwml99HOD7oj1jjgVpKEJpBdGbeFC4Bv psql -h hostname -U username -d database_name -f fichier.sql
-PGPASSWORD=Hwml99HOD7oj1jjgVpKEJpBdGbeFC4Bv pg_restore -h localhost -U postgres -d postgres --verbose --clean --no-owner supabase_dump_20251028_164145.sql
 
-PGPASSWORD=Hwml99HOD7oj1jjgVpKEJpBdGbeFC4Bv psql -h 37.59.121.40 -U postgres -d postgres -f supabase_dump_20251028_164145.sql --echo-all
+# Or with password (set via environment variable):
+PGPASSWORD=$DB_PASSWORD psql -h $TARGET_SERVER_HOST -U postgres -d postgres -f supabase_dump_20251028_164145.sql
 
 # Vérification du succès
 if [ $? -eq 0 ]; then
@@ -133,10 +137,11 @@ WHERE table_schema IN ('public', 'auth');"
 
 Une fois l'importation terminée:
 
-- **Hôte**: localhost ou 37.59.121.40
+- **Hôte**: localhost ou `$TARGET_SERVER_HOST`
 - **Base**: clubcreole_db
 - **Utilisateur**: postgres
 - **Port**: 5432
+- **Mot de passe**: Stored in `$DB_PASSWORD` environment variable
 
 ## 🔧 Étapes Suivantes
 

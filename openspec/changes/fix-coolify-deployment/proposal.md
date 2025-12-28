@@ -19,7 +19,7 @@ The Club Créole application deployed on Coolify is experiencing critical mixed 
   - Deals/bons plans
 
 ### Root Causes Identified
-1. **HTTP URLs in production environment**: Several configuration files still reference `http://37.59.121.40:8000`
+1. **HTTP URLs in production environment**: Several configuration files reference HTTP URLs instead of HTTPS
 2. **Nginx configuration**: Only listening on port 80, no HTTPS support
 3. **Environment variables**: Mixed HTTP/HTTPS URLs causing inconsistent behavior
 4. **Supabase client configuration**: Hardcoded HTTP URLs in client files
