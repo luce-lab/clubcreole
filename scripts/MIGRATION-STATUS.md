@@ -26,10 +26,7 @@
 
 ### Incompatibilité JWT Secret
 
-Le JWT secret configuré dans Docker Compose ne correspond pas aux clés générées :
-- JWT Secret dans .env : `2cd8e7cdb62a7b0320a897ed5f6871801d024fb1c5cc1eaf278ef1a87f74eb6c`
-- Clés générées avec un autre secret : Incompatibles
-
+Le JWT secret configuré dans Docker Compose ne correspond pas aux clés générées.
 **Solution requise** : Régénérer les clés JWT avec le bon secret ou aligner le secret dans Docker Compose.
 
 ## 📁 Fichiers Créés
@@ -72,7 +69,7 @@ npx tsx scripts/import-backup-data.ts
 
 ```bash
 # Si vous avez accès direct à PostgreSQL
-PGPASSWORD=KZUBqVrTYHQUuH5u psql -h localhost -U postgres -d postgres < backup.sql
+PGPASSWORD=$DB_PASSWORD psql -h localhost -U postgres -d postgres < backup.sql
 ```
 
 ### Option 3 : Utiliser Supabase CLI

@@ -1,21 +1,27 @@
 # Guide Complet de Migration Supabase vers Instance Auto-hébergée
 
 ## 🎯 Objectif
-Migrer les données de l'instance Supabase cloud vers une instance auto-hébergée sur le serveur `37.59.121.40` avec `clubcreole_db`.
+Migrer les données de l'instance Supabase cloud vers une instance auto-hébergée.
+
+## 📋 Configuration Requise
+Définir les variables d'environnement suivantes avant de commencer:
+- `TARGET_SERVER_HOST`: IP du serveur distant
+- `TARGET_SERVER_USER`: Nom d'utilisateur SSH
+- `TARGET_SERVER_PASSWORD`: Mot de passe SSH (ou utiliser des clés SSH)
+- `DB_PASSWORD`: Mot de passe PostgreSQL
 
 ## 📋 Vue d'ensemble
 
 ### Infrastructure Source
 - **Instance**: Supabase Cloud
-- **Project Ref**: `psryoyugyimibjhwhvlh`
 - **Dump disponible**: `supabase_dump_20251028_164145.sql` (12KB)
 
 ### Infrastructure Cible
-- **Serveur**: `37.59.121.40`
+- **Serveur**: `$TARGET_SERVER_HOST`
 - **Base de données**: `clubcreole_db`
 - **PostgreSQL**: Port 5432
 - **Utilisateur**: `postgres`
-- **Mot de passe**: `Catilo`
+- **Mot de passe**: Stored in `$DB_PASSWORD` environment variable
 
 ## 🚀 Processus de Migration
 
@@ -30,8 +36,7 @@ Migrer les données de l'instance Supabase cloud vers une instance auto-héberg�
 #### Méthode A: Importation Manuelle (Recommandée)
 1. **Connexion au serveur**:
    ```bash
-   ssh ubuntu@37.59.121.40
-   # Mot de passe: Catilo
+   ssh $TARGET_SERVER_USER@$TARGET_SERVER_HOST
    ```
 
 2. **Installation PostgreSQL**:
@@ -87,13 +92,13 @@ node test_new_database_connection.ts
 #### Variables d'environnement à modifier
 ```bash
 # Remplacer dans .env
-VITE_SUPABASE_URL=http://37.59.121.40:8000
-VITE_SUPABASE_PUBLISHABLE_KEY=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc2MTA2OTQ4MCwiZXhwIjo0OTE2NzQzMDgwLCJyb2xlIjoiYW5vbiJ9.XPLr03kTqHVfR3teQNHMmapCyz0ho7xNEfOG-TFS_bw
+VITE_SUPABASE_URL=http://$TARGET_SERVER_HOST:8000
+VITE_SUPABASE_PUBLISHABLE_KEY=<your_supabase_anon_key>
 ```
 
 #### Configuration complète (fichier `.env.production.new`)
-- URL Supabase: `http://37.59.121.40:8000`
-- Base PostgreSQL: `postgresql://postgres:Catilo@37.59.121.40:5432/clubcreole_db`
+- URL Supabase: `http://$TARGET_SERVER_HOST:8000`
+- Base PostgreSQL: `postgresql://postgres:$DB_PASSWORD@$TARGET_SERVER_HOST:5432/clubcreole_db`
 
 ## 🔍 Validation de la Migration
 
@@ -144,9 +149,10 @@ node test_new_database_connection.ts
 ## ⚠️ Points d'Attention
 
 ### Sécurité
-- **Mot de passe PostgreSQL**: `Catilo` (à changer en production)
+- **Mot de passe PostgreSQL**: Use strong password stored in environment variables
 - **Clés Supabase**: Utiliser les clés générées lors de l'installation
 - **Accès réseau**: Configurer le firewall pour autoriser les connexions
+- **SSH Access**: Prefer SSH keys over passwords
 
 ### Performance
 - **Index**: Vérifier que tous les index ont été migrés

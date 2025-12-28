@@ -32,6 +32,34 @@ dev-debug.log
 node_modules/
 # Environment variables
 .env
+.env.*
+!.env.example
+!.env.*.example
+scripts/.env*
+!scripts/.env.example
+
+# Sensitive configuration files
+.mcp-supabase.json
+
+# Migration and transfer scripts (contain credentials)
+complete_transfer_import.sh
+complete_base64_instructions.sh
+base64_import_remote.sh
+scp_transfer.sh
+scp_simple.sh
+sftp_transfer.py
+simple_transfer.py
+manual_transfer_instructions.sh
+remote_import_commands.sh
+http_transfer_plan.sh
+import_database.sh
+deploy-edge-functions.sh
+deploy-edge-functions-coolify.sh
+scripts/import-to-target-db.sh
+scripts/import-to-target-postgres.ts
+scripts/migrate-data-postgres.sh
+scripts/apply-autoconfirm.mjs
+
 .vscode
 # OS specific
 
