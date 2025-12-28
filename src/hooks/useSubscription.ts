@@ -49,24 +49,15 @@ export const useSubscription = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Fetch subscription data from edge function and local database
-  const checkSubscription = useCallback(async () => {
+  // showToastOnError: when false, errors are logged silently (for automatic checks)
+  const checkSubscription = useCallback(async (showToastOnError = false) => {
     if (!user || !session) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      // First, call the edge function to sync with Stripe
-      const { data: stripeData, error: stripeError } = await supabase.functions.invoke('check-subscription', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
-
-      if (stripeError) throw stripeError;
-
-      // Then fetch the complete subscriber data from database
-      // Note: Some columns may not exist in production - using only base columns
+      // First, try to fetch from local database (fast, always available)
       const { data: subscriberData, error: dbError } = await supabase
         .from('subscribers')
         .select(`
@@ -81,13 +72,31 @@ export const useSubscription = () => {
         console.error('Database error:', dbError);
       }
 
-      // Merge Stripe data with database data
-      // Note: Many fields come from Stripe edge function, not database
+      // Then try to sync with Stripe via edge function (may fail if not configured)
+      let stripeData = null;
+      try {
+        const { data, error: stripeError } = await supabase.functions.invoke('check-subscription', {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        });
+
+        if (!stripeError) {
+          stripeData = data;
+        } else {
+          console.warn('Stripe sync unavailable:', stripeError.message);
+        }
+      } catch (stripeErr) {
+        // Stripe sync failed silently - use local data
+        console.warn('Stripe sync failed:', stripeErr);
+      }
+
+      // Use Stripe data if available, otherwise fall back to database data
       setSubscriptionData({
         subscribed: stripeData?.subscribed ?? subscriberData?.subscribed ?? false,
         subscription_tier: stripeData?.subscription_tier ?? subscriberData?.subscription_tier ?? null,
         subscription_end: stripeData?.subscription_end ?? subscriberData?.subscription_end ?? null,
-        subscription_status: stripeData?.subscribed ? 'active' : null,
+        subscription_status: (stripeData?.subscribed ?? subscriberData?.subscribed) ? 'active' : null,
         cancel_at_period_end: false,
         last_invoice_amount: null,
         last_invoice_date: null,
@@ -100,11 +109,13 @@ export const useSubscription = () => {
       const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue';
       console.error('Error checking subscription:', err);
       setError(errorMessage);
-      toast({
-        title: "Erreur",
-        description: "Impossible de vérifier le statut d'abonnement",
-        variant: "destructive",
-      });
+      if (showToastOnError) {
+        toast({
+          title: "Erreur",
+          description: "Impossible de vérifier le statut d'abonnement",
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }

@@ -1,18 +1,18 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
 } from "@/components/ui/card";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -39,7 +39,7 @@ const UserConsumptionHistory = lazy(() => import('./consumption/UserConsumptionH
 export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminProps) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>("partners");
-  
+
   // Si un utilisateur est sélectionné, passer à l'onglet de consommation
   useEffect(() => {
     if (selectedUserId) {
@@ -61,8 +61,8 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
               <p className="text-sm text-gray-600">Créez et gérez toutes vos activités de loisirs</p>
             </div>
           </div>
-          <Button 
-            onClick={() => navigate("/loisirs-management")} 
+          <Button
+            onClick={() => navigate("/loisirs-management")}
             size="lg"
             className="bg-creole-green hover:bg-creole-green/90 shadow-md"
           >
@@ -84,8 +84,8 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
               <p className="text-sm text-gray-600">Créez et gérez tous les hébergements disponibles</p>
             </div>
           </div>
-          <Button 
-            onClick={() => navigate("/accommodations-management")} 
+          <Button
+            onClick={() => navigate("/accommodations-management")}
             size="lg"
             className="bg-blue-600 hover:bg-blue-700 shadow-md"
           >
@@ -221,7 +221,7 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
             <TabsTrigger value="consumption">Consommation</TabsTrigger>
           </TabsList>
         </div>
-        
+
         <TabsContent value="partners" className="mt-4">
           <Card>
             <CardHeader className="flex justify-between">
@@ -288,7 +288,7 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="users" className="mt-4">
           <Card>
             <CardHeader className="flex justify-between">
@@ -304,12 +304,12 @@ export const DashboardAdmin = ({ selectedUserId, onSelectUser }: DashboardAdminP
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="consumption" className="mt-4">
           <div className="mb-4">
             {selectedUserId && (
-              <button 
-                onClick={() => onSelectUser && onSelectUser(null)} 
+              <button
+                onClick={() => onSelectUser && onSelectUser(null)}
                 className="text-blue-600 hover:underline flex items-center"
               >
                 ← Retour à la liste des utilisateurs

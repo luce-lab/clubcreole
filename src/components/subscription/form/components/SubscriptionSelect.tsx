@@ -1,12 +1,12 @@
 
 import { Control } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage 
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
 } from "@/components/ui/form";
 import { SubscriptionFormValues } from "../types";
 
@@ -23,8 +23,8 @@ export function SubscriptionSelect({ control, isSubmitting }: SubscriptionSelect
       render={({ field }) => (
         <FormItem>
           <FormLabel>Abonnement</FormLabel>
-          <Select 
-            onValueChange={field.onChange} 
+          <Select
+            onValueChange={field.onChange}
             defaultValue={field.value}
             disabled={isSubmitting}
           >
