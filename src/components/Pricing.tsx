@@ -19,8 +19,8 @@ export const Pricing = () => {
     if (lowerName === "gratuit") return null;
     // Map plan name to Stripe price type
     if (lowerName === "passionné" || lowerName === "passionne") return "passionne";
-    if (lowerName === "expert") return "expert";
-    return lowerName;
+    if (lowerName === "expert" || lowerName.includes("premium")) return "expert";
+    return "passionne"; // Default to passionne for unknown plans
   };
 
   const handleSubscription = (priceType: string | null) => {
