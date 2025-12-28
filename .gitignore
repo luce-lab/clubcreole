@@ -58,6 +58,7 @@ deploy-edge-functions-coolify.sh
 scripts/import-to-target-db.sh
 scripts/import-to-target-postgres.ts
 scripts/migrate-data-postgres.sh
+scripts/apply-autoconfirm.mjs
 
 .vscode
 # OS specific
